@@ -479,6 +479,11 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #care .tile.jr{grid-column:1/-1;flex-direction:row!important;align-items:center!important}
 #care .tile.jr .ib{flex-direction:row;gap:8px;font-size:20px;margin-left:auto;padding:8px 18px}
 #care .tile.jr:after{right:auto;left:150px}
+#care .mmap .tap{position:absolute;right:3px;bottom:0;font-style:normal;font-size:14px;opacity:.7}
+#care .row.tight{gap:4px;flex-wrap:nowrap}
+#care .row.tight .ib{min-width:50px;padding:3px 6px;font-size:14px}
+#care .row.tight .ib i{font-size:22px}
+#care .mmap{height:62px!important}
 </style>
 </head>
 <body>
@@ -1556,7 +1561,7 @@ function removeSickLeaves(p){ visit(p); p.mildew = false; p.leafWet = 0; p.leafA
 function wxJudge(p, w0){
   if (!p.today.visited) return;
   const g = gapToNext(p), k = kindOf(w0);
-  if (nightsAhead(p, "window", g) < 10){ p.care.wxChance++; if (nightsAhead(p, p.spot, g) >= 10) p.care.wxGood++; }
+  if (nightsAhead(p, "window", g) < 10){ p.care.wxChance++; if (nightsAhead(p, nSpot(p), g) >= 10) p.care.wxGood++; }
   if (k === "rain" || k === "cloud"){ p.care.wxChance++; if (!(p.today.ml > 0 && p.moist > 90)) p.care.wxGood++; }
   if (LV() === "hard" && w0.sunH >= 9 && w0.tmax >= 26 && p.spot === "window"){ p.care.wxChance++; if (p.blind) p.care.wxGood++; }
   if (g >= 4){ p.care.wxChance++; if (p.moist >= 62) p.care.wxGood++; }
@@ -1565,7 +1570,7 @@ function wxJudge(p, w0){
 function dayStep(p){
   const h0 = p.health;
   // ① 오늘 밤 기온 (지금 자리)
-  const w0 = wxOf(p.day), n0 = spotNow(p, p.spot, w0);
+  const w0 = wxOf(p.day), n0 = nightNow(p, w0);   // 밤 온도는 «밤 자리» 로 (+ 덮개)
   if (n0.nightT < 10 && LV() !== "easy"){ p.chill = 2; p.health -= n0.nightT < 7 ? 14 : 8; p.stress.cold++; } else if (p.chill > 0) p.chill--;
   wxJudge(p, w0);
   logDay(p, w0);
@@ -1844,7 +1849,7 @@ let waterTarget = "soil", pour = null, pourSnd = null, mapSel = null;
 function wxCard(p){
   const w = wxOf(p.day), k = kindOf(w), g = gapToNext(p), fc = [];
   for (let i = 1; i <= g; i++){ const x = wxOf(p.day + i); fc.push(`<span>${"일월화수목금토"[dateOf(p.day + i).getDay()]} ${KIND_ICON[kindOf(x)]} ${Math.round(x.tmin)}°</span>`); }
-  const coldHere = nightsAhead(p, p.spot, g);
+  const coldHere = nightsAhead(p, nSpot(p), g);
   let warn = "";
   if (coldHere < 10) warn = `🥶 다음 수업 전, 지금 자리는 밤에 ${Math.round(coldHere)}℃까지 내려가요 — 바질은 10℃ 아래가 싫어요`;
   else if (w.sunH >= 9 && w.tmax >= 26 && p.spot === "window" && !p.blind) warn = `☀ 오늘 햇볕이 아주 세요(해 ${w.sunH}시간 · ${Math.round(w.tmax)}℃) — 잎이 탈 수 있어요`;
@@ -2998,7 +3003,7 @@ function wxCard(p){
   if (L === "easy") return `<div class="wxcard"><div><b>오늘 ${KIND_ICON[k]} ${WXK_NAME[k]}</b> <span class="hint">· 교실 안이라 비는 화분에 안 들어가요</span></div></div>`;
   const g = gapToNext(p), fc = [];
   for (let i = 1; i <= g; i++){ const x = wxOf(p.day + i); fc.push(`<span>${"일월화수목금토"[dateOf(p.day + i).getDay()]} ${KIND_ICON[kindOf(x)]} ${Math.round(x.tmin)}°</span>`); }
-  const coldHere = nightsAhead(p, p.spot, g);
+  const coldHere = nightsAhead(p, nSpot(p), g);
   let warn = "";
   if (L === "hard" && coldHere < 10) warn = `🥶 다음 수업 전, 지금 자리는 밤에 ${Math.round(coldHere)}℃까지 내려가요 — 바질은 10℃ 아래가 싫어요`;
   else if (L === "hard" && w.sunH >= 9 && w.tmax >= 26 && p.spot === "window" && !p.blind) warn = `☀ 오늘 햇볕이 아주 세요(해 ${w.sunH}시간 · ${Math.round(w.tmax)}℃) — 잎이 탈 수 있어요`;
@@ -3043,8 +3048,8 @@ function alertsOf(p){
   else if (L === "normal" && p.today.checkedDeep && p.surf < 40 && p.moist >= 55 && !p.today.watered && !p.today.noWater)
     add("surf", "🤔 겉흙은 보송한데 속흙은 촉촉해요", ["noWaterOk"], ["lots", "속흙이 아직 촉촉해요. 지금 주면 물이 너무 많아져요"]);
   sick.filter(k => !["wet", "dry", "dark"].includes(k)).forEach(k => add(k, "👀 " + SICK[k].sym, ["diag"]));
-  if (L === "normal" && !p.chill && nightsAhead(p, p.spot, g) < 10)
-    add("cold", `🥶 다음 수업 전 밤에 지금 자리는 ${Math.round(nightsAhead(p, p.spot, g))}℃까지 내려가요`, ["inside"], ["blindC", "블라인드로는 밤 추위를 못 막아요. 창에서 먼 안쪽이 덜 추워요"]);
+  if (L === "normal" && !p.chill && nightsAhead(p, nSpot(p), g) < 10)
+    add("cold", `🥶 다음 수업 전 밤에 지금 자리는 ${Math.round(nightsAhead(p, nSpot(p), g))}℃까지 내려가요`, ["inside"], ["blindC", "블라인드로는 밤 추위를 못 막아요. 창에서 먼 안쪽이 덜 추워요"]);
   if (stage(p) >= 1 && here.sun < 3) add("dark", `🌑 여기는 햇빛이 모자라요 (☀ ${here.sun.toFixed(1)}시간)`, ["bright"], ["more", "물보다 햇빛이 모자라요. 햇빛이 6시간 넘게 드는 곳으로 옮겨요"]);
   if (L === "normal" && stage(p) >= 2 && p.nutr < 25 && !p.today.fert) add("fert", "🍂 잎 색이 옅어졌어요 — 흙 속 양분이 모자라요", ["fert"], ["more", "잎 색이 옅은 건 물이 아니라 양분이 모자라서예요"]);
   if (canPinch) add("pinch", "✂ 순지르기 할 때예요! 꼭대기 순을 자르면 곁가지가 나요", ["pinch"]);
@@ -3249,7 +3254,7 @@ function todayScore(p){
   if (td.gw || td.noWater) s.water = 25;
   else if (td.watered) s.water = Math.max(0, 15 - (td.over ? 10 : 0) - (td.leafW ? 5 : 0) - (td.wetW ? 10 : 0));
   else s.water = 0;
-  const sun = spotNow(p, p.spot, w).sun, night = nightsAhead(p, p.spot, g);
+  const sun = spotNow(p, p.spot, w).sun, night = nightsAhead(p, nSpot(p), g);
   s.spot = (sun >= 6 || sun >= bestOf(p, x => spotNow(p, x, w).sun) - .3 ? 10 : 0) + (night >= 10 || night >= bestOf(p, x => nightsAhead(p, x, g)) - .3 ? 10 : 0);
   const need = (p.saucer > 0 ? 1 : 0) + (p.moist > 95 ? 1 : 0) + (p.bug ? 1 : 0) + (sickList(p).filter(x => x !== "bug" && x !== "wet").length && !td.diag ? 1 : 0) + (LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert ? 1 : 0);
   s.care = Math.max(0, 15 - need * 5 - (td.fert && p.day - (p.prevFert ?? -99) < 6 ? 5 : 0));
@@ -3279,7 +3284,11 @@ function skipWater(){
 /* 🪴 기울여 물 빼기 — 화분을 살짝 기울여 밑구멍으로 남은 물을 뺌 · 한 번에 흙 물기 −10 · 85(좋은 칸 위끝)까지 되풀이 */
 function tiltDrain(){
   if (busy || me.dead) return;
-  if (me.moist <= 85){ toast("👍 이제 알맞아요"); return; }
+  const sau = me.saucer;
+  if (me.moist <= 85){
+    if (sau > 0){ drainSaucer(me); fxAdd(`<circle class="drop" cx="80" cy="390" r="3" fill="#7fbfea" style="--dx:-30px;--dy:18px"/>`, 900); sfx("water", .4); renderMe(); happy(); toast(`🍽 받침 물 ${sau}mL 를 버렸어요`); return; }
+    toast(`💧 더 빠질 물이 없어요 (흙물 ${Math.round(me.moist)})`); return;
+  }
   visit(me);
   const before = Math.round(me.moist);
   me.moist = Math.max(85, me.moist - 10); me.surf = Math.min(me.surf, me.moist + 5);
@@ -3331,13 +3340,13 @@ function renderMe(){
   else water = `<div class="row">${L === "hard" ? B("🟫", "흙에", "setTarget('soil')", lk.water, waterTarget === "soil" ? "sel" : "") + B("🍃", "잎에", "setTarget('leaf')", lk.water, waterTarget === "leaf" ? "sel" : "") : ""}
       <button class="ib ${lk.water ? "lock" : ""}" id="pourBtn" style="touch-action:none" ${lk.water ? `onclick="lockTap('${lk.water}')"` : `onpointerdown="pourStart(event)" onpointerup="pourEnd()" onpointerleave="pourEnd()" onpointercancel="pourEnd()"`}><i>🚿</i>꾹</button>
       <span class="gauge2"><span class="ok"></span><b id="gFill" style="width:${Math.min(100, p.today.ml / 3)}%"></b></span><span class="ml"><b id="mlLab" style="font-weight:400">${p.today.ml}</b> mL</span></div>`;
-  water += `<div class="row">${B("🚱", "오늘 그만", "skipWater()", lk.water === "soil" || lk.water === "dead" ? lk.water : p.today.noWater ? "nowater" : p.today.watered ? "done" : "")}${p.saucer > 0 ? B("🍽", "버리기", "doDrain()", "", "main") : ""}${!dead && p.moist > 85 && (p.today.deepWord || p.today.easyWord || p.today.watered || p.saucer > 0) ? B("🪴", "기울이기", "tiltDrain()", "", "main") : ""}</div>`;
+  water += `<div class="row">${B("🚱", "오늘 그만", "skipWater()", lk.water === "soil" || lk.water === "dead" ? lk.water : p.today.noWater ? "nowater" : p.today.watered ? "done" : "")}${B("🪴", "물 빼기", "tiltDrain()", dead ? "dead" : "", p.saucer > 0 || (p.moist > 85 && (p.today.deepWord || p.today.easyWord || p.today.watered)) ? "main" : "")}</div>`;
   // ③ 자리
-  const w = wxOf(p.day), s = spotNow(p, p.spot, w), night = nightsAhead(p, p.spot, gapToNext(p)), nSun = s.sun >= 6 ? 3 : s.sun >= 3 ? 2 : s.sun >= 1 ? 1 : 0;
+  const w = wxOf(p.day), s = spotNow(p, p.spot, w), night = nightsAhead(p, nSpot(p), gapToNext(p)), nSun = s.sun >= 6 ? 3 : s.sun >= 3 ? 2 : s.sun >= 1 ? 1 : 0;
   const fc = L === "hard" ? (() => { const g = gapToNext(p), a = []; for (let i = 1; i <= g; i++) a.push(KIND_ICON[kindOf(wxOf(p.day + i))]); return `<div class="tiny">다음 수업까지 ${a.join(" ")} · ☀ ${s.sun.toFixed(1)}h</div>`; })() : "";
-  const spotT = `<div class="row"><div class="mmap" onclick="${dead ? "" : "openMap()"}"><b style="left:${SPOTS[p.spot].x}%;top:${Math.max(18, SPOTS[p.spot].y)}%">🪴</b></div>
+  const spotT = `<div class="row"><div class="mmap" onclick="${dead ? "" : "openMap()"}"><b style="left:${SPOTS[p.spot].x}%;top:${Math.max(18, SPOTS[p.spot].y)}%">🪴</b>${p.nightSpot && p.nightSpot !== p.spot ? `<b style="left:${SPOTS[p.nightSpot].x}%;top:${Math.max(18, SPOTS[p.nightSpot].y)}%;font-size:16px">🌙</b>` : ""}<i class="tap">👆</i></div>
       <div class="suns">${"☀".repeat(nSun)}<span class="dim">${"☀".repeat(3 - nSun)}</span><br>🌙 ${Math.round(night)}°${night < 10 ? " 🥶" : ""}</div></div>${fc}
-    <div class="row">${B("🗺", "옮기기", "openMap()", dead ? "dead" : "")}${L !== "easy" && (p.spot === "window" || p.spot === "side") ? B("🪟", p.blind ? "올리기" : "내리기", `doBlind(${!p.blind})`, dead ? "dead" : "", p.blind ? "sel" : "") : ""}</div>`;
+    <div class="row tight">${B("🗺", "낮 자리", "openMap()", dead ? "dead" : "")}${B("🌙", p.nightSpot && p.nightSpot !== p.spot ? SPOTS[p.nightSpot].icon + " 밤" : "밤 자리", "openNightMap()", dead ? "dead" : "", p.nightSpot && p.nightSpot !== p.spot ? "sel" : "")}${L !== "easy" && (p.spot === "window" || p.spot === "side") ? B("🪟", p.blind ? "올리기" : "내리기", `doBlind(${!p.blind})`, dead ? "dead" : "", p.blind ? "sel" : "") : ""}${L === "hard" ? B("🧥", p.cover ? "벗기기" : "덮개", "toggleCover()", dead ? "dead" : "", p.cover ? "sel" : "") : ""}</div>`;
   // ④ 가꾸기
   const prog = [lk.pinch === "grow" ? (p.h < 10 ? `✂ 📏${p.h.toFixed(1)}/10` : `✂ 🍃${leaves(p)}/8`) : "", lk.pick === "pick" && !p.done ? (leaves(p) < 10 ? `🧺 🍃${leaves(p)}/10` : `🧺 ⏳${3 - (p.day - p.lastPick)}일`) : p.harvested ? `🧺 ${p.harvested}장` : ""].filter(Boolean).join("　");   // 가장 가까운 조건 하나씩만
   const garden = `<div class="row">${L === "easy" ? "" : B("🧪", "거름", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}</div><div class="tiny">${prog}</div>`;
@@ -3349,7 +3358,7 @@ function renderMe(){
      <div class="step tile ${p.today.watered || p.today.noWater ? "done" : ""}"><div class="hd"><span class="no">2</span>💧 물</div>${water}</div>
      <div class="step tile"><div class="hd"><span class="no">3</span>🗺 자리</div>${spotT}</div>
      <div class="step tile"><div class="hd"><span class="no">4</span>🌿 가꾸기</div>${garden}</div>
-     <div class="step tile jr ${p.today.journal ? "done" : ""}"><div class="hd"><span class="no">5</span>📏 일지</div><span class="tiny" style="margin-left:12px">${jrNote}</span>${B("📏", "재고 · 세기", "openJournal()", dead ? "dead" : p.today.journal ? "done" : "", "main")}</div>`;
+     <div class="step tile jr ${p.today.journal ? "done" : ""}"><div class="hd"><span class="no">5</span>📏 일지</div><span class="tiny" style="margin-left:12px">${jrNote}</span>${B("📏", p.today.journal ? "고치기" : "재고 · 세기", "openJournal()", dead ? "dead" : "", "main")}</div>`;
   renderEffort(); renderCard(); renderRewards(); renderHarvest(); checkBadges(); renderScene();
   if (p.dead && !p.deadSeen){ p.deadSeen = true; setTimeout(openDead, 400); }
   renderExtras(p);
@@ -3360,7 +3369,7 @@ function renderMe(){
 const STAT_HELP = {
   w: "💧 흙물 = 속흙에 물이 얼마나. 초록 칸(30~85)이 좋아요. 너무 적으면 목마르고, 너무 많으면 뿌리가 숨 막혀요",
   s: "☀ 햇빛 = 지금 자리에서 오늘 받는 햇빛 시간. 6시간 넘으면 좋아요",
-  n: "🌙 밤 = 다음 수업까지 가장 추운 밤 온도(지금 자리). 10℃ 넘으면 좋아요",
+  n: "🌙 밤 = 다음 수업까지 가장 추운 밤 온도(밤 자리). 10℃ 넘으면 좋아요. 추우면 «🌙 밤 자리» 를 안쪽으로",
   f: "🧪 양분 = 흙 속 거름. 날마다 줄어요. 25~80이 좋아요",
   h: "❤ 건강 = 바질 기운. 위 넷이 초록 칸이면 밤마다 올라가요",
 };
@@ -3370,7 +3379,7 @@ function renderStat(p){
   const el = $("stat"); if (!el) return;
   if (!stuName){ el.style.display = "none"; $("nightLine").style.display = "none"; return; }
   el.style.display = "flex";
-  const L = LV(), w = wxOf(p.day), s = spotNow(p, p.spot, w), night = nightsAhead(p, p.spot, gapToNext(p));
+  const L = LV(), w = wxOf(p.day), s = spotNow(p, p.spot, w), night = nightsAhead(p, nSpot(p), gapToNext(p));
   const G = (key, ic, nm, v, lo, hi, max, txt, hid) => {
     const on = _statKey === key ? " on" : "";
     if (hid) return `<div class="g hid${on}" onclick="statHelp('${key}')"><span class="ic">${ic}</span><span class="nm">${nm}</span><span class="br"></span><span class="n">👆 ?</span></div>`;
@@ -3397,8 +3406,8 @@ function renderStat(p){
 /* 💬 말풍선 — 바질이 하는 말 (그림 + 낱말) + 할 일 단추 · 알림 카드를 대신함 */
 const SICK_PIC = {dry: ["😩", "잎이 축 처졌어"], wet: ["💛", "아래 잎이 노래"], dark: ["🥢", "줄기만 길쭉해"], cold: ["🖤", "잎이 거무스름해"], scorch: ["🍂", "잎 끝이 갈색이야"], mildew: ["⚪", "하얀 가루가…"], bug: ["🐛", "잎 뒤가 간질간질"]};
 const ACT2 = {
-  drain: ["🍽", "버리기", () => doDrain()], tilt: ["🪴", "기울이기", () => tiltDrain()], noWater: ["🚱", "오늘 그만", () => skipWater()], water: ["💧", "물 주기", () => LV() === "easy" ? easyWater() : goWater()],
-  inside: ["🗺", "안쪽으로", () => openMap()], bright: ["🗺", "밝은 곳", () => openMap()], diag: ["🩺", "진찰", () => openDiag()],
+  drain: ["🍽", "버리기", () => doDrain()], tilt: ["🪴", "물 빼기", () => tiltDrain()], noWater: ["🚱", "오늘 그만", () => skipWater()], water: ["💧", "물 주기", () => LV() === "easy" ? easyWater() : goWater()],
+  inside: ["🗺", "안쪽으로", () => openMap()], nightIn: ["🌙", "밤엔 안쪽", () => openNightMap()], bright: ["🗺", "밝은 곳", () => openMap()], diag: ["🩺", "진찰", () => openDiag()],
   fert: ["🧪", "거름", () => doFert()], pinch: ["✂", "자르기", () => doPinch()], pick: ["🧺", "따기", () => doPick()], replant: ["🌈", "다시 심기", () => openDead()],
 };
 const WRONG2 = {more: ["💧", "더 주기"], shade: ["🗺", "옮기기"], lots: ["💧", "듬뿍"], blindC: ["🪟", "블라인드"]};
@@ -3415,14 +3424,14 @@ function alertsOf(p){
     if (canPinch) add("pinch", "✂🌿", "꼭대기 순이 쑥!", []);
     return out;
   }
-  const g = gapToNext(p), here = spotNow(p, p.spot, wxOf(p.day)), nt = nightsAhead(p, p.spot, g);
+  const g = gapToNext(p), here = spotNow(p, p.spot, wxOf(p.day)), nt = nightsAhead(p, nSpot(p), g);
   if (p.saucer > 0 || p.moist > 95 || p.soggy >= 2)
-    add("wet", p.saucer > 0 ? "💦🍽" : "💦💦", "발이 축축해!", [p.saucer > 0 && "drain", p.moist > 85 && "tilt", !p.today.watered && !p.today.noWater && "noWater"], ["more", "❌ 이미 질척해요"]);
+    add("wet", p.saucer > 0 ? "💦🍽" : "💦💦", "발이 축축해!", ["tilt", !p.today.watered && !p.today.noWater && "noWater"], ["more", "❌ 이미 질척해요"]);
   else if (p.moist < 18 && !p.today.watered) add("dry", "🏜💧", "목말라!", ["water"], ["shade", "❌ 물이 먼저예요"]);
   else if (L === "normal" && p.today.checkedDeep && p.surf < 40 && p.moist >= 55 && !p.today.watered && !p.today.noWater)
     add("surf", "👆🙂 👇💧", "속은 촉촉해!", ["noWater"], ["lots", "❌ 속흙이 아직 촉촉해요"]);
   sick.filter(k => !["wet", "dry", "dark"].includes(k)).forEach(k => add(k, SICK_PIC[k][0], SICK_PIC[k][1], ["diag"]));
-  if (L === "normal" && !p.chill && nt < 10) add("cold", `🌙🥶`, `밤에 ${Math.round(nt)}°, 추워!`, ["inside"], ["blindC", "❌ 블라인드로는 못 막아요"]);
+  if (L === "normal" && !p.chill && nt < 10) add("cold", `🌙🥶`, `밤에 ${Math.round(nt)}°, 추워!`, ["nightIn"], ["blindC", "❌ 블라인드로는 못 막아요"]);
   if (stage(p) >= 1 && here.sun < 3) add("dark", "🌑", "햇빛 줘!", ["bright"], ["more", "❌ 햇빛이 모자라요"]);
   if (L === "normal" && stage(p) >= 2 && p.nutr < 25 && !p.today.fert) add("fert", "🍂🧪", "배고파!", ["fert"], ["more", "❌ 양분이 모자라요"]);
   if (p.health < 40 && !out.length) add("weak", "🤒", "아파…", ["diag"]);
@@ -3477,6 +3486,100 @@ function renderExtras(p){
     const svg = eb.querySelector("svg"); if (svg) svg.style.height = "170px";
     eb.insertAdjacentHTML("afterbegin", `<h3>⭐ 날짜별 오늘 점수</h3><div class="dbars" style="display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px 18px;border-bottom:1px solid var(--line);overflow:hidden">${days.slice(-14).map(x => `<div style="flex:0 0 30px;height:${Math.max(6, x.s)}%;background:linear-gradient(#f2c14e,#e0a43a);border-radius:6px 6px 0 0;position:relative;font:12px Jua;color:#fff;text-align:center">${x.s}<span style="position:absolute;bottom:-17px;left:-4px;right:-4px;color:var(--sub)">${x.d}일</span></div>`).join("") || `<span class="hint">돌본 날마다 막대가 생겨요</span>`}</div>`);
   }
+}
+
+
+/* ═════════ 낮 자리 · 밤 자리 · 🧥 밤 덮개 ═════════
+   햇빛은 낮 자리(p.spot), 밤 온도는 밤 자리(p.nightSpot · 없으면 낮 자리)로 셈 — «집에 가기 전 안쪽으로» */
+function nSpot(p){ return p.nightSpot && (LEVEL_SPOTS[LV()] || []).includes(p.nightSpot) ? p.nightSpot : p.spot; }
+const coverBonus = p => LV() === "hard" && p.cover ? 3 : 0;
+function nightsAhead(p, k, g){ let m = 99; for (let i = 0; i < g; i++) m = Math.min(m, spotNow(p, k, wxOf(p.day + i)).nightT); return m + coverBonus(p); }
+function nightNow(p, w0){ const s = spotNow(p, nSpot(p), w0); return {...s, nightT: s.nightT + coverBonus(p)}; }
+let _mapNight = false;
+function openNightMap(){
+  if (busy || me.dead) return;
+  _mapNight = true; _openMap0(); pickZone(nSpot(me));
+  const h = document.querySelector("#mapModal h2"); if (h) h.firstChild.textContent = "🌙 밤에는 어디에 둘까요? ";
+}
+const _openMap0 = openMap;
+openMap = function(){ _mapNight = false; const h = document.querySelector("#mapModal h2"); if (h) h.firstChild.textContent = "🗺 낮에는 어디에 둘까요? "; _openMap0(); };
+function mapOk(){
+  $("mapModal").classList.remove("on");
+  if (_mapNight){
+    _mapNight = false; visit(me);
+    me.nightSpot = mapSel === me.spot ? null : mapSel; sfx("whoosh");
+    const nt = nightsAhead(me, nSpot(me), gapToNext(me));
+    renderMe(); toast(`🌙 밤엔 ${SPOTS[nSpot(me)].icon} ${SPOTS[nSpot(me)].name} · 밤 ${Math.round(nt)}°` + (nt >= 10 ? " 👍" : " 🥶"));
+    if (nt >= 10) happy();
+    return;
+  }
+  if (mapSel !== me.spot) moveSpot(mapSel);
+}
+document.addEventListener("click", e => { if (e.target && e.target.id === "mapModal") _mapNight = false; }, true);
+/* 🧥 밤 덮개 (어려움) — 밤 +3℃ · 씌운 채로 두면 덮개 속이 습해 잎이 젖고(흰가루) · 맑고 더운 낮엔 덥다 */
+function toggleCover(){
+  if (busy || me.dead) return;
+  visit(me); me.cover = !me.cover; sfx("whoosh"); renderMe();
+  toast(me.cover ? "🧥 덮개를 씌웠어요 — 밤에 +3° · 다음 수업엔 벗겨 줘요" : "🧥 덮개를 벗겼어요 — 바람이 통해요");
+}
+const _dayStep0 = dayStep;
+dayStep = function(p){
+  const covered = LV() === "hard" && p.cover;
+  _dayStep0(p);
+  if (covered){ const w = wxOf(p.day); p.leafWet += .6; if (w.sunH >= 8 && w.tmax >= 24){ p.health = clamp(p.health - 3, 0, 100); } }
+};
+
+/* ═════════ 📏 관찰일지 — 언제나 저장 (빈칸은 알려만 줌) · 오늘 일지는 다시 열어 고침 ═════════
+   키 · 잎 정답 맞히기는 처음 적은 값으로만 정함 (저장하면 정답이 보이므로 — 보고 고쳐서 점수 받기 막음) */
+function jrLock(){
+  const d = jrDraft, L = LV(), seed = stage(me) === 0, miss = [];
+  if (d.h === "") miss.push("① 키");
+  if (L !== "easy" && !seed && d.l === "") miss.push("② 잎");
+  if (L === "hard" && !seed && !d.color) miss.push("③ 잎 색");
+  if (!d.txt.trim()) miss.push("본 것");
+  if (L === "hard" && d.pred === "") miss.push("🔮 예상");
+  const b = $("jrSave"); if (!b) return;
+  b.disabled = false;
+  $("jrWhy").textContent = miss.length ? "💡 아직 빈칸 : " + miss.join(" · ") + " (그래도 저장돼요)" : "";
+}
+const _openJournal0 = openJournal;
+openJournal = function(){
+  _openJournal0();
+  const p = me, n = p.today.journal ? p.notes.filter(x => x.d === p.day).pop() : null;
+  if (!n) return;
+  const set = (id, v, key) => { const el = $(id); if (el && v != null && v !== ""){ el.value = v; jrDraft[key] = String(v); } };
+  set("jrH", n.hIn, "h"); set("jrL", n.lIn, "l"); set("jrT", n.t, "txt"); set("jrP", n.pred, "pred");
+  if (n.color && n.color !== "없음"){ jrDraft.color = n.color; document.querySelectorAll("#jrBox [data-c]").forEach(b => b.classList.toggle("sel", b.dataset.c === n.color)); }
+  if (n.pred != null){ jrDraft.pred = String(n.pred); const pv = $("jrPv"); if (pv) pv.textContent = `→ 다음 수업 때 ${n.pred}cm`; }
+  if (n.why){ jrDraft.why = n.why; document.querySelectorAll("#jrBox [data-w]").forEach(b => b.classList.toggle("sel", b.dataset.w === n.why)); }
+  const b = $("jrSave"); if (b) b.textContent = "고쳐서 저장";
+  jrLock();
+};
+function saveJournal(){
+  const d = jrDraft, p = me, L = LV(), seed = stage(p) === 0, easy = L === "easy";
+  const hIn = d.h === "" ? null : +d.h, lIn = !easy && !seed && d.l !== "" ? +d.l : null, colorOn = L === "hard" && !seed && d.color;
+  const realH = drawnHeightCM(p), realL = drawnLeaves(p), first = !p.today.journal;
+  if (first){ visit(p); p.today.journal = true; p.care.journals++; addCoin(p, 2, "관찰일지"); }
+  // 정답 맞히기 — 그날 처음 적은 값으로만
+  if (hIn != null && p.today.accH == null){ p.today.accH = Math.abs(hIn - realH) <= (easy ? 1 : .5); if (p.today.accH){ p.care.accurate++; addCoin(p, 2, "자로 정확히 재기"); } }
+  if (lIn != null && p.today.accL == null){ p.today.accL = Math.abs(lIn - realL) <= (easy ? 2 : 1); if (p.today.accL) addCoin(p, 1, "잎 정확히 세기"); }
+  p.today.jrAcc = !!p.today.accH;
+  // 지난 예상 견주기 — 그날 처음 키를 적었을 때 한 번
+  let predRes = p.today.predRes || null; const lp = lastPred(p);
+  if (!predRes && hIn != null && lp && !lp.checked){ lp.checked = true; predRes = {pred: lp.pred, real: realH, diff: +(realH - lp.pred).toFixed(1)}; if (Math.abs(predRes.diff) <= 1){ p.care.predGood++; addCoin(p, 2, "예상이 맞음"); } p.today.predRes = predRes; }
+  const note = {d: p.day, t: (d.txt || "").trim(), hIn, lIn, color: colorOn ? d.color : leafColorName(p), pred: easy || d.pred === "" ? null : +d.pred, why: d.why || "", realH, realL};
+  const i = p.notes.findIndex(x => x.d === p.day);
+  if (first || i < 0) p.notes.push(note); else p.notes[i] = note;
+  let msg = `<div class="tip" style="background:#eaf6e3">`;
+  if (hIn == null) msg += `<div class="no">📏 키를 아직 안 적었어요</div>`;
+  else msg += p.today.accH ? `<div class="ok">📏 키를 정확히 쟀어요! (실제 ${realH}cm)</div>` : `<div class="no">📏 다시 보면 ${realH}cm 예요 — 자의 0은 흙 높이 · 꼭대기 새순까지</div>`;
+  if (!easy && !seed){ if (lIn == null) msg += `<div class="no">🍃 잎을 아직 안 셌어요</div>`; else msg += p.today.accL ? `<div class="ok">🍃 잎을 정확히 셌어요! (${realL}장)</div>` : `<div class="no">🍃 그림의 잎은 ${realL}장이에요 — 마주 난 두 장을 함께 · 새순과 곁눈은 빼고</div>`; }
+  if (colorOn && d.color !== leafColorName(p)) msg += `<div class="no">🎨 잎 색은 「${leafColorName(p)}」에 가까워요</div>`;
+  if (predRes){ const x = predRes; msg += `<div style="margin-top:6px">🔮 지난 예상 ${x.pred}cm → 실제 ${x.real}cm : ${Math.abs(x.diff) <= 1 ? "<b>거의 맞았어요!</b>" : x.diff < 0 ? `예상보다 <b>${-x.diff}cm 덜</b> 자랐어요` : `예상보다 <b>${x.diff}cm 더</b> 자랐어요`}</div>`; }
+  if (!first) msg += `<div class="hint" style="margin-top:4px">고친 것을 저장했어요 · 정답 맞히기 점수는 처음 적은 값으로 정해요</div>`;
+  msg += `</div>`;
+  $("jrRes").innerHTML = msg; $("jrSave").textContent = "고쳐서 저장"; $("jrWhy").textContent = "✔ 저장했어요 — 더 고쳐도 돼요";
+  sfx(p.today.accH ? "chime" : "pop"); renderMe();
 }
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
