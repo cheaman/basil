@@ -1934,7 +1934,7 @@ function doCheck(depth){
   act(1300, () => toast(`${depth === "deep" ? "속흙(한 마디 깊이)" : "겉흙(손가락 끝)"}이 ${word}${depth === "deep" ? "" : "해요"}`));
 }
 /* 물 주기 — 꾹 누르는 만큼 */
-function setTarget(tg){ waterTarget = tg; renderMe(); if (tg === "leaf") toast("잎에 뿌리면 흙엔 조금만 들어가요 — 잎이 자꾸 젖으면 병이 생길 수 있어요"); }
+function setTarget(tg){ waterTarget = tg; renderMe(); if (tg === "leaf") toast("🍃 잎에 : 흙엔 조금만 · 🐛 벌레 씻기 · 더운 날 식히기에 좋아요 · 젖은 채 두면 흰가루"); }
 function pourStart(ev){
   if (busy || pour || me.dead || (waterLock && !me.today.checked)) return;
   if (ev) ev.preventDefault();
@@ -3090,7 +3090,7 @@ function goWater(){
 function easyWater(){ if (!me.today.checked){ checkSoil(me, "easy"); me.today.easyWord = easyWord(me.moist); } waterCup(120); }
 /* renderMe 끝에 — 알림 · 시연 단추 */
 function renderExtras(p){
-  if (LV() !== "hard") waterTarget = "soil";
+  if (LV() === "easy") waterTarget = "soil";
   renderAlerts(p);
   const db = $("demoBar"); if (!db) return;
   db.innerHTML = CFG && CFG.demo && stuName ? `<b>🧪 시연</b><button class="b" onclick="demoPass(1)">⏩ 하루</button><button class="b" onclick="demoPass(3)">⏩ 3일</button>` : "";
@@ -3230,7 +3230,7 @@ function renderTest(){
 }
 /* renderMe 끝에 — 알림 · 시연 단추 · 시험기 */
 function renderExtras(p){
-  if (LV() !== "hard") waterTarget = "soil";
+  if (LV() === "easy") waterTarget = "soil";
   renderAlerts(p);
   const db = $("demoBar");
   if (db){ db.innerHTML = CFG && CFG.demo && !TEST && stuName ? `<b>🧪 시연</b><button class="b" onclick="demoPass(1)">⏩ 하루</button><button class="b" onclick="demoPass(3)">⏩ 3일</button>` : ""; db.style.display = db.innerHTML ? "flex" : "none"; }
@@ -3255,7 +3255,7 @@ function todayScore(p){
   const td = p.today, g = gapToNext(p), w = wxOf(p.day), k = kindOf(w), s = {};
   s.soil = (td.checked ? 10 : 0) + (td.checkedDeep ? 5 : 0);
   // 💧 물 : 그날 «마지막» 흙물로 매김 — 알맞게 준 뒤 또 부어 넘치면 깎이고, 🪴 물 빼기로 돌아오면 다시 채워짐
-  if (td.watered){ const m = p.moist; s.water = Math.max(0, (m >= 60 && m <= 90 ? 25 : m > 90 ? 10 : m >= 45 ? 15 : 5) - (p.saucer > 0 ? 5 : 0) - (td.leafW ? 5 : 0)); }
+  if (td.watered){ const m = p.moist; s.water = Math.max(0, (m >= 60 && m <= 90 ? 25 : m > 90 ? 10 : m >= 45 ? 15 : 5) - (p.saucer > 0 ? 5 : 0) - (td.leafW && !td.leafGood ? 5 : 0)); }
   else if (td.noWater) s.water = 25;
   else s.water = 0;
   const sun = spotNow(p, p.spot, w).sun, night = nightsAhead(p, nSpot(p), g);
@@ -3284,7 +3284,7 @@ function scoreWhy(p, k){
     if (!td.watered && !td.noWater) return top + `물을 주거나, 흙이 젖었으면 «🚱 오늘 그만» 을 눌러요 · 물 준 뒤 흙물 60~90 이면 25`;
     if (td.noWater) return top + `흙이 젖어 있어 물을 참았어요 👍`;
     const m = Math.round(p.moist);
-    return top + `지금 흙물 ${m} : ${m >= 60 && m <= 90 ? "알맞아요 ✔ (60~90)" : m > 90 ? "너무 많아요 → 🪴 물 빼기로 90 까지" : "조금 모자라요 → 조금 더"}${p.saucer > 0 ? " · 받침에 물 −5" : ""}${td.leafW ? " · 잎에 뿌림 −5" : ""}`;
+    return top + `지금 흙물 ${m} : ${m >= 60 && m <= 90 ? "알맞아요 ✔ (60~90)" : m > 90 ? "너무 많아요 → 🪴 물 빼기로 90 까지" : "조금 모자라요 → 조금 더"}${p.saucer > 0 ? " · 받침에 물 −5" : ""}${td.leafW && !td.leafGood ? " · 잎에 뿌림 −5 (쓸 때가 아니었어요)" : td.leafGood ? " · 🍃 잎에 잘 썼어요 ✔" : ""}`;
   }
   if (k === "spot"){ const sun = spotNow(p, p.spot, w).sun, nt = nightsAhead(p, nSpot(p), g); return top + `낮 햇빛 6시간+ ${sun.toFixed(1)}h ${Y(sc.spot === 20 || sun >= 6)} · 밤 10°+ ${Math.round(nt)}° ${Y(nt >= 10)} (밤이 추우면 «🌙 밤 자리» 를 안쪽으로 · 가장 좋은 곳이면 만점)`; }
   if (k === "care"){
@@ -3370,7 +3370,7 @@ function renderMe(){
   // ② 물
   let water;
   if (L === "easy") water = `<div class="row">${B('<span style="font-size:20px">🥛</span>', "조금", "waterCup(60)", lk.water)}${B('<span style="font-size:28px">🥛</span>', "알맞게", "waterCup(120)", lk.water)}${B('<span style="font-size:36px">🥛</span>', "듬뿍", "waterCup(200)", lk.water)}</div>`;
-  else water = `<div class="row">${L === "hard" ? B("🟫", "흙에", "setTarget('soil')", lk.water, waterTarget === "soil" ? "sel" : "") + B("🍃", "잎에", "setTarget('leaf')", lk.water, waterTarget === "leaf" ? "sel" : "") : ""}
+  else water = `<div class="row">${L !== "easy" ? B("🟫", "흙에", "setTarget('soil')", lk.water, waterTarget === "soil" ? "sel" : "") + B("🍃", "잎에", "setTarget('leaf')", lk.water, waterTarget === "leaf" ? "sel" : "") : ""}
       <button class="ib ${lk.water ? "lock" : ""}" id="pourBtn" style="touch-action:none" ${lk.water ? `onclick="lockTap('${lk.water}')"` : `onpointerdown="pourStart(event)" onpointerup="pourEnd()" onpointerleave="pourEnd()" onpointercancel="pourEnd()"`}><i>🚿</i>꾹</button>
       <span class="gauge2"><span class="ok"></span><b id="gFill" style="width:${Math.min(100, p.today.ml / 3)}%"></b></span><span class="ml"><b id="mlLab" style="font-weight:400">${p.today.ml}</b> mL</span></div>`;
   water += `<div class="row">${B("🚱", "오늘 그만", "skipWater()", lk.water === "soil" || lk.water === "dead" ? lk.water : p.today.noWater ? "nowater" : p.today.watered ? "done" : "")}${B("🪴", "물 빼기", "tiltDrain()", dead ? "dead" : "", p.saucer > 0 || (p.moist > 90 && (p.today.deepWord || p.today.easyWord || p.today.watered)) ? "main" : "")}</div>`;
@@ -3403,7 +3403,8 @@ const STAT_HELP = {
   w: "💧 흙물 = 속흙에 물이 얼마나. 초록 칸(30~90)이 좋아요. 너무 적으면 목마르고, 너무 많으면 뿌리가 숨 막혀요",
   s: "☀ 햇빛 = 지금 자리에서 오늘 받는 햇빛 시간. 6시간 넘으면 좋아요",
   n: "🌙 밤 = 다음 수업까지 가장 추운 밤 온도(밤 자리). 10℃ 넘으면 좋아요. 추우면 «🌙 밤 자리» 를 안쪽으로",
-  f: "🧪 양분 = 흙 속 거름. 날마다 줄어요. 25~80이 좋아요",
+  f: "🧪 양분 = 흙 속 거름. 날마다 줄어요. 25~80이 좋아요. 너무 자주 주면(6일 안) 잎이 아파요",
+  f0: "🧪 양분 = 아직 필요 없어요. 떡잎일 땐 씨앗 속 양분으로 자라요. 키 2cm(본잎)부터 거름이 열려요",
   a: "🌬 공기 = 교실 공기가 얼마나 상쾌한가. «🌬 환기» 를 누르면 100, 안 하면 하루에 20씩 줄어요. 50 넘으면 좋아요",
   h: "❤ 건강 = 바질 기운. 위 줄들이 초록 칸이면 밤마다 올라가요",
 };
@@ -3425,7 +3426,7 @@ function renderStat(p){
     + G("w", "💧", "흙물", p.moist, 30, 90, 100, Math.round(p.moist), !seen)
     + G("s", "☀", "햇빛", s.sun, 6, 12, 12, s.sun.toFixed(1) + "h")
     + (L === "easy" ? "" : G("n", "🌙", "밤", night, 10, 30, 30, Math.round(night) + "°"))
-    + (L === "easy" ? "" : G("f", "🧪", "양분", p.nutr, 25, 80, 100, Math.round(p.nutr)))
+    + (L === "easy" ? "" : stage(p) < 2 ? `<div class="g${_statKey === "f0" ? " on" : ""}" onclick="statHelp('f0')"><span class="ic">🧪</span><span class="nm">양분</span><span class="br" style="background:#f1f4ef"></span><span class="n">🌱</span></div>` : G("f", "🧪", "양분", p.nutr, 25, 80, 100, Math.round(p.nutr)))
     + G("a", "🌬", "공기", p.air ?? 80, 50, 100, 100, Math.round(p.air ?? 80))
     + G("h", "❤", "건강", p.health, 60, 100, 100, Math.round(p.health))
     + `<div class="hl">${_statKey ? STAT_HELP[_statKey] : "👆 줄을 누르면 뜻이 나와요"}</div>`;
@@ -3456,6 +3457,7 @@ function alertsOf(p){
     if (p.saucer > 0) add("saucer", "🍽💧", "받침에 물이 있어", []);
     sick.forEach(k => add(k, SICK_PIC[k][0], SICK_PIC[k][1], ["diag"]));
     if (stage(p) >= 2 && p.nutr < 25 && !p.today.fert) add("fert", "🍂", "잎 색이 옅어졌어", []);
+    if (p.leafWet >= 1.5 && !p.mildew) add("leafwet", "💧🍃", "잎에 물방울이 그대로야", []);
     if (canPinch) add("pinch", "✂🌿", "꼭대기 순이 쑥!", []);
     return out;
   }
@@ -3469,6 +3471,7 @@ function alertsOf(p){
   if (L === "normal" && !p.chill && nt < 10) add("cold", `🌙🥶`, `밤에 ${Math.round(nt)}°, 추워!`, ["nightIn"], ["blindC", "❌ 블라인드로는 못 막아요"]);
   if (stage(p) >= 1 && here.sun < 3) add("dark", "🌑", "햇빛 줘!", ["bright"], ["more", "❌ 햇빛이 모자라요"]);
   if (L === "normal" && stage(p) >= 2 && p.nutr < 25 && !p.today.fert) add("fert", "🍂🧪", "배고파!", ["fert"], ["more", "❌ 양분이 모자라요"]);
+  if (p.leafWet >= 1.5 && !p.mildew) add("leafwet", "💧🍃", "잎이 축축해…", ["vent"], ["more", "❌ 더 뿌리면 더 젖어요"]);
   if ((p.air ?? 80) < 50 && !p.today.vent) add("air", "😮‍💨", "답답해!", ["vent"], ["more", "❌ 물보다 바람이 필요해요"]);
   if (p.health < 40 && !out.length) add("weak", "🤒", "아파…", ["diag"]);
   if (canPinch) add("pinch", "✂🌿", "순지르기 할 때!", ["pinch"]);
@@ -3502,7 +3505,7 @@ function alertDo(i, k){
 /* renderMe 끝에 — 말풍선 · 상태판 · 점수 오름 표시 · 시연 · 시험기 · 내 노력 날짜별 점수 */
 let _scPrev = null;
 function renderExtras(p){
-  if (LV() !== "hard") waterTarget = "soil";
+  if (LV() === "easy") waterTarget = "soil";
   renderAlerts(p); renderStat(p);
   const sc = todayScore(p);
   if (stuName && _scPrev && _scPrev.day === p.day && _scPrev.name === stuName){
@@ -3650,6 +3653,40 @@ dayStep = function(p){
 /* 반 친구 · 시험기 «꼼꼼히 돌봄» 도 환기를 함 */
 const _autoCareAir = autoCare;
 autoCare = function(p, e, r){ _autoCareAir(p, e, r); if (p.today && p.today.visited && r() < e) p.today.vent = true; };
+
+
+/* ═════════ 💧 흙에 / 🍃 잎에 — 보이게 · 쓸모 · 위험 ═════════
+   잎에 : 흙엔 20%만 (그대로) · 잎에 물방울이 맺혀 마를 때까지 보임
+   쓸모 : 🐛 진딧물이 있으면 씻겨 나감 · 아주 더운 날(30°+) 잎을 식혀 잎 탐을 막음 → 이때는 점수를 깎지 않음
+   위험 : 잎이 오래 젖으면 흰가루 · ☀ 해가 6시간 넘거나 🌬 환기한 날 밤은 더 빨리 마름 */
+const _basilSVG0 = basilSVG;
+basilSVG = function(p, opt){
+  let svg = _basilSVG0(p, opt);
+  if (p && !p.dead && stage(p) >= 1 && p.leafWet > .3){
+    const n = Math.min(9, Math.ceil(p.leafWet * 3)), top = 284 - Math.min(p.h, 18) * 9.5;
+    let d = "";
+    for (let i = 0; i < n; i++){ const x = 150 + (((i * 37) % 100) - 50) * .9, y = top + (284 - top) * (.15 + ((i * 53) % 60) / 100);
+      d += `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2.6" ry="3.6" fill="#a8dcff" stroke="#fff" stroke-width=".8" opacity=".95"/>`; }
+    svg = svg.replace("</svg>", d + "</svg>");
+  }
+  return svg;
+};
+const _waterLeaf0 = water;
+water = function(p, mL, target){
+  const bug = p.bug, r = _waterLeaf0(p, mL, target);
+  if (target === "leaf"){
+    if (bug && mL >= 40){ cleanBug(p); p.today.leafGood = true; r.bugWashed = true; if (p === me) setTimeout(() => toast("🐛 진딧물이 씻겨 나갔어요! 🌱 +3"), 1100); }
+    if (wxOf(p.day).tmax >= 30){ p.today.leafGood = true; if (p === me && !r.bugWashed) setTimeout(() => toast("🍃 더운 날 잎을 식혀 줬어요 — 잎 탐을 막아요"), 1100); }
+  }
+  return r;
+};
+const _dayStepLeaf = dayStep;
+dayStep = function(p){
+  const td = p.today || {}, cool = !!td.leafW && wxOf(p.day).tmax >= 30, vent = !!td.vent, sc0 = p.scorch, h0 = p.health;
+  _dayStepLeaf(p);
+  if (cool && p.scorch > sc0){ p.scorch = sc0; p.health = clamp(p.health + 4, 0, 100); if (p.stress) p.stress.scorch = Math.max(0, p.stress.scorch - 1); }
+  if (p.leafWet > 0){ p.leafWet = Math.max(0, p.leafWet - (vent ? .4 : 0) - ((p.sunToday ?? 0) >= 6 ? .2 : 0)); }
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
