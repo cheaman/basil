@@ -569,6 +569,10 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 /* 상태판(아래 바닥 · 높이 약 125)만큼 장면 아래를 늘 비워 화분을 올림 — 시험기를 펼치면 .testing(170) 이 이김 */
 .scene{padding-bottom:142px!important}
 #sayBtn.sayon{background:var(--leaf)!important;color:#fff!important;box-shadow:0 0 0 3px #cfe9c4}
+.nav{height:50px!important;padding:4px 12px!important}
+.nav div{font-size:18px!important;border-radius:12px!important;box-shadow:0 2px 0 #cfe3c4!important}
+.nav div.on{box-shadow:0 2px 0 #2f6a2a!important}
+.nav i{font-size:20px!important}
 /* 📖 카드 앞면 그림 · 뒤집기 · 🧠 오늘의 퀴즈 */
 #p8 .learn{grid-template-columns:1.25fr 1fr!important}
 #facts4{grid-template-columns:repeat(4,1fr)!important;gap:10px!important}
@@ -594,6 +598,19 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .quiz .ops .b:disabled{opacity:1;cursor:default}
 .quiz .res{font:15px "Noto Sans KR";margin-top:5px}
 .quiz .done{font:20px "Jua";background:#fff6d6;border:2px solid #f1d47a;border-radius:16px;padding:10px 14px;text-align:center}
+/* 📢 오늘의 사건 */
+#evModal .evbox{width:920px;padding:22px 28px;display:flex;flex-direction:column;gap:14px;align-items:center}
+#evModal .evhd{font:32px "Jua";align-self:stretch;display:flex;align-items:center;gap:10px}
+#evModal .evhd small{font:19px "Jua";color:#a0662c;margin-left:auto}
+#evModal .evs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;align-self:stretch}
+#evModal .e{border:3px solid #f2c14e;border-radius:20px;background:#fffbea;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+#evModal .e i{font-style:normal;font-size:64px;line-height:1.1}
+#evModal .e b{font:23px/1.3 "Jua";font-weight:400}
+#evModal .e .lv{font:16px "Jua";color:#8a6a2a}
+#evModal .e .how{font:18px "Jua";color:#2f7a2a}
+#evModal .big{width:auto;padding:12px 34px}
+.bubble .evh{font:17px "Jua";color:#2f7a2a;margin-top:4px}
+#plantBig .evtap{cursor:pointer}
 </style>
 </head>
 <body>
@@ -2923,7 +2940,7 @@ function basilSVG(p, opt = {}){
     stemS += `<path d="M148 285 Q${149 + bend * .3} ${(285 + endY) / 2} ${xAt(endY) - .6} ${endY} L${xAt(endY) + 1.2} ${endY} Q${151.5 + bend * .3} ${(285 + endY) / 2} 153 285 Z" fill="${C.stem}"/>`;
     stemS += `<path d="M150 284 Q${150 + bend * .3} ${(284 + endY) / 2} ${xAt(endY) + .3} ${endY + 2}" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none"/>`;
     if (L.cot){ const cc = L.cotOld ? "#d2c36a" : "#86c860";
-      for (const sd of [-1, 1]) mid += LF(`<g transform="translate(${xAt(cotY)} ${cotY}) scale(${sd} 1) rotate(${dry ? 25 : 0})"><line x1="0" y1="0" x2="5" y2="-1" stroke="${cc}" stroke-width="1.5"/><ellipse cx="13" cy="-2.5" rx="9.5" ry="6" fill="${cc}" transform="rotate(-12 13 -2.5)"/></g>`); }
+      for (const sd of [-1, 1]) mid += `<g class="lf cot"><g transform="translate(${xAt(cotY)} ${cotY}) scale(${sd} 1) rotate(${dry ? 25 : 0})"><line x1="0" y1="0" x2="5" y2="-1" stroke="${cc}" stroke-width="1.5"/><ellipse cx="13" cy="-2.5" rx="9.5" ry="6" fill="${cc}" transform="rotate(-12 13 -2.5)"/></g></g>`; }   // cot : 📢 누런 떡잎 사건에서 톡 떼기
     const nodes = []; for (let k = 1; k <= n; k++) nodes.push(cotY - (cotY - (p.pinched ? endY : endY + 6)) * (k / Math.max(1, n)));
     const Lmax = clamp(28 + n * 7 + L.br * 4, 30, 64) * ls;
     nodes.forEach((y, i) => {
@@ -3609,7 +3626,7 @@ function renderAlerts(p){
   if (quiz){ ops.forEach((o, j) => ops[j] = o.replace('class="ib main"', 'class="ib"')); ops.splice(p.day % 2 ? 0 : ops.length, 0, `<button class="ib" onclick="alertDo(${i},'')"><i>${WRONG2[a.bad[0]][0]}</i>${WRONG2[a.bad[0]][1]}</button>`); }
   bb.className = "bubble al";
   bb.innerHTML = `<div class="bp">${a.pic}</div><div class="bw">${a.word}</div>${ops.length ? `<div class="bo">${ops.join("")}</div>` : ""}<div class="bx" id="awhy${i}"></div>`
-    + (list.length > 1 ? `<div class="more">${list.map((x, j) => `<span class="${j === i ? "on" : ""}" onclick="_alertI=${j};renderAlerts(me)">${x.pic.slice(0, 2)}</span>`).join("")}</div>` : "");
+    + (list.length > 1 ? `<div class="more">${list.map((x, j) => `<span class="${j === i ? "on" : ""}" onclick="_alertI=${j};renderAlerts(me)">${[...x.pic][0]}</span>`).join("")}</div>` : "");
   if (sayOn() && a.word !== _said){ _said = a.word; speak(a.word); }
 }
 function alertDo(i, k){
@@ -4246,6 +4263,20 @@ toggleSay = function(){
   else { try { speechSynthesis.cancel(); } catch (e) {} toast("🔇 읽어 주기를 껐어요"); }
   sayIcon(); saveMe();
 };
+/* ⛶ 전체 화면 — 패드 크롬의 주소창 · 아래 줄을 없애 화면을 다 씀 · 학생이 들어갈 때 저절로 한 번 켬 */
+function fsOn(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+function toggleFS(){
+  try {
+    if (fsOn()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else { const el = document.documentElement; (el.requestFullscreen || el.webkitRequestFullscreen).call(el); }
+  } catch (e) {}
+}
+(() => {
+  document.querySelectorAll("#sayBtn").forEach(b => b.insertAdjacentHTML("beforebegin", `<button class="nmbtn rnd" id="fsBtn" onclick="toggleFS()" title="전체 화면">⛶</button>`));
+  document.addEventListener("fullscreenchange", () => { const b = $("fsBtn"); if (b) b.textContent = fsOn() ? "🗗" : "⛶"; });
+})();
+const _loginAsFS = loginAs;
+loginAs = function(){ if (!TEST && !fsOn() && matchMedia("(pointer:coarse)").matches) toggleFS(); return _loginAsFS.apply(this, arguments); };   // 패드(손가락 화면)에서만 저절로 · 시험기에선 안 켬
 const _renderMeSay = renderMe;
 renderMe = function(){ const r = _renderMeSay.apply(this, arguments); sayIcon(); return r; };
 
@@ -4362,6 +4393,228 @@ function answer2(i, j){
   saveMe(); renderQuiz();
 }
 answer = function(){};   // 예전 퀴즈(3문제 · 다시 풀면 코인) 막음
+
+
+/* ═════════ 📢 오늘의 사건 (10-04 전무님) ═════════
+   · 들어올 때마다 «생긴 일» 카드 — 매일 와도 사건이 있고, 며칠 만에 오면 비운 날만큼 쌓임 (반 전체 사건은 최대 3)
+   · 반 전체 사건 : 같은 날 반 모두에게 같음 (반 이름 + 날짜 + 날씨로 정함 → 운이 갈리지 않음 · 수업 이야깃거리)
+       하루 개수 쉬움 1 · 보통 하루 1 · 하루 2 번갈아 · 어려움 2 · 어제와 같은 사건은 되풀이 안 함
+   · 내 바질 사건 : 내 돌봄에 따라 (날파리 · 누런 떡잎 · 꽃대 · 진딧물 다시)
+   · 해결 🌱 2 · 그냥 두면 밤마다 건강 − · 오늘 점수 «돌봄» 칸에서 못 푼 사건마다 −5
+   · 새 손동작 : 🐌 그림의 달팽이 톡 · 🪴 기운 화분 톡(세우기) → 🟫 흙 채우기 · 🍂 누런 떡잎 톡 · 🌸 꽃대 톡 */
+function evHash(s){ let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
+const EV = {
+  snail:  {pic: "🐌", word: "달팽이가 잎을 갉아 먹었어!", cls: true, hint: "👆 바질 그림의 달팽이를 톡!", how: "👆 달팽이 톡"},
+  tip:    {pic: "⚽🪴", word: "공에 맞아 화분이 기울었어!", cls: true, hint: "👆 화분을 톡 눌러 세워요", how: "🪴 세우기 · 🟫 흙"},
+  heater: {pic: "🔥🏜", word: "난방기 때문에 흙이 바싹!", cls: true, how: "💧 물"},
+  draft:  {pic: "🪟🥶", word: "창문이 열려 찬 바람이 들어와!", cls: true, how: "🪟 창 닫기"},
+  heat:   {pic: "☀🔥", word: "땡볕이 너무 세!", cls: true, how: "🪟 블라인드"},
+  rain:   {pic: "🌧🌧", word: "며칠째 흐려서 흙이 안 말라", cls: true, how: "🚱 물 참기"},
+  moved:  {pic: "🧹🌑", word: "청소하다 화분을 구석으로 옮겼어", cls: true, how: "🗺 밝은 곳"},
+  gnat:   {pic: "🦟", word: "흙 위에 날파리가 날아다녀", how: "🚱 물 참기"},
+  cot:    {pic: "🍂", word: "아래 떡잎이 누렇게 됐어", hint: "👆 누런 떡잎을 톡!", how: "🍂 떼기"},
+  flower: {pic: "🌸", word: "꽃대가 올라왔어!", hint: "👆 꼭대기 꽃대를 톡!", how: "✂ 꽃대"},
+};
+const EV_OK = {snail: () => [], tip: p => [p.tipped === 2 ? "standPot" : "fillSoil"], heater: () => ["water"], draft: () => ["closeWin"], heat: () => ["blindDown"],
+               rain: () => ["noWater"], moved: () => ["bright"], gnat: () => ["noWater"], cot: () => ["pickCot"], flower: () => ["cutFlower"]};
+const EV_BAD = {heater: ["shade", "❌ 물이 먼저예요"], draft: ["more", "❌ 추운 바람은 물로 못 막아요"], heat: ["more", "❌ 물로는 땡볕을 못 막아요"],
+                rain: ["more", "❌ 흙이 아직 안 말랐어요"], moved: ["more", "❌ 물보다 햇빛이에요"], gnat: ["more", "❌ 젖은 흙이 날파리를 불러요"]};
+/* 반 전체 사건 — 그날 날씨에 맞는 것만 (추운 날 찬 바람 · 더운 날 땡볕 · 흐린 날 장마) */
+function evPool(day){
+  const w = wxOf(day), dow = dateOf(day).getDay(), wet = w.rain >= 1 || w.cloud >= 75, a = ["snail"].concat(dow === 0 || dow === 6 ? [] : ["tip", "moved"]);   // 공놀이 · 청소는 학교 가는 날만
+  if (w.tmax < 20 && !wet) a.push("heater");   // 쌀쌀한 맑은 날 난방기
+  if (w.tmin < 12) a.push("draft");
+  if (LV() !== "easy" && w.tmax >= 26 && w.sunH >= 7) a.push("heat");
+  if (wet) a.push("rain");
+  return a;
+}
+function evRank(day){ const c = (CFG && CFG.className) || "반"; return evPool(day).map(k => [k, evHash(c + "|" + day + "|" + k)]).sort((x, y) => x[1] - y[1]).map(x => x[0]); }
+function evCount(day){ const L = LV(); return L === "easy" ? 1 : L === "hard" ? 2 : (day % 2 ? 2 : 1); }
+function classEvents(day){
+  if (day < 1) return [];
+  const prev = new Set(evRank(day - 1).slice(0, evCount(day - 1))), r = evRank(day);
+  return r.filter(k => !prev.has(k)).concat(r.filter(k => prev.has(k))).slice(0, evCount(day));
+}
+function evPending(p){ return ((p && p.ev) || []).filter(e => !e.done && !e.gone); }
+function evHas(p, k){ return evPending(p).find(e => e.k === k); }
+function evWord(p, e){ if (e.k === "snail" && (p.snail || 0) > 1) return `달팽이 ${p.snail}마리가 잎을 갉아 먹어!`; if (e.k === "tip" && p.tipped === 1) return "쏟아진 흙을 다시 담아 줘"; return EV[e.k].word; }
+function evStart(p, k){
+  if (p.dead || p.done) return;
+  const ex = evHas(p, k);
+  if (ex){ if (k === "snail"){ p.snail = Math.min(3, (p.snail || 0) + 1); ex.n = p.snail; } return; }
+  if (EV[k].cls && evPending(p).filter(e => EV[e.k].cls).length >= 3) return;   // 반 전체 사건은 최대 3 쌓임
+  (p.ev = p.ev || []).push({k, d: p.day, n: 1});
+  if (k === "snail") p.snail = 1;
+  if (k === "tip"){ p.tipped = 2; p.surf = clamp(p.surf - 20, 0, 100); p.moist = clamp(p.moist - 6, 0, 100); }
+  if (k === "heater"){ p.surf = Math.min(p.surf, 12); p.moist = Math.min(p.moist, 34); }   // 겉흙 바싹 · 속흙은 조금 마름에서 멈춤
+  if (k === "draft") p.draft = true;
+  if (k === "rain"){ p.moist = Math.max(p.moist, 70); p.surf = Math.max(p.surf, 65); }
+  if (k === "moved"){ p.movedFrom = p.spot; p.spot = "center"; p.blind = false; }   // 교실 가운데 (햇빛 모자람)
+  if (k === "flower") p.flower = true;
+}
+/* 밤 — 못 푼 사건이 바질을 괴롭힘 (하루가 넘어가기 전에) */
+function evNight(p){
+  const L = LV(), h0 = p.health;
+  evPending(p).forEach(e => {
+    const k = e.k, win = p.spot === "window" || p.spot === "side";
+    if (k === "snail"){ const n = p.snail || 1; p.leafAcc = Math.max(0, p.leafAcc - .5 * n); p.health -= n; p.snail = Math.min(3, n + 1); e.n = p.snail; }
+    if (k === "tip"){ p.health -= 1; p.moist = clamp(p.moist - 3, 0, 100); }
+    if (k === "draft"){ if (win){ p.health -= L === "easy" ? 3 : 6; if (L !== "easy") p.chill = 2; } p.draft = false; e.gone = true; }
+    if (k === "heat"){ if (p.spot === "window" && !p.blind){ p.health -= 4; if (L === "hard") p.scorch = Math.min(3, (p.scorch || 0) + 1); } e.gone = true; }
+    if (k === "rain"){ if (p.today.watered) p.moist = clamp(p.moist + 10, 0, 100); e.gone = true; }
+    if (k === "heater") e.gone = true;
+    if (k === "gnat"){ p.health -= 1; if (p.moist < 70) e.gone = true; }
+    if (k === "flower"){ p.leafAcc = Math.max(0, p.leafAcc - .3); p.health -= 1; }
+    if (k === "cot" && !(stage(p) >= 1 && plantLayout(p).cot)) e.gone = true;
+  });
+  const cap = L === "easy" ? 1 : L === "hard" ? 2 : 1.5;   // 수업은 주 2~3번 — 사흘 간격에도 성실한 아이 바질이 크게 꺾이지 않게
+  p.health = clamp(Math.max(p.health, h0 - cap), 0, 100);   // 사건 피해는 하룻밤 cap 점까지
+}
+const _dayStepEv = dayStep;
+dayStep = function(p){
+  evNight(p);
+  _dayStepEv(p);
+  if (p.dead || p.done || p.day < 1) return;
+  classEvents(p.day).forEach(k => evStart(p, k));
+  const L = LV(), lay = stage(p) >= 1 ? plantLayout(p) : null;
+  if (L !== "easy" && (p.soggy >= 2 || p.moist > 92) && !evHas(p, "gnat") && !(p.gnatDay != null && p.day - p.gnatDay < 4)){ evStart(p, "gnat"); p.gnatDay = p.day; }
+  if (lay && lay.cot && lay.cotOld && !p.cotOff && !evHas(p, "cot")) evStart(p, "cot");
+  if (L !== "easy" && p.h >= 15 && !p.flower && (p.flowerCut == null || p.day - p.flowerCut >= 5) && !evHas(p, "flower")) evStart(p, "flower");
+  if (L !== "easy" && !p.bug && p.bugAgain != null && p.day >= p.bugAgain){ p.bug = true; p.bugAgain = null; }   // 진딧물이 다시 (키우는 동안 2~3번)
+};
+const _cleanBugEv = cleanBug;
+cleanBug = function(p){ _cleanBugEv(p); p.bugAgain = p.day + 6 + evHash((p.name || "") + p.day) % 3; };
+const _plantLayoutEv = plantLayout;
+plantLayout = function(p){ const L = _plantLayoutEv(p); if (p.cotOff) L.cot = false; return L; };
+
+function evDone(p, k){
+  const e = evHas(p, k); if (!e) return;
+  e.done = true; e.doneD = p.day; visit(p);
+  p.care.evSolved = (p.care.evSolved || 0) + 1; p.today.evSolved = (p.today.evSolved || 0) + 1;
+  addCoin(p, 2, "사건 해결");
+  if (p === me){ sfx("chime"); try { happy(); } catch (x) {} toast(`✔ ${EV[k].pic} 해결! 🌱 +2`); }
+}
+/* 할 일을 하면 저절로 해결 — 물 · 블라인드 · 물 참기 · 자리 옮기기 · 창 닫기 · 톡 */
+function evCheck(p){
+  if (!p || !p.ev || p.dead) return;
+  const w = wxOf(p.day), td = p.today;
+  if (evHas(p, "heater") && td.watered && p.moist >= 30) evDone(p, "heater");
+  if (evHas(p, "heat") && (p.blind || p.spot !== "window")) evDone(p, "heat");
+  if (evHas(p, "rain") && (td.noWater || td.tilt)) evDone(p, "rain");
+  if (evHas(p, "moved") && spotNow(p, p.spot, w).sun >= 5) evDone(p, "moved");
+  if (evHas(p, "gnat") && (td.noWater || td.tilt)) evDone(p, "gnat");
+  if (evHas(p, "draft") && !p.draft) evDone(p, "draft");
+  if (evHas(p, "tip") && !p.tipped) evDone(p, "tip");
+  if (evHas(p, "snail") && !p.snail) evDone(p, "snail");
+  if (evHas(p, "cot") && p.cotOff) evDone(p, "cot");
+  if (evHas(p, "flower") && !p.flower) evDone(p, "flower");
+}
+Object.assign(ACT2, {
+  standPot: ["🪴", "세우기", () => evAct("stand")], fillSoil: ["🟫", "흙 채우기", () => evAct("fill")], closeWin: ["🪟", "창 닫기", () => evAct("win")],
+  blindDown: ["🪟", "블라인드", () => evAct("blind")], pickCot: ["🍂", "떼기", () => evAct("cot")], cutFlower: ["✂", "꽃대", () => evAct("flower")],
+});
+function evAct(a){
+  const p = me; if (busy || p.dead) return; visit(p);
+  if (a === "stand"){ if (p.tipped === 2){ p.tipped = 1; sfx("tap"); toast("🪴 화분을 세웠어요 — 쏟아진 흙을 담아 줘요"); } }
+  if (a === "fill"){ if (p.tipped === 1){ p.tipped = 0; p.surf = Math.max(p.surf, 35); sfx("tap"); } else if (p.tipped === 2){ sfx("bad"); toast("🪴 먼저 화분을 세워요"); } }
+  if (a === "win"){ p.draft = false; sfx("whoosh"); }
+  if (a === "blind") setBlind(p, true);
+  if (a === "cot"){ p.cotOff = true; sfx("tap"); }
+  if (a === "flower"){ p.flower = false; p.flowerCut = p.day; sfx("tap"); }
+  renderMe();
+}
+/* 바질 그림 톡 — 달팽이 · 기운 화분 · 누런 떡잎 · 꽃대 */
+document.addEventListener("click", ev => {
+  const t = ev.target.closest && ev.target.closest("#plantBig .evtap, #plantBig .lf.cot"); if (!t || !me || busy || !stuName) return;
+  const k = t.classList.contains("cot") ? (evHas(me, "cot") ? "cot" : "") : t.dataset.k; if (!k) return;
+  ev.stopPropagation();
+  if (k === "snail"){ visit(me); me.snail = Math.max(0, (me.snail || 0) - 1); const e = evHas(me, "snail"); if (e) e.n = me.snail; sfx("pop"); if (me.snail) toast(`🐌 잡았어요! 남은 달팽이 ${me.snail}마리`); renderMe(); }
+  else evAct(k === "tip" ? "stand" : k);
+}, true);
+/* 그림 — 달팽이 · 꽃대 · 기운 화분과 쏟아진 흙 */
+const _basilSVGEv = basilSVG;
+basilSVG = function(p, opt){
+  let svg = _basilSVGEv(p, opt);
+  if (!p || p.dead) return svg;
+  const top = 284 - Math.min(p.h || 0, 18) * CMV; let add = "";
+  if (p.flower && stage(p) >= 1){ const x = 150, y = top + 4;
+    add += `<g class="evtap" data-k="flower"><path d="M${x} ${y} L${x} ${y - 22}" stroke="#4c8a36" stroke-width="2.4"/>${[0, 1, 2, 3, 4].map(i => `<circle cx="${x + (i % 2 ? 3.6 : -3.6)}" cy="${y - 6 - i * 3.8}" r="2.8" fill="${i % 2 ? "#fbe3f0" : "#ffffff"}" stroke="#e7b3cf" stroke-width=".6"/>`).join("")}<circle cx="${x}" cy="${y - 12}" r="15" fill="transparent"/></g>`; }
+  for (let i = 0; i < Math.min(3, p.snail || 0); i++){ const [x, f] = [[108, .55], [192, .35], [150, .78]][i], y = top + (284 - top) * f;
+    add += `<g class="evtap" data-k="snail"><circle cx="${x}" cy="${y - 7}" r="16" fill="transparent"/><text x="${x}" y="${y}" font-size="22" text-anchor="middle">🐌</text></g>`; }
+  if (add) svg = svg.replace(/<\/svg>$/, add + "</svg>");
+  const spill = `<path d="M204 397 Q228 368 262 397 Z" fill="#6b4a2f"/><circle cx="231" cy="385" r="3" fill="#5a3f28"/><circle cx="246" cy="391" r="2.5" fill="#5a3f28"/>`;
+  if (p.tipped === 2) svg = svg.replace(/^(<svg[^>]*>)/, '$1<g transform="rotate(-13 150 394)">').replace(/<\/svg>$/, `</g>${spill}<text x="266" y="392" font-size="24">⚽</text><rect class="evtap" data-k="tip" x="60" y="276" width="180" height="124" fill="transparent"/></svg>`);
+  else if (p.tipped === 1) svg = svg.replace(/<\/svg>$/, spill + "</svg>");
+  return svg;
+};
+/* 말풍선 — 사건을 맨 앞에 · 같은 문제를 두 번 말하지 않게 */
+const _alertsOfEv = alertsOf;
+alertsOf = function(p){
+  const base = _alertsOfEv(p); if (!stuName || !p || p.dead || p.done) return base;
+  const pend = evPending(p), dup = {heater: "dry", moved: "dark", draft: "cold", gnat: "wet", rain: "wet"}, drop = new Set(pend.map(e => dup[e.k]).filter(Boolean));
+  return pend.map(e => ({k: "ev_" + e.k, pic: EV[e.k].pic, word: evWord(p, e), ok: EV_OK[e.k](p), bad: EV_BAD[e.k], hint: EV[e.k].hint})).concat(base.filter(a => !drop.has(a.k)));
+};
+const _renderAlertsEv = renderAlerts;
+renderAlerts = function(p){
+  _renderAlertsEv(p);
+  const a = _alerts[Math.min(_alertI, _alerts.length - 1)];
+  if (a && a.hint && !(a.k === "ev_tip" && p.tipped === 1)) $("bubble").insertAdjacentHTML("beforeend", `<div class="evh">${a.hint}</div>`);
+};
+/* 오늘 점수 «돌봄» — 못 푼 사건마다 −5 */
+const _todayScoreEv = todayScore;
+todayScore = function(p){
+  const s = _todayScoreEv(p), n = p && !p.dead ? evPending(p).length : 0;
+  if (n && s.care > 0){ const c = Math.max(0, s.care - 5 * n); s.total -= s.care - c; s.care = c; }
+  return s;
+};
+/* 반 친구 · 시험기 «꼼꼼히 돌봄» 도 사건을 풂 */
+const _autoCareEv = autoCare;
+autoCare = function(p, e, r){
+  const solve = evPending(p).filter(() => r() < e).map(x => x.k);
+  solve.forEach(k => {
+    if (k === "snail") p.snail = 0; if (k === "tip") p.tipped = 0; if (k === "draft") p.draft = false; if (k === "heat") p.blind = true;
+    if (k === "moved" && p.spot === "center") p.spot = p.movedFrom || "window";
+    if (k === "cot") p.cotOff = true; if (k === "flower"){ p.flower = false; p.flowerCut = p.day; }
+  });
+  _autoCareEv(p, e, r);
+  if (!p.today || !p.today.visited) return;
+  solve.forEach(k => { if ((k === "rain" || k === "gnat") && !p.today.watered && p.moist >= 45) p.today.noWater = true;
+    if (k === "heater" && !p.today.watered){ water(p, 110, "soil"); } });
+  evCheck(p);
+};
+BADGES.push(["fixer", "🛠", "사건 해결사", p => (p.care.evSolved || 0) >= 5, "생긴 일을 5번 해결했어요"]);
+BADGE_INFO.fixer = ["생긴 일(달팽이 · 찬 바람 · 꽃대 …)을 5번 해결하면", "식물을 키우면 날마다 다른 일이 생겨요. 보고 알맞게 돕는 게 돌봄이에요"];
+
+/* 📢 들어오면 «생긴 일» 카드 — 하루 한 번 */
+function evCard(){
+  const p = me, list = evPending(p); if (!list.length) return;
+  p.evShown = p.day; saveMe();
+  let m = $("evModal");
+  if (!m){ m = document.createElement("div"); m.id = "evModal"; m.className = "modal"; m.onclick = e => { if (e.target === m) m.classList.remove("on"); }; $("jrModal").parentNode.appendChild(m); }
+  const since = p.today.visited ? p.prevVisit : p.lastVisit, gap = since == null ? 1 : Math.max(1, p.day - Math.max(0, since));
+  const when = gap <= 1 ? "오늘" : (["", "", "이틀", "사흘", "나흘", "닷새", "엿새", "이레"][gap] || gap + "일") + " 동안";
+  m.innerHTML = `<div class="box evbox"><div class="evhd">📢 ${when} 생긴 일 <small>다 해결하면 🌱 +${list.length * 2}</small></div>
+    <div class="evs">${list.map(e => `<div class="e"><i>${EV[e.k].pic}</i><b>${evWord(p, e)}</b><div class="how">${EV[e.k].how}</div><div class="lv">${EV[e.k].cls ? "🏫 우리 반 모두" : "🌿 내 바질"}</div></div>`).join("")}</div>
+    <button class="big" onclick="$('evModal').classList.remove('on')">해결하러 가기 →</button></div>`;
+  m.classList.add("on"); sfx("chime");
+  if (sayOn()) speak(`${when} 생긴 일. ` + list.map(e => evWord(p, e)).join(". "));
+}
+const _renderMeEv = renderMe;
+renderMe = function(){
+  if (stuName && me) evCheck(me);
+  const r = _renderMeEv.apply(this, arguments);
+  if (stuName && me && !me.dead && me.evShown !== me.day && evPending(me).length && !_evTrying) evTry(12);
+  return r;
+};
+let _evTrying = false;
+function evTry(n){
+  _evTrying = true;
+  setTimeout(() => {
+    const tut = $("tut"), ready = !busy && me && stuName && !document.querySelector(".modal.on") && $("p2").classList.contains("on") && !(tut && tut.style.display !== "none");
+    if (!me || !stuName || me.evShown === me.day || !evPending(me).length){ _evTrying = false; return; }
+    if (ready){ _evTrying = false; evCard(); } else if (n > 0) evTry(n - 1); else _evTrying = false;
+  }, n === 12 ? 700 : 1000);
+}
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
