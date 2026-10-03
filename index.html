@@ -401,6 +401,78 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .testp .b{font-size:14px;padding:3px 8px;background:#fff1d6;color:#6a4000}
 .testp .b.sel{background:#e0a43a;color:#fff}
 .testchip{position:absolute;left:10px;bottom:78px;z-index:30;border:2px solid #e0a43a;background:#fff8e6;border-radius:999px;padding:5px 14px;font:16px "Jua";color:#6a4000;cursor:pointer}
+/* ══ 그림 먼저 ② 내 바질 · 오늘 점수 · 상태판 ══ */
+#p2 .bar .logo{font-size:30px}
+#p2 .bar .who{font-size:21px}
+.nmbtn.rnd{width:44px;height:44px;border-radius:50%;padding:0!important;font-size:22px!important;display:inline-flex;align-items:center;justify-content:center}
+#p2 .coin{font-size:22px}
+#chips .chip{font-size:20px}
+/* 말풍선 = 바질이 하는 말 + 할 일 단추 (알림 카드는 안 씀) */
+#alerts{display:none!important}
+.bubble{max-width:340px!important;min-width:200px;text-align:center;padding:10px 16px!important}
+.bubble.al{border:3px solid #f2c14e}
+.bubble .bp{font-size:44px;line-height:1.1}
+.bubble .bw{font:24px/1.3 "Jua"}
+.bubble .bo{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.bubble .bx{font:15px "Jua";color:#b0473a;margin-top:4px}
+.bubble .more{display:flex;gap:4px;justify-content:center;margin-top:6px}
+.bubble .more span{width:34px;height:34px;border-radius:50%;background:#f4f6f2;display:inline-flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
+.bubble .more span.on{background:#ffe9a8}
+/* 그림 단추 : 큰 그림 + 낱말 하나 */
+.ib{display:inline-flex;flex-direction:column;align-items:center;gap:1px;border:0;border-radius:16px;background:#eaf5e3;padding:5px 9px;min-width:64px;font:16px "Jua";color:#24502a;cursor:pointer;position:relative;touch-action:manipulation}
+.ib i{font-style:normal;font-size:28px;line-height:1.1}
+.ib.main{background:var(--leaf);color:#fff}
+.ib.sel{background:var(--leaf);color:#fff}
+.ib.lock{background:#eef0ec;color:#a6aea8}
+.ib.lock:after{content:"🔒";position:absolute;right:-5px;top:-7px;font-size:16px}
+/* 🩺 상태판 (화분 왼쪽) · 어젯밤 줄 */
+.stat{position:absolute;left:12px;top:258px;width:206px;z-index:4;background:rgba(255,255,255,.95);border-radius:18px;padding:8px 10px;box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:5px}
+.stat .t{font:17px "Jua"}
+.stat .g{display:flex;align-items:center;gap:6px;font:15px "Jua"}
+.stat .g .ic{width:24px;text-align:center;font-size:19px}
+.stat .g .br{flex:1;height:14px;border-radius:999px;background:#eef0ec;position:relative;overflow:hidden}
+.stat .g .br .z{position:absolute;top:0;bottom:0;background:#c9ecbf}
+.stat .g .br .v{position:absolute;top:0;bottom:0;width:5px;margin-left:-2px;border-radius:3px;background:#24332a}
+.stat .g .br.bad .v{background:#c9573f}
+.stat .g .n{width:44px;text-align:right}
+.stat .g.hid .br{background:repeating-linear-gradient(45deg,#eef0ec 0 6px,#e0e5dc 6px 12px)}
+.night{position:absolute;left:12px;top:224px;z-index:4;display:none;background:#fff6d6;border:2px solid #f1d47a;border-radius:999px;padding:3px 12px;font:16px "Jua";white-space:nowrap}
+/* 돌보기 칸 = ⭐ 오늘 점수 + 그림 칸 넷 + 일지 */
+#care{display:grid!important;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr 1fr auto;gap:9px!important;padding:10px 14px!important;align-content:stretch}
+#care .score{grid-column:1/-1;display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #f2c14e;border-radius:16px;padding:4px 10px;position:relative}
+#care .score .sbig{font:30px "Jua";color:#c98a00;white-space:nowrap;margin-right:4px}
+#care .score .sbig small{font-size:17px;color:var(--sub)}
+#care .score .seg{flex:1;display:flex;flex-direction:column;align-items:center;font:13px "Jua";color:var(--sub);line-height:1.15}
+#care .score .seg i{font-style:normal;font-size:21px}
+#care .score .seg b{font-weight:400;font-size:15px;color:var(--ink)}
+#care .score .seg.full b{color:#2f7a2a}
+#care .score .seg.zero{opacity:.45}
+#care .pop{position:absolute;right:12px;top:-14px;background:#2f7a2a;color:#fff;border-radius:999px;padding:2px 12px;font:19px "Jua";animation:popUp 1.6s ease-out forwards;pointer-events:none}
+@keyframes popUp{0%{opacity:0;transform:translateY(8px)}15%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
+#care .tile{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;background:#fff;border:2px solid var(--line);border-radius:20px;padding:8px 12px!important;position:relative;min-height:0}
+#care .tile .hd{display:flex;align-items:center;gap:8px;font:21px "Jua"}
+#care .tile .hd .no{flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:#e8f3e1;color:var(--leaf);display:flex;align-items:center;justify-content:center;font:18px "Jua"}
+#care .tile.done{border-color:var(--leaf)}
+#care .tile.done .hd .no{background:var(--leaf);color:#fff}
+#care .tile.done:after{content:"✔";position:absolute;right:12px;top:4px;font-size:26px;color:var(--leaf)}
+#care .tile.flash{animation:stepFlash .5s 4}
+#care .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#care .soil{display:flex;gap:8px}
+#care .soil div{flex:1;height:44px;border-radius:12px;background:linear-gradient(#a07a52,#6b4a2f);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;position:relative}
+#care .soil div em{position:absolute;left:5px;top:2px;font-style:normal;font-size:15px}
+#care .gauge2{flex:1;min-width:90px;height:18px;border-radius:999px;background:#eef3ea;position:relative;overflow:hidden}
+#care .gauge2 .ok{position:absolute;left:33.3%;width:16.7%;top:0;bottom:0;background:#c9ecbf}
+#care .gauge2 b{position:absolute;left:0;top:0;bottom:0;background:#6db7f0;opacity:.85}
+#care .ml{font:15px "Jua";color:var(--sub)}
+#care .mmap{width:118px;height:74px;border-radius:10px;background:#f3efe6;border:2px solid #d9d2c3;position:relative;cursor:pointer;flex:0 0 auto}
+#care .mmap:before{content:"";position:absolute;left:8px;right:8px;top:0;height:6px;background:#9fd3f7;border-radius:0 0 4px 4px}
+#care .mmap b{position:absolute;font-size:20px;transform:translate(-50%,-50%)}
+#care .suns{font:20px/1.3 "Jua"}
+#care .suns .dim{opacity:.25}
+#care .tiny{font:14px "Jua";color:var(--sub)}
+#care .tile.jr{grid-column:1/-1;flex-direction:row!important;align-items:center!important}
+#care .tile.jr .ib{flex-direction:row;gap:8px;font-size:20px;margin-left:auto;padding:8px 18px}
+#care .tile.jr:after{right:auto;left:150px}
 </style>
 </head>
 <body>
@@ -453,14 +525,14 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
     <div class="app">
       <div class="bar">
         <span class="logo">🌿 바질 키우기</span>
-        <span class="who"><span class="whoName"></span> · 내 바질 「<span id="nm">초록이</span>」<button class="nmbtn" onclick="openName()">✏ 이름 바꾸기</button></span>
-        <span class="day" id="dayLab"></span><span class="chip" id="wxLab" style="padding:3px 12px"></span><button class="nmbtn" onclick="startTutorial()">❓ 따라 하기</button><button class="nmbtn" id="sayBtn" onclick="toggleSay()">🔈 읽어 주기</button><button class="nmbtn" onclick="logout()">🚪 나가기</button>
-        <button class="coin" style="cursor:pointer" onclick="openCoins()" title="눌러서 코인 기록장 보기">내 코인 🌱 <span id="coinLab">0</span> ▸</button>
+        <span class="who">🙂 <span class="whoKid"></span> · 🌱 <span id="nm">초록이</span><button class="nmbtn" onclick="openName()" title="이름 바꾸기">✏</button></span>
+        <span class="day" id="dayLab"></span><span class="chip" id="wxLab" style="padding:3px 12px"></span><button class="nmbtn rnd" onclick="startTutorial()" title="따라 하기">❓</button><button class="nmbtn rnd" id="sayBtn" onclick="toggleSay()" title="읽어 주기">🔈</button><button class="nmbtn rnd" onclick="logout()" title="나가기">🚪</button>
+        <button class="coin" style="cursor:pointer" onclick="openCoins()" title="눌러서 코인 기록장 보기">🌱 <span id="coinLab">0</span></button>
       </div>
       <div class="body">
         <div class="scene s0" id="scene">
           <div class="window" id="win"></div><div class="beam" id="beam"></div><div class="tl" id="tl" style="display:none"></div>
-          <div class="bubble" id="bubble"></div><div class="alerts" id="alerts"></div><div class="demo" id="demoBar"></div>
+          <div class="bubble" id="bubble"></div><div class="alerts" id="alerts"></div><div class="stat" id="stat"></div><div class="night" id="nightLine"></div><div class="demo" id="demoBar"></div>
           <div class="plantwrap" id="pwrap"><div class="plantbox" id="plantBig"></div><svg class="fx" id="fx" viewBox="0 0 300 400"></svg></div>
           <div class="chips" id="chips"></div>
         </div>
@@ -1446,7 +1518,7 @@ function newPlantBase(){
            care:{visits:0, checks:0, waters:0, goodWaters:0, journals:0, solved:0, overFert:0, weekendPrep:0, wxGood:0, wxChance:0, diag:0, accurate:0, predGood:0},
            coins:0, coinLog:[], hist:[{d:0,h:0}], notes:[], diagMarks:[], log:[] };
 }
-function visit(p){ if (!p.today.visited){ p.today.visited = true; p.care.visits++; p.lastVisit = p.day; addCoin(p, 1, "들어와서 살펴보기"); } }
+function visit(p){ if (!p.today.visited){ p.today.visited = true; p.care.visits++; p.prevVisit = p.lastVisit; p.lastVisit = p.day; addCoin(p, 1, "들어와서 살펴보기"); } }
 function surfWord(m){ return m < 20 ? "바싹" : m < 40 ? "보송보송" : m <= 80 ? "촉촉" : "축축"; }
 function checkSoil(p, depth){
   depth = depth || "surf"; visit(p);
@@ -1458,12 +1530,13 @@ function checkSoil(p, depth){
 function water(p, mL, target){
   target = target || "soil"; visit(p);
   const before = p.moist, toSoil = target === "leaf" ? mL * .2 : mL;
+  if (before >= 80) p.today.wetW = true; if (target === "leaf") p.today.leafW = true;
   p.care.waters++; p.today.watered = true; p.today.ml += mL;
   if (target === "leaf") p.leafWet += 1;
   p.surf = clamp(p.surf + toSoil * .6, 0, 100);
   let deep = p.moist + toSoil * .4, overflow = 0;
   if (deep > 100){ overflow = (deep - 100) / .4; deep = 100; }
-  p.moist = deep; p.saucer += Math.round(overflow);
+  p.moist = deep; p.saucer += Math.round(overflow); if (overflow >= 25) p.today.over = true;
   const good = target === "soil" && before < 60 && p.moist >= 60 && p.moist <= 97 && overflow < 25;
   if (good){ p.care.goodWaters++; p.today.gw = true; addCoin(p, 2, "알맞게 물 주기"); }
   if (good && dateOf(p.day).getDay() === 4 && p.today.checked && p.moist >= 75) p.care.weekendPrep++;
@@ -1484,6 +1557,7 @@ function wxJudge(p, w0){
 }
 
 function dayStep(p){
+  const h0 = p.health;
   // ① 오늘 밤 기온 (지금 자리)
   const w0 = wxOf(p.day), n0 = spotNow(p, p.spot, w0);
   if (n0.nightT < 10 && LV() !== "easy"){ p.chill = 2; p.health -= n0.nightT < 7 ? 14 : 8; p.stress.cold++; } else if (p.chill > 0) p.chill--;
@@ -1518,6 +1592,7 @@ function dayStep(p){
   if (p.bug){ p.health -= 4; p.stress.bug++; }
   if (sun < 3) p.stress.dark++;
   p.health = clamp(p.health, 0, 100);
+  p.nightLog = (p.nightLog || []).concat({d: p.day, h0: Math.round(h0), h1: Math.round(p.health), w: ms === 1, s: ss >= 1, n: ns === 1, t: ts >= .7 && !(n0.nightT < 10 && LV() !== "easy")}).slice(-10);
   const age = p.day - p.sowDay;
   if (age >= Math.ceil(4 / SPEED()) && !p.dead){
     const base = stage(p) <= 1 ? .45 : .7, pickBoost = p.day - p.lastPick <= 4 ? 1.35 : 1;
@@ -1827,7 +1902,7 @@ function renderScene(){
   $("win").innerHTML = s;
   $("beam").classList.toggle("on", (p.spot === "window" || p.spot === "side") && vis === "sun" && w.sunH >= 5);
   $("beam").style.filter = p.blind ? "opacity(.35)" : "";
-  $("wxLab").textContent = `${KIND_ICON[k]} ${WXK_NAME[k]} ${Math.round(w.tmax)}℃`;
+  $("wxLab").textContent = `${KIND_ICON[k]} ${Math.round(w.tmax)}°`;
   $("scene").classList.toggle("dry", (p.moist < 18 || p.dead) && stage(p) >= 1);
 }
 /* 흙 만져 보기 — 겉흙 / 속흙 */
@@ -2080,6 +2155,7 @@ function saveJournal(){
   if (d.color !== leafColorName(p)) msg += `<div class="no">🎨 잎 색은 「${leafColorName(p)}」에 가까워요 ${leafColorName(p) === "노랑" ? "— 아픈 곳이 없는지 진찰해 봐요" : ""}</div>`;
   if (r.predRes){ const x = r.predRes; msg += `<div style="margin-top:6px">🔮 지난 예상 ${x.pred}cm → 실제 ${x.real}cm : ${Math.abs(x.diff) <= 1 ? "<b>거의 맞았어요! 🌱 +2</b>" : x.diff < 0 ? `예상보다 <b>${-x.diff}cm 덜</b> 자랐어요 — 그동안 날씨 · 햇빛 · 물이 어땠는지 떠올려 봐요` : `예상보다 <b>${x.diff}cm 더</b> 자랐어요 — 무엇이 잘 맞았을까요?`}</div>`; }
   msg += `</div>`;
+  p.today.jrAcc = r.accH;
   $("jrRes").innerHTML = msg; $("jrSave").disabled = true; $("jrWhy").textContent = "기록했어요 — 닫기를 누르세요";
   sfx(r.accH ? "chime" : "pop"); renderMe();
 }
@@ -2135,7 +2211,7 @@ function downloadRecord(){
 function logDay(p, w0){
   if (!p.log) p.log = [];
   const td = p.today;
-  p.log.push({d:p.day, v:!!td.visited, c:!!td.checked, cd:!!td.checkedDeep, ml:td.ml || 0, dr:!!td.drain, j:!!td.journal, f:!!td.fert, pc:!!td.pinch, pk:!!td.pick, dg:!!td.diag, nw:!!td.noWater, rp:td.replant || "",
+  p.log.push({d:p.day, v:!!td.visited, c:!!td.checked, cd:!!td.checkedDeep, ml:td.ml || 0, dr:!!td.drain, j:!!td.journal, f:!!td.fert, pc:!!td.pinch, pk:!!td.pick, dg:!!td.diag, nw:!!td.noWater, sc: td.visited ? todayScore(p).total : null, rp:td.replant || "",
               spot:p.spot, bl:!!p.blind, h:+p.h.toFixed(1), hl:Math.round(p.health), k:kindOf(w0), sick:sickList(p).length, dead:!!p.dead});
 }
 /* 평가 기준 셋 — 실과 «식물 가꾸기» (문구는 선생님이 바꿀 수 있게 한 곳에) */
@@ -2488,7 +2564,7 @@ function loginAs(name, pw, fail){
     plantName = "초록이"; first = true;
     LS.set("basil.stu." + name, {pw, plantName, plant: me, createdAt: Date.now()});
   }
-  me.name = plantName; _earned = null; setWho(); $("nm").textContent = plantName; $("sayBtn").textContent = sayOn() ? "🔈 읽어 주기 켬" : "🔈 읽어 주기";
+  me.name = plantName; _earned = null; setWho(); $("nm").textContent = plantName; $("sayBtn").textContent = sayOn() ? "🔊" : "🔈";
   show("p2"); renderMe();
   const gap = beforeStart() ? 0 : todayIdx() - me.day;
   if (gap > 0) setTimeout(() => passDays(gap), 500);
@@ -2590,7 +2666,7 @@ function speak(txt){
     const u = new SpeechSynthesisUtterance(txt.replace(/[🌿🌱💧☀️⛅🌧️🥶🔥👆👇📏🔮🩺🍽🧪✂🧺🪟🗺❓🔈🚪🌈🥀]/gu, "")); u.lang = "ko-KR"; u.rate = .95; speechSynthesis.speak(u); } catch (e) {}
 }
 function sayOn(){ return me && (me.readAloud || (CFG && CFG.level === "easy" && me.readAloud !== false)); }
-function toggleSay(){ me.readAloud = !sayOn(); $("sayBtn").textContent = me.readAloud ? "🔈 읽어 주기 켬" : "🔈 읽어 주기"; if (me.readAloud) speak("읽어 주기를 켰어요. 글을 누르면 읽어 줄게요."); else speechSynthesis && speechSynthesis.cancel(); saveMe(); }
+function toggleSay(){ me.readAloud = !sayOn(); $("sayBtn").textContent = me.readAloud ? "🔊" : "🔈"; if (me.readAloud) speak("읽어 주기를 켰어요. 글을 누르면 읽어 줄게요."); else speechSynthesis && speechSynthesis.cancel(); saveMe(); }
 /* 글을 누르면 읽음 (단추 · 입력 칸은 그대로 동작) */
 document.addEventListener("click", ev => {
   if (!stuName || !sayOn()) return;
@@ -2609,7 +2685,9 @@ function waterCup(ml){
 /* 따라 하기 — 볼 곳만 밝히고 손가락이 짚음 */
 const TUT = [
   {sel: "#plantBig",              tx: "이게 내 바질 모종이에요! 본잎 두 쌍이 난 모종을 화분에 옮겨 심었어요. 내가 돌본 만큼 다르게 자라요."},
-  {sel: "#alerts",               tx: "바질이 도움이 필요하면 여기에 🔔 알림이 와요. 알림을 읽고 무엇을 할지 골라 봐요."},
+  {sel: "#bubble",               tx: "바질이 하고 싶은 말이에요. 그림을 보고 단추를 눌러 도와줘요."},
+  {sel: "#stat",                 tx: "바질 상태판이에요. 막대가 초록 칸 안에 있으면 좋아요. 흙 물기는 흙을 만져 봐야 보여요."},
+  {sel: "#score",                tx: "오늘 점수예요. 흙 · 물 · 자리 · 돌봄 · 일지 · 날씨를 잘하면 100점까지 올라가요."},
   {sel: "#care .wxcard",          tx: "오늘 날씨와 다음 수업까지 날씨예요. 날씨에 따라 돌보는 방법이 달라져요."},
   {sel: "#care .step", i: 0,      tx: "① 먼저 흙을 만져 봐요. 손가락 끝은 겉흙, 한 마디 깊이는 속흙이에요."},
   {sel: "#care .step", i: 1,      tx: "② 물 주기예요. 흙이 말랐을 때만 알맞게! 넘친 물은 받침에 고여요."},
@@ -2839,7 +2917,7 @@ function loginAs(name, pw, fail, sure){
     LS.set("basil.stu." + name, Object.assign(rec || {}, {pw, plantName, plant: me, createdAt: Date.now()}));
   }
   fixSpot(me);
-  me.name = plantName; _earned = null; setWho(); $("nm").textContent = plantName; $("sayBtn").textContent = sayOn() ? "🔈 읽어 주기 켬" : "🔈 읽어 주기";
+  me.name = plantName; _earned = null; setWho(); $("nm").textContent = plantName; $("sayBtn").textContent = sayOn() ? "🔊" : "🔈";
   show("p2"); setHomeLabels(); renderMe();
   const gap = beforeStart() ? 0 : todayIdx() - me.day;
   if (gap > 0) setTimeout(() => passDays(gap), 500);
@@ -3051,13 +3129,14 @@ function jrLock(){
 }
 function saveJournal(){
   const d = jrDraft, p = me, L = LV(), seed = stage(p) === 0, countL = L !== "easy" && !seed, colorOn = L === "hard" && !seed;
-  const r = writeJournal(p, d.txt.trim(), {hIn: +d.h, lIn: countL ? +d.l : null, color: colorOn ? d.color : undefined, pred: L === "easy" || d.pred === "" ? null : +d.pred, why: d.why});
+  const r = writeJournal(p, (d.txt || "").trim(), {hIn: +d.h, lIn: countL ? +d.l : null, color: colorOn ? d.color : undefined, pred: L === "easy" || d.pred === "" ? null : +d.pred, why: d.why});
   let msg = `<div class="tip" style="background:#eaf6e3">`;
   msg += r.accH ? `<div class="ok">📏 키를 정확히 쟀어요! (실제 ${r.realH}cm) 🌱 +2</div>` : `<div class="no">📏 다시 보면 ${r.realH}cm 예요 — 자의 0은 흙 높이예요. 바질 꼭대기 새순까지 봐요</div>`;
   if (countL) msg += r.accL ? `<div class="ok">🍃 잎을 정확히 셌어요! (${r.realL}장) 🌱 +1</div>` : `<div class="no">🍃 그림의 잎은 ${r.realL}장이에요 — 마주 난 두 장을 함께 · 새순과 곁눈은 빼고 세어 봐요</div>`;
   if (colorOn && d.color !== leafColorName(p)) msg += `<div class="no">🎨 잎 색은 「${leafColorName(p)}」에 가까워요 ${leafColorName(p) === "노랑" ? "— 아픈 곳이 없는지 진찰해 봐요" : ""}</div>`;
   if (r.predRes){ const x = r.predRes; msg += `<div style="margin-top:6px">🔮 지난 예상 ${x.pred}cm → 실제 ${x.real}cm : ${Math.abs(x.diff) <= 1 ? "<b>거의 맞았어요! 🌱 +2</b>" : x.diff < 0 ? `예상보다 <b>${-x.diff}cm 덜</b> 자랐어요 — 그동안 날씨 · 햇빛 · 물이 어땠는지 떠올려 봐요` : `예상보다 <b>${x.diff}cm 더</b> 자랐어요 — 무엇이 잘 맞았을까요?`}</div>`; }
   msg += `</div>`;
+  p.today.jrAcc = r.accH;
   $("jrRes").innerHTML = msg; $("jrSave").disabled = true; $("jrWhy").textContent = "기록했어요 — 닫기를 누르세요";
   sfx(r.accH ? "chime" : "pop"); renderMe();
 }
@@ -3146,6 +3225,226 @@ function renderExtras(p){
 if (TEST){
   const card = document.querySelector("#p1 .login .card");
   if (card) card.insertAdjacentHTML("beforeend", `<button class="b" style="margin-top:10px;width:100%;background:#fff1d6;color:#6a4000" onclick="testLogin()">🧪 시험 학생으로 바로 들어가기 (개발용)</button>`);
+}
+
+
+/* ═════════ 그림 먼저 ② 내 바질 · ⭐ 오늘 점수 · 🩺 상태판 ═════════ */
+/* 위쪽 줄 · 아래 탭 : 글을 줄임 */
+document.querySelectorAll("#p2 .logo, #p3 .logo, #p5 .logo, #p7 .logo, #p8 .logo").forEach(e => e.textContent = "🌿");
+document.querySelectorAll(".nav div").forEach(d => { const t = d.lastChild; if (t && t.nodeType === 3) t.textContent = {"내 노력": "노력", "바질 알기": "알기", "수확 · 카드": "수확"}[t.textContent.trim()] || t.textContent; });
+function setWho(){ document.querySelectorAll(".whoName").forEach(e => e.textContent = `${CFG.className} ${stuName}`); document.querySelectorAll(".whoKid").forEach(e => e.textContent = stuName); }
+
+/* ⭐ 오늘 점수 100 — 흙 15 · 물 25 · 자리 20 · 돌봄 15 · 일지 15 · 날씨 10 (손질안 5번 탭) */
+const SC_PARTS = [["soil", "👆", "흙", 15], ["water", "💧", "물", 25], ["spot", "☀", "자리", 20], ["care", "🌿", "돌봄", 15], ["jr", "📏", "일지", 15], ["wx", "🌦", "날씨", 10]];
+function bestOf(p, f){ return Math.max(...spotEntries().map(([k]) => f(k))); }
+function todayScore(p){
+  const td = p.today, g = gapToNext(p), w = wxOf(p.day), k = kindOf(w), s = {};
+  s.soil = (td.checked ? 10 : 0) + (td.checkedDeep ? 5 : 0);
+  if (td.gw || td.noWater) s.water = 25;
+  else if (td.watered) s.water = Math.max(0, 15 - (td.over ? 10 : 0) - (td.leafW ? 5 : 0) - (td.wetW ? 10 : 0));
+  else s.water = 0;
+  const sun = spotNow(p, p.spot, w).sun, night = nightsAhead(p, p.spot, g);
+  s.spot = (sun >= 6 || sun >= bestOf(p, x => spotNow(p, x, w).sun) - .3 ? 10 : 0) + (night >= 10 || night >= bestOf(p, x => nightsAhead(p, x, g)) - .3 ? 10 : 0);
+  const need = (p.saucer > 0 ? 1 : 0) + (p.bug ? 1 : 0) + (sickList(p).filter(x => x !== "bug").length && !td.diag ? 1 : 0) + (LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert ? 1 : 0);
+  s.care = Math.max(0, 15 - need * 5 - (td.fert && p.day - (p.prevFert ?? -99) < 6 ? 5 : 0));
+  s.jr = td.journal ? 10 + (td.jrAcc ? 5 : 0) : 0;
+  const ch = [];
+  if (LV() !== "easy" && nightsAhead(p, "window", g) < 10) ch.push(night >= 10);
+  if (k === "rain" || k === "cloud") ch.push(!(td.ml > 0 && p.moist > 90));
+  if (LV() === "hard" && w.sunH >= 9 && w.tmax >= 26 && p.spot === "window") ch.push(!!p.blind);
+  if (g >= 4) ch.push(p.moist >= 62);
+  s.wx = ch.length ? Math.round(10 * ch.filter(Boolean).length / ch.length) : 10;
+  if (p.dead) for (const x in s) s[x] = 0;
+  s.total = s.soil + s.water + s.spot + s.care + s.jr + s.wx;
+  return s;
+}
+/* 거름 «너무 자주» 판단용 — 전에 준 날을 기억 */
+const _fertilize0 = fertilize;
+fertilize = function(p){ p.prevFert = p.lastFert; return _fertilize0(p); };
+
+/* 물 참기 — 흙이 젖어 있을 때만 «잘 판단» (마른 흙이면 알려 주고 잠그지 않음) */
+function skipWater(){
+  visit(me);
+  if (me.moist < 45){ sfx("bad"); toast("❌ 속흙이 말랐어요 — 물이 필요해요"); return; }
+  if (!me.today.noWater){ me.today.noWater = true; me.care.skipGood = (me.care.skipGood || 0) + 1; addCoin(me, 1, "젖은 흙엔 물 참기"); }
+  renderMe(); happy(); toast("🚱 오늘은 물 그만 — 잘 판단했어요! 🌱 +1");
+}
+
+/* 잠긴 단추를 누르면 — 글 대신 «먼저 할 칸» 이 반짝 + 짧은 말 */
+function lockTap(k){
+  const p = me, flash = i => { const st = document.querySelectorAll("#care .tile")[i]; if (st){ st.classList.remove("flash"); void st.offsetWidth; st.classList.add("flash"); } };
+  sfx("bad");
+  if (k === "soil"){ flash(0); toast("👆 흙 먼저!"); return; }
+  if (k === "nowater"){ toast("🚱 오늘은 물 그만"); return; }
+  if (k === "dead"){ openDead(); return; }
+  if (k === "young"){ toast("🌱 본잎이 더 나오면"); return; }
+  if (k === "done"){ toast("✔ 오늘 했어요"); return; }
+  if (k === "grow"){ toast(`✂ 📏 ${p.h.toFixed(1)}/10cm · 🍃 ${leaves(p)}/8`); return; }
+  if (k === "pick"){ toast(p.done ? "✔ 수확 끝" : leaves(p) < 10 ? `🧺 🍃 ${leaves(p)}/10` : `⏳ ${3 - (p.day - p.lastPick)}일 뒤`); return; }
+}
+const dropsOf = m => m < 20 ? "🏜" : m < 40 ? "💧○○" : m <= 80 ? "💧💧○" : m <= 95 ? "💧💧💧" : "💦💦💦";
+
+/* ② 내 바질 — 그림 칸 다섯 (흙 · 물 · 자리 · 가꾸기 · 일지) + 오늘 점수 */
+function renderMe(){
+  const p = me, st = stage(p), L = LV(), dead = !!p.dead;
+  $("dayLab").textContent = p.day ? `📅 ${p.day}일째` : "📅 첫날"; $("dayLab2").textContent = dateLab(p.day); $("coinLab").textContent = p.coins;
+  $("scene").className = "scene " + SPOTS[p.spot].scene;
+  $("plantBig").innerHTML = basilSVG(p);
+  $("chips").innerHTML = `<span class="chip">📏 ${p.h.toFixed(1)}</span><span class="chip">🍃 ${leaves(p)}</span>${p.plantNo >= 2 ? `<span class="chip">🌈 ${p.plantNo}</span>` : ""}`;
+  const lk = {
+    water: dead ? "dead" : p.today.noWater ? "nowater" : (waterLock && !p.today.checked) ? "soil" : "",
+    fert:  dead ? "dead" : st < 2 ? "young" : p.today.fert ? "done" : "",
+    pinch: dead ? "dead" : p.pinched ? "done" : (p.h < 10 || leaves(p) < 8) ? "grow" : "",
+    pick:  dead ? "dead" : pickLock(p) ? "pick" : "",
+  };
+  const B = (ic, lab, js, lock, cls) => `<button class="ib ${lock ? "lock" : ""} ${cls || ""}" onclick="${lock ? `lockTap('${lock}')` : js}"><i>${ic}</i>${lab}</button>`;
+  const sc = todayScore(p);
+  const score = `<div class="score" id="score"><span class="sbig">⭐ ${sc.total}<small> / 100</small></span>${SC_PARTS.map(([k, ic, nm, mx]) => `<div class="seg ${sc[k] >= mx ? "full" : sc[k] === 0 ? "zero" : ""}"><i>${ic}</i><b>${sc[k]}/${mx}</b>${nm}</div>`).join("")}</div>`;
+  // ① 흙
+  const soilBtns = L === "easy" ? B("👆", "흙", "doCheck('easy')", dead ? "dead" : "") : B("👆", "겉", "doCheck('surf')", dead ? "dead" : "") + B("👇", "속", "doCheck('deep')", dead ? "dead" : "");
+  const soilPic = L === "easy" ? `<div class="soil"><div>${p.today.easyWord ? dropsOf(p.moist) : "?"}</div></div>`
+    : `<div class="soil"><div><em>👆</em>${p.today.surfWord ? dropsOf(p.surf) : "?"}</div><div><em>👇</em>${p.today.deepWord ? dropsOf(p.moist) : "?"}</div></div>`;
+  // ② 물
+  let water;
+  if (L === "easy") water = `<div class="row">${B('<span style="font-size:20px">🥛</span>', "조금", "waterCup(60)", lk.water)}${B('<span style="font-size:28px">🥛</span>', "알맞게", "waterCup(120)", lk.water)}${B('<span style="font-size:36px">🥛</span>', "듬뿍", "waterCup(200)", lk.water)}</div>`;
+  else water = `<div class="row">${L === "hard" ? B("🟫", "흙에", "setTarget('soil')", lk.water, waterTarget === "soil" ? "sel" : "") + B("🍃", "잎에", "setTarget('leaf')", lk.water, waterTarget === "leaf" ? "sel" : "") : ""}
+      <button class="ib ${lk.water ? "lock" : ""}" id="pourBtn" style="touch-action:none" ${lk.water ? `onclick="lockTap('${lk.water}')"` : `onpointerdown="pourStart(event)" onpointerup="pourEnd()" onpointerleave="pourEnd()" onpointercancel="pourEnd()"`}><i>🚿</i>꾹</button>
+      <span class="gauge2"><span class="ok"></span><b id="gFill" style="width:${Math.min(100, p.today.ml / 3)}%"></b></span><span class="ml"><b id="mlLab" style="font-weight:400">${p.today.ml}</b> mL</span></div>`;
+  water += `<div class="row">${B("🚱", "오늘 그만", "skipWater()", lk.water === "soil" || lk.water === "dead" ? lk.water : p.today.noWater ? "nowater" : p.today.watered ? "done" : "")}${p.saucer > 0 ? B("🍽", "버리기", "doDrain()", "", "main") : ""}</div>`;
+  // ③ 자리
+  const w = wxOf(p.day), s = spotNow(p, p.spot, w), night = nightsAhead(p, p.spot, gapToNext(p)), nSun = s.sun >= 6 ? 3 : s.sun >= 3 ? 2 : s.sun >= 1 ? 1 : 0;
+  const fc = L === "hard" ? (() => { const g = gapToNext(p), a = []; for (let i = 1; i <= g; i++) a.push(KIND_ICON[kindOf(wxOf(p.day + i))]); return `<div class="tiny">다음 수업까지 ${a.join(" ")} · ☀ ${s.sun.toFixed(1)}h</div>`; })() : "";
+  const spotT = `<div class="row"><div class="mmap" onclick="${dead ? "" : "openMap()"}"><b style="left:${SPOTS[p.spot].x}%;top:${Math.max(18, SPOTS[p.spot].y)}%">🪴</b></div>
+      <div class="suns">${"☀".repeat(nSun)}<span class="dim">${"☀".repeat(3 - nSun)}</span><br>🌙 ${Math.round(night)}°${night < 10 ? " 🥶" : ""}</div></div>${fc}
+    <div class="row">${B("🗺", "옮기기", "openMap()", dead ? "dead" : "")}${L !== "easy" && (p.spot === "window" || p.spot === "side") ? B("🪟", p.blind ? "올리기" : "내리기", `doBlind(${!p.blind})`, dead ? "dead" : "", p.blind ? "sel" : "") : ""}</div>`;
+  // ④ 가꾸기
+  const prog = [lk.pinch === "grow" ? (p.h < 10 ? `✂ 📏${p.h.toFixed(1)}/10` : `✂ 🍃${leaves(p)}/8`) : "", lk.pick === "pick" && !p.done ? (leaves(p) < 10 ? `🧺 🍃${leaves(p)}/10` : `🧺 ⏳${3 - (p.day - p.lastPick)}일`) : p.harvested ? `🧺 ${p.harvested}장` : ""].filter(Boolean).join("　");   // 가장 가까운 조건 하나씩만
+  const garden = `<div class="row">${L === "easy" ? "" : B("🧪", "거름", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}</div><div class="tiny">${prog}</div>`;
+  // ⑤ 일지
+  const lp = lastPred(p), n = p.notes[p.notes.length - 1];
+  const jrNote = p.today.journal && n ? `📏 ${n.hIn}${n.lIn != null && L !== "easy" ? ` · 🍃 ${n.lIn}` : ""}` : (lp && !lp.checked && L !== "easy") ? `🔮 지난 예상 ${lp.pred}?` : "";
+  $("care").innerHTML = score +
+    `<div class="step tile ${p.today.checked ? "done" : ""}"><div class="hd"><span class="no">1</span>👆 흙</div><div class="row">${soilBtns}</div>${soilPic}</div>
+     <div class="step tile ${p.today.watered || p.today.noWater ? "done" : ""}"><div class="hd"><span class="no">2</span>💧 물</div>${water}</div>
+     <div class="step tile"><div class="hd"><span class="no">3</span>🗺 자리</div>${spotT}</div>
+     <div class="step tile"><div class="hd"><span class="no">4</span>🌿 가꾸기</div>${garden}</div>
+     <div class="step tile jr ${p.today.journal ? "done" : ""}"><div class="hd"><span class="no">5</span>📏 일지</div><span class="tiny" style="margin-left:12px">${jrNote}</span>${B("📏", "재고 · 세기", "openJournal()", dead ? "dead" : p.today.journal ? "done" : "", "main")}</div>`;
+  renderEffort(); renderCard(); renderRewards(); renderHarvest(); checkBadges(); renderScene();
+  if (p.dead && !p.deadSeen){ p.deadSeen = true; setTimeout(openDead, 400); }
+  renderExtras(p);
+  saveMe();
+}
+
+/* 🩺 바질 상태판 — 막대 + 초록 구간(좋은 범위) · 흙 물기는 흙을 만져 봐야 보임 */
+function renderStat(p){
+  const el = $("stat"); if (!el) return;
+  if (!stuName){ el.style.display = "none"; $("nightLine").style.display = "none"; return; }
+  el.style.display = "flex";
+  const L = LV(), w = wxOf(p.day), s = spotNow(p, p.spot, w), night = nightsAhead(p, p.spot, gapToNext(p));
+  const G = (ic, v, lo, hi, max, txt, hid) => {
+    if (hid) return `<div class="g hid"><span class="ic">${ic}</span><span class="br"></span><span class="n">👆 ?</span></div>`;
+    const pc = x => clamp(x / max * 100, 0, 100), ok = v >= lo && v <= hi;
+    return `<div class="g"><span class="ic">${ic}</span><span class="br ${ok ? "" : "bad"}"><span class="z" style="left:${pc(lo)}%;width:${pc(hi) - pc(lo)}%"></span><span class="v" style="left:${pc(v)}%"></span></span><span class="n">${txt}</span></div>`;
+  };
+  const seen = L === "easy" ? !!p.today.easyWord : !!p.today.deepWord;
+  el.innerHTML = `<div class="t">🩺 바질 상태</div>`
+    + G("💧", p.moist, 30, 85, 100, Math.round(p.moist), !seen)
+    + G("☀", s.sun, 6, 12, 12, s.sun.toFixed(1) + "h")
+    + (L === "easy" ? "" : G("🌙", night, 10, 30, 30, Math.round(night) + "°"))
+    + (L === "easy" ? "" : G("🧪", p.nutr, 25, 80, 100, Math.round(p.nutr)))
+    + G("❤", p.health, 60, 100, 100, Math.round(p.health));
+  // 어젯밤 줄 — 지난번 들어온 뒤 밤마다 건강이 오르내린 것
+  const since = p.today.visited ? (p.prevVisit ?? -1) : p.lastVisit, L2 = (p.nightLog || []).filter(x => x.d > since);
+  const nl = $("nightLine");
+  if (!L2.length || p.dead){ nl.style.display = "none"; return; }
+  const dh = L2[L2.length - 1].h1 - L2[0].h0, ok = f => L2.every(x => x[f]) ? "✔" : "✘";
+  nl.style.display = "block";
+  nl.innerHTML = `${L2.length === 1 ? "어젯밤" : `지난 ${L2.length}밤`} ❤ <b style="color:${dh >= 0 ? "#2f7a2a" : "#c9573f"}">${dh >= 0 ? "+" : ""}${dh}</b> · 💧${ok("w")} ☀${ok("s")}${L === "easy" ? "" : ` 🧪${ok("n")} 🌙${ok("t")}`}`;
+}
+
+/* 💬 말풍선 — 바질이 하는 말 (그림 + 낱말) + 할 일 단추 · 알림 카드를 대신함 */
+const SICK_PIC = {dry: ["😩", "잎이 축 처졌어"], wet: ["💛", "아래 잎이 노래"], dark: ["🥢", "줄기만 길쭉해"], cold: ["🖤", "잎이 거무스름해"], scorch: ["🍂", "잎 끝이 갈색이야"], mildew: ["⚪", "하얀 가루가…"], bug: ["🐛", "잎 뒤가 간질간질"]};
+const ACT2 = {
+  drain: ["🍽", "버리기", () => doDrain()], noWater: ["🚱", "오늘 그만", () => skipWater()], water: ["💧", "물 주기", () => LV() === "easy" ? easyWater() : goWater()],
+  inside: ["🗺", "안쪽으로", () => openMap()], bright: ["🗺", "밝은 곳", () => openMap()], diag: ["🩺", "진찰", () => openDiag()],
+  fert: ["🧪", "거름", () => doFert()], pinch: ["✂", "자르기", () => doPinch()], pick: ["🧺", "따기", () => doPick()], replant: ["🌈", "다시 심기", () => openDead()],
+};
+const WRONG2 = {more: ["💧", "더 주기"], shade: ["🗺", "옮기기"], lots: ["💧", "듬뿍"], blindC: ["🪟", "블라인드"]};
+function alertsOf(p){
+  const L = LV(), out = [];
+  if (!stuName || p.done) return out;
+  if (p.dead) return [{k: "dead", pic: "🥀", word: "시들었어…", ok: ["replant"]}];
+  const add = (k, pic, word, ok, bad) => out.push({k, pic, word, ok: ok.filter(Boolean), bad});
+  const sick = sickList(p), canPinch = !p.pinched && p.h >= 10 && leaves(p) >= 8;
+  if (L === "hard"){
+    if (p.saucer > 0) add("saucer", "🍽💧", "받침에 물이 있어", []);
+    sick.forEach(k => add(k, SICK_PIC[k][0], SICK_PIC[k][1], ["diag"]));
+    if (stage(p) >= 2 && p.nutr < 25 && !p.today.fert) add("fert", "🍂", "잎 색이 옅어졌어", []);
+    if (canPinch) add("pinch", "✂🌿", "꼭대기 순이 쑥!", []);
+    return out;
+  }
+  const g = gapToNext(p), here = spotNow(p, p.spot, wxOf(p.day)), nt = nightsAhead(p, p.spot, g);
+  if (p.saucer > 0 || p.moist > 95 || p.soggy >= 2)
+    add("wet", p.saucer > 0 ? "💦🍽" : "💦💦", "발이 축축해!", [p.saucer > 0 && "drain", !p.today.watered && !p.today.noWater && "noWater"], ["more", "❌ 이미 질척해요"]);
+  else if (p.moist < 18 && !p.today.watered) add("dry", "🏜💧", "목말라!", ["water"], ["shade", "❌ 물이 먼저예요"]);
+  else if (L === "normal" && p.today.checkedDeep && p.surf < 40 && p.moist >= 55 && !p.today.watered && !p.today.noWater)
+    add("surf", "👆🙂 👇💧", "속은 촉촉해!", ["noWater"], ["lots", "❌ 속흙이 아직 촉촉해요"]);
+  sick.filter(k => !["wet", "dry", "dark"].includes(k)).forEach(k => add(k, SICK_PIC[k][0], SICK_PIC[k][1], ["diag"]));
+  if (L === "normal" && !p.chill && nt < 10) add("cold", `🌙🥶`, `밤에 ${Math.round(nt)}°, 추워!`, ["inside"], ["blindC", "❌ 블라인드로는 못 막아요"]);
+  if (stage(p) >= 1 && here.sun < 3) add("dark", "🌑", "햇빛 줘!", ["bright"], ["more", "❌ 햇빛이 모자라요"]);
+  if (L === "normal" && stage(p) >= 2 && p.nutr < 25 && !p.today.fert) add("fert", "🍂🧪", "배고파!", ["fert"], ["more", "❌ 양분이 모자라요"]);
+  if (p.health < 40 && !out.length) add("weak", "🤒", "아파…", ["diag"]);
+  if (canPinch) add("pinch", "✂🌿", "순지르기 할 때!", ["pinch"]);
+  else if (!pickLock(p)) add("pick", "🧺🍃", "잎 따도 돼!", ["pick"]);
+  return out;
+}
+let _alertI = 0, _alertKey = "", _said = "";
+function renderAlerts(p){
+  const bb = $("bubble"); if (!bb) return;
+  const list = alertsOf(p), L = LV(); _alerts = list;
+  const key = list.map(a => a.k).join(","); if (key !== _alertKey){ _alertI = 0; _alertKey = key; }
+  if (!list.length){
+    const mood = stage(p) === 0 ? ["💤", "쿨쿨…"] : p.health > 75 ? ["😊", "기분 최고!"] : ["🙂", "나 좀 봐 줘"];
+    bb.className = "bubble"; bb.innerHTML = `<div class="bp">${mood[0]}</div><div class="bw">${mood[1]}</div>`; return;
+  }
+  const i = Math.min(_alertI, list.length - 1), a = list[i];
+  const ops = a.ok.map(k => `<button class="ib main" onclick="alertDo(${i},'${k}')"><i>${ACT2[k][0]}</i>${ACT2[k][1]}</button>`);
+  const quiz = L === "normal" && a.bad && a.ok.length && a.ok[0] !== "diag";
+  if (quiz){ ops.forEach((o, j) => ops[j] = o.replace('class="ib main"', 'class="ib"')); ops.splice(p.day % 2 ? 0 : ops.length, 0, `<button class="ib" onclick="alertDo(${i},'')"><i>${WRONG2[a.bad[0]][0]}</i>${WRONG2[a.bad[0]][1]}</button>`); }
+  bb.className = "bubble al";
+  bb.innerHTML = `<div class="bp">${a.pic}</div><div class="bw">${a.word}</div>${ops.length ? `<div class="bo">${ops.join("")}</div>` : ""}<div class="bx" id="awhy${i}"></div>`
+    + (list.length > 1 ? `<div class="more">${list.map((x, j) => `<span class="${j === i ? "on" : ""}" onclick="_alertI=${j};renderAlerts(me)">${x.pic.slice(0, 2)}</span>`).join("")}</div>` : "");
+  if (sayOn() && a.word !== _said){ _said = a.word; speak(a.word); }
+}
+function alertDo(i, k){
+  if (busy) return;
+  if (!k){ const el = $("awhy" + i); if (el) el.textContent = _alerts[i].bad[1]; sfx("bad"); return; }
+  sfx("chime"); ACT2[k][2]();
+}
+
+/* renderMe 끝에 — 말풍선 · 상태판 · 점수 오름 표시 · 시연 · 시험기 · 내 노력 날짜별 점수 */
+let _scPrev = null;
+function renderExtras(p){
+  if (LV() !== "hard") waterTarget = "soil";
+  renderAlerts(p); renderStat(p);
+  const sc = todayScore(p);
+  if (stuName && _scPrev && _scPrev.day === p.day && _scPrev.name === stuName){
+    const ch = SC_PARTS.filter(([k]) => sc[k] !== _scPrev[k]).map(([k, ic]) => `${ic} ${sc[k] > _scPrev[k] ? "+" : "−"}${Math.abs(sc[k] - _scPrev[k])}`);
+    const down = SC_PARTS.some(([k]) => sc[k] < _scPrev[k]);   // 떨어진 것이 있으면 빨간 딱지
+    if (ch.length) document.getElementById("score").insertAdjacentHTML("beforeend", `<span class="pop" style="${down ? "background:#c9573f" : ""}">${ch.join(" ")}</span>`);
+  }
+  _scPrev = Object.assign({day: p.day, name: stuName}, sc);
+  const db = $("demoBar");
+  if (db){ db.innerHTML = CFG && CFG.demo && !TEST && stuName ? `<b>🧪 시연</b><button class="b" onclick="demoPass(1)">⏩ 하루</button><button class="b" onclick="demoPass(3)">⏩ 3일</button>` : ""; db.style.display = db.innerHTML ? "flex" : "none"; }
+  renderTest();
+  // 내 노력 : 날짜별 오늘 점수 막대 (수업한 날 · 오늘은 지금 점수)
+  const eb = document.querySelectorAll("#effortBody .panel")[1];
+  if (eb && !eb.querySelector(".dbars")){
+    const days = (p.log || []).filter(x => x.sc != null).map(x => ({d: x.d, s: x.sc}));
+    if (p.today.visited) days.push({d: p.day, s: sc.total});
+    const svg = eb.querySelector("svg"); if (svg) svg.style.height = "170px";
+    eb.insertAdjacentHTML("afterbegin", `<h3>⭐ 날짜별 오늘 점수</h3><div class="dbars" style="display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px 18px;border-bottom:1px solid var(--line);overflow:hidden">${days.slice(-14).map(x => `<div style="flex:0 0 30px;height:${Math.max(6, x.s)}%;background:linear-gradient(#f2c14e,#e0a43a);border-radius:6px 6px 0 0;position:relative;font:12px Jua;color:#fff;text-align:center">${x.s}<span style="position:absolute;bottom:-17px;left:-4px;right:-4px;color:var(--sub)">${x.d}일</span></div>`).join("") || `<span class="hint">돌본 날마다 막대가 생겨요</span>`}</div>`);
+  }
 }
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
