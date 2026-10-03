@@ -403,6 +403,8 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .testchip{position:absolute;left:10px;bottom:78px;z-index:30;border:2px solid #e0a43a;background:#fff8e6;border-radius:999px;padding:5px 14px;font:16px "Jua";color:#6a4000;cursor:pointer}
 /* ══ 그림 먼저 ② 내 바질 · 오늘 점수 · 상태판 ══ */
 #p2 .bar .logo{font-size:30px}
+#p2 .plantwrap,#p2 .plantbox{width:380px!important;height:456px!important}
+#p2 .plantwrap{margin-left:70px}
 #p2 .bar .who{font-size:21px}
 .nmbtn.rnd{width:44px;height:44px;border-radius:50%;padding:0!important;font-size:22px!important;display:inline-flex;align-items:center;justify-content:center}
 #p2 .coin{font-size:22px}
@@ -2751,6 +2753,7 @@ function pinch(p){
   p.h = Math.max(1.5, p.h - .7); p.leafAcc = Math.max(0, p.leafAcc - 2);
   addCoin(p, 3, "순지르기");
 }
+const LEAF_K = 1.3;   // 잎 크기 — 아이 패드에서 잘 보이게 (10-03 밤 전무님 «잎이 너무 작다»)
 const CMV = 9.5;   // 1cm = 9.5 칸 — 관찰일지 자와 같음 (0 = 흙 높이 y 284)
 function plantLayout(p){
   const st = stage(p), tp = Math.max(0, Math.floor((leaves(p) - 2) / 2));
@@ -2810,7 +2813,7 @@ function basilSVG(p, opt = {}){
     const nodeH = p.pinched ? Math.max(1.2, (p.pinchH || p.h) - 1.2) : p.h, H = p.h * CMV, endY = 284 - nodeH * CMV + (p.pinched ? 0 : 11);   // 새순 끝 = 키 (자로 잴 때 맞게)
     const cotY = 284 - Math.min(nodeH * CMV, 2.2 * CMV), n = L.main;
     const bend = dead ? 34 : dry ? 12 : 0, xAt = y => 150 + bend * Math.pow(Math.max(0, 284 - y) / Math.max(1, 284 - endY), 1.6);
-    const droopX = dry ? 40 : 0, ls = leggy ? .6 : 1;
+    const droopX = dry ? 40 : 0, ls = (leggy ? .6 : 1) * LEAF_K;
     stemS += `<path d="M148 285 Q${149 + bend * .3} ${(285 + endY) / 2} ${xAt(endY) - .6} ${endY} L${xAt(endY) + 1.2} ${endY} Q${151.5 + bend * .3} ${(285 + endY) / 2} 153 285 Z" fill="${C.stem}"/>`;
     stemS += `<path d="M150 284 Q${150 + bend * .3} ${(284 + endY) / 2} ${xAt(endY) + .3} ${endY + 2}" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none"/>`;
     if (L.cot){ const cc = L.cotOld ? "#d2c36a" : "#86c860";
@@ -3166,7 +3169,7 @@ if (TEST && !LS.get("basil.cfg", null)){
   LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라"], pin: "0000", level: "normal", speed: 1, startAs: "seedling", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "record", region: "대전", dir: "남향"}});
 }
 function nowDate(){ const now = new Date(); now.setHours(0, 0, 0, 0); if (CFG && (CFG.demo || TEST) && CFG.dayOffset) now.setDate(now.getDate() + CFG.dayOffset); return now; }
-let testOpen = true, testCare = "";
+let testOpen = true, testCare = "care";
 /* 날짜 n 일 앞으로 — 지나는 동안 «꼼꼼히 돌봄 / 안 돌봄 / 그냥» */
 function testPass(n){
   if (busy || !stuName) return;
@@ -3174,10 +3177,17 @@ function testPass(n){
   if (add <= 0 && me.day >= 21){ toast("21일째예요 — 더 지날 날이 없어요"); return; }
   CFG.dayOffset = (CFG.dayOffset || 0) + add; LS.set("basil.cfg", CFG); TEACHER_DAY = todayIdx(); repDay = TEACHER_DAY;
   const gap = target - me.day; if (gap <= 0){ renderMe(); return; }
-  if (!testCare && gap <= 3){ passDays(gap); return; }          // 1~3일 그냥 지나기는 타임랩스로
+  if (testCare === "lazy" && gap <= 3){ passDays(gap); return; }          // 1~3일 그냥 지나기는 타임랩스로
   const r = rng(Date.now() % 100000);
-  for (let i = 0; i < gap; i++){ if (testCare === "care") autoCare(me, 1, r); dayStep(me); }
-  renderMe(); toast(`⏩ ${gap}일 지남${testCare === "care" ? " (꼼꼼히 돌봄)" : testCare === "lazy" ? " (안 돌봄)" : ""} · 키 ${me.h.toFixed(1)}cm · 잎 ${leaves(me)}장${me.dead ? " · 🥀 시듦" : ""}`);
+  for (let i = 0; i < gap; i++){ if (testCare === "care") autoCare(me, 1, r); else if (testCare === "some") autoCare(me, .5, r); dayStep(me); }
+  renderMe(); toast(`⏩ ${gap}일 지남${testCare === "care" ? " (꼼꼼히 돌봄)" : testCare === "some" ? " (보통으로 돌봄)" : " (안 돌봄)"} · 키 ${me.h.toFixed(1)}cm · 잎 ${leaves(me)}장${me.dead ? " · 🥀 시듦" : ""}`);
+}
+/* 💚 살리기 — 시들었거나 아파도 바로 되살려 계속 시험 */
+function testRevive(){
+  if (!stuName) return; const p = me;
+  p.dead = false; p.deadSeen = false; p.lowDays = 0; p.health = 80; p.moist = Math.max(55, Math.min(80, p.moist)); p.surf = Math.max(50, p.surf); p.saucer = 0;
+  p.bug = false; p.mildew = false; p.leafWet = 0; p.chill = 0; p.scorch = 0; p.air = 80; if (p.h < 1) p.h = 4.5;
+  $("deadModal").classList.remove("on"); renderMe(); toast("💚 되살렸어요 — 건강 80 · 흙물 · 공기 알맞게");
 }
 /* 첫날로 — 이 학생 바질을 새로 (열쇠 · 이름은 그대로) */
 function testFirstDay(){
@@ -3223,7 +3233,7 @@ function renderTest(){
   el.innerHTML = `<div class="testp">
     <div class="th">🧪 시험기 <small>개발용 · 주소 끝 ?test 일 때만 · D+${me.day} / 21 · ${dateLab(me.day).split(" · ")[1]}</small><button class="b" style="margin-left:auto" onclick="testOpen=false;renderTest()">접기 ▾</button></div>
     <div class="tr"><span>날짜</span>${B(0, "testPass(1)", "⏩ 1일")}${B(0, "testPass(3)", "⏩ 3일")}${B(0, "testPass(7)", "⏩ 7일")}${B(0, "testPass(21)", "⏭ 21일째로")}${B(0, "testFirstDay()", "⏪ 첫날로")}</div>
-    <div class="tr"><span>지나는 동안</span>${B(testCare === "", "testCare='';renderTest()", "그냥")}${B(testCare === "care", "testCare='care';renderTest()", "🤖 꼼꼼히 돌봄")}${B(testCare === "lazy", "testCare='lazy';renderTest()", "😴 안 돌봄")}</div>
+    <div class="tr"><span>지나는 동안</span>${B(testCare === "care", "testCare='care';renderTest()", "🤖 꼼꼼히")}${B(testCare === "some", "testCare='some';renderTest()", "🙂 보통")}${B(testCare === "lazy", "testCare='lazy';renderTest()", "😴 안 돌봄")}${B(0, "testRevive()", "💚 살리기")}</div>
     <div class="tr"><span>아프게</span>${B(0, "testSick('dry')", "🏜 마름")}${B(0, "testSick('wet')", "💦 물 많음")}${B(0, "testSick('leaf')", "🍃 잎에 물")}${B(0, "testSick('cold')", "🥶 추운 밤")}${B(0, "testSick('bug')", "🐛 벌레")}${B(0, "testSick('dead')", "🥀 시듦")}</div>
     <div class="tr"><span>바로 바꾸기</span>${B(L === "easy", "testSet('level','easy')", "쉬움")}${B(L === "normal", "testSet('level','normal')", "보통")}${B(L === "hard", "testSet('level','hard')", "어려움")} · ${B(sp === 1, "testSet('speed',1)", "×1")}${B(sp === 1.5, "testSet('speed',1.5)", "×1.5")}${B(sp === 2, "testSet('speed',2)", "×2")}<button class="b" style="margin-left:auto" onclick="testClearAll()">🧹 모두 지우기</button></div>
   </div>`;
@@ -3353,7 +3363,7 @@ function renderMe(){
   $("dayLab").textContent = p.day ? `📅 ${p.day}일째` : "📅 첫날"; $("dayLab2").textContent = dateLab(p.day); $("coinLab").textContent = p.coins;
   $("scene").className = "scene " + SPOTS[p.spot].scene;
   $("plantBig").innerHTML = basilSVG(p);
-  $("chips").innerHTML = `<span class="chip">📏 ${p.h.toFixed(1)}</span><span class="chip">🍃 ${leaves(p)}</span>${p.plantNo >= 2 ? `<span class="chip">🌈 ${p.plantNo}</span>` : ""}`;
+  $("chips").innerHTML = `<span class="chip">📏 ${drawnHeightCM(p)}</span><span class="chip">🍃 ${leaves(p)}</span>${p.plantNo >= 2 ? `<span class="chip">🌈 ${p.plantNo}</span>` : ""}`;
   const lk = {
     water: dead ? "dead" : p.today.noWater ? "nowater" : (waterLock && !p.today.checked) ? "soil" : "",
     fert:  dead ? "dead" : st < 2 ? "young" : p.today.fert ? "done" : "",
@@ -3677,6 +3687,7 @@ water = function(p, mL, target){
   if (target === "leaf"){
     if (bug && mL >= 40){ cleanBug(p); p.today.leafGood = true; r.bugWashed = true; if (p === me) setTimeout(() => toast("🐛 진딧물이 씻겨 나갔어요! 🌱 +3"), 1100); }
     if (wxOf(p.day).tmax >= 30){ p.today.leafGood = true; if (p === me && !r.bugWashed) setTimeout(() => toast("🍃 더운 날 잎을 식혀 줬어요 — 잎 탐을 막아요"), 1100); }
+    if (p === me) waterTarget = "soil";   // 한 번 뿌리면 «흙에» 로 돌아옴 (얼떨결에 계속 잎에 뿌리지 않게)
   }
   return r;
 };
