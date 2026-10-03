@@ -533,7 +533,7 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #jrBox .jrow .k{width:52px;height:52px;border-radius:15px;background:#e8f3e1;display:flex;align-items:center;justify-content:center;font-size:28px;flex:0 0 auto}
 #jrBox .jrow .val{font:34px "Jua";color:var(--leaf);min-width:74px;text-align:right}
 #jrBox .jrow .val.empty{color:#b9c4b4}
-#jrBox .jrow .sub{font:15px "Noto Sans KR";color:var(--sub)}
+#jrBox .jrow .sub{font:18px "Jua";color:var(--sub)}
 #jrBox .nb{border:0;border-radius:12px;width:46px;height:46px;font:22px "Jua";background:#eaf5e3;color:#24502a;cursor:pointer}
 #jrBox .stk{border:2px solid var(--line);border-radius:16px;padding:6px 12px;font:19px "Jua";background:#fff;cursor:pointer;white-space:nowrap}
 #jrBox .stk.on{border-color:var(--leaf);background:#eaf6e3;box-shadow:0 0 0 2px var(--leaf) inset}
@@ -548,7 +548,10 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #jrBox .preds button i{font-style:normal;line-height:1.1}
 #jrBox .preds button.on{border-color:var(--leaf);background:#eaf6e3}
 #jrBox .jbtns{display:flex;gap:10px;align-items:center;margin-top:auto}
-#jrBox .why{font:15px "Noto Sans KR";color:var(--sub)}
+#jrBox .why{font:18px "Jua";color:#a0662c}
+#jrBox .jr .ok,#jrBox .jr .no{font:17px/1.45 "Noto Sans KR"}
+#jrBox .miss{font:19px/1.4 "Jua";background:#fff3dc;border:2px solid #f2c14e;border-radius:14px;padding:8px 12px;margin-bottom:6px;color:#7a4a00}
+#jrBox .miss.all{background:#eaf6e3;border-color:#8fcf7a;color:#2f7a2a}
 #jrBox .tip{border-radius:12px;padding:8px 12px}
 /* ② 바질이 잘 보이게 — 🩺 상태판 · 지난밤 줄은 화분 아래 바닥으로 · 💬 말풍선은 오른쪽 끝 · 바질은 왼쪽으로 조금 */
 .scene .pwrap,.scene .chips{transform:translateX(-34px)}
@@ -4049,7 +4052,14 @@ function jrSetH(cm){
 function jrNudge(d){ jrSetH((jrDraft.h === "" ? 0 : +jrDraft.h) + d); }
 /* ▼▲ 꾹 누르면 계속 0.1cm 씩 (처음 0.4초 뒤부터 빠르게) */
 let _jrHoldT = null;
-function jrHold(d, w){ const f = w === "p" ? jrNudgeP : jrNudge; f(d); clearTimeout(_jrHoldT); _jrHoldT = setTimeout(function rep(){ f(d); _jrHoldT = setTimeout(rep, w === "p" ? 160 : 80); }, 400); }
+function jrHold(d, w){ const f = w === "p" ? jrNudgeP : w === "l" ? jrNudgeL : jrNudge; f(d); clearTimeout(_jrHoldT); _jrHoldT = setTimeout(function rep(){ f(d); _jrHoldT = setTimeout(rep, w ? 160 : 80); }, 400); }
+/* 🍃 잎 수 ▼▲ — 톡톡 센 수에서 더하고 뺌 */
+function jrNudgeL(d){
+  const base = jrDraft.l === "" ? document.querySelectorAll("#jrBox .lf[data-o]").length : +jrDraft.l;
+  jrDraft.l = String(clamp(base + d, 0, 80));
+  const v = $("jrLv"); if (v){ v.textContent = jrDraft.l; v.classList.remove("empty"); }
+  jrLock();
+}
 /* 🔮 어려움 예상 — 처음 누르면 오늘 잰 키(없으면 0)에서 시작 */
 function jrSetP(v){ v = clamp(Math.round(v * 10) / 10, 0, 30); jrDraft.pred = String(v); const e = $("jrP"); if (e){ e.textContent = v.toFixed(1); e.classList.remove("empty"); } jrLock(); }
 function jrNudgeP(d){ jrSetP(jrDraft.pred === "" ? (jrDraft.h === "" ? 0 : +jrDraft.h) + d : +jrDraft.pred + d); }
@@ -4094,25 +4104,29 @@ jrPick = function(x){
   document.querySelectorAll("#jrBox [data-x]").forEach(b => b.classList.toggle("on", +b.dataset.x === x));
   $("jrPv").textContent = `→ ${jrDraft.pred}cm`; jrLock();
 };
-jrLock = function(){
+function jrMissing(){
   const d = jrDraft, L = LV(), seed = stage(me) === 0, miss = [];
-  if (d.h === "") miss.push("📏");
-  if (L !== "easy" && !seed && d.l === "") miss.push("🍃");
-  if (L === "hard" && !seed && !d.color) miss.push("🎨");
-  if (!d.tags.length && !d.txt.trim()) miss.push("👀");
-  if (L === "hard" && d.pred === "") miss.push("🔮");
-  const b = $("jrSave"); if (!b) return;
+  if (d.h === "") miss.push("📏 키 재기");
+  if (L !== "easy" && !seed && d.l === "") miss.push("🍃 잎 세기");
+  if (L === "hard" && !seed && !d.color) miss.push("🎨 잎 색");
+  if (!d.tags.length && !d.txt.trim()) miss.push("👀 본 것");
+  if (L === "hard" && d.pred === "") miss.push("🔮 예상");
+  return miss;
+}
+jrLock = function(){
+  const miss = jrMissing(), b = $("jrSave"); if (!b) return;
   b.disabled = false;
-  $("jrWhy").textContent = miss.length ? "💡 아직 : " + miss.join(" ") + " (그래도 저장돼요)" : "";
+  $("jrWhy").textContent = miss.length ? "💡 아직 안 한 것 : " + miss.join(" · ") : "✔ 다 했어요!";
 };
 openJournal = function(){
   const p = me, lp = lastPred(p), L = LV(), seed = stage(p) === 0, v = jrView = jrViewOf(p);
   jrDraft = {h: "", l: seed ? "0" : "", color: seed ? "없음" : "", txt: "", pred: "", why: "", tags: [], other: []}; jrSeq = 0;
   if (jrDragInit.off) jrDragInit.off();
-  const plant = basilSVG(p).replace('viewBox="0 0 300 400"', `viewBox="${v.x} ${v.y} ${v.w} ${v.h}"`);
+  const bare = Object.assign({}, p, {deco: null, leafWet: 0, snail: 0, flower: false});   // 물방울 · 꾸미기 · 달팽이 · 꽃대가 잎을 가리지 않게
+  const plant = basilSVG(bare).replace('viewBox="0 0 300 400"', `viewBox="${v.x} ${v.y} ${v.w} ${v.h}"`);
   const none = `<span class="sub">🌱 아직 잎이 없어요</span>`;
   const leafRow = L === "easy" ? "" : `<div class="jrow"><span class="k">🍃</span>${seed ? none
-      : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 그림의 잎을 톡톡</span>`}</div>`;
+      : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onpointerdown="jrHold(-1,'l')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(1,'l')" onpointerleave="jrHoldEnd()">▲</button><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 그림의 잎을 톡톡</span>`}</div>`;
   const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🎨</span><span class="cl">가장 많은 색</span>
       <div class="sws">${JR_COLORS.map(([c, hx]) => `<button class="sw" data-c="${c}" onclick="jrColor('${c}')"><i style="background:${hx}"></i>${c}</button>`).join("")}</div></div>
     <div class="jrow" style="margin-top:-6px"><span class="k" style="background:none">➕</span><span class="cl">또 보이는 색</span>
@@ -4173,6 +4187,11 @@ saveJournal = function(){
     const tip = document.querySelector("#jrRes .tip"); if (m && tip) tip.insertAdjacentHTML("beforeend", m);
   }
   $("jrSave").textContent = "✅ 고쳐서 저장";
+  const miss = jrMissing(), res = $("jrRes");
+  if (res) res.insertAdjacentHTML("afterbegin", miss.length
+    ? `<div class="miss">📝 저장했어요! 아직 안 한 것 : <b>${miss.join(" · ")}</b><br><span style="font-size:16px">하고 나서 «✅ 고쳐서 저장» 을 눌러요</span></div>`
+    : `<div class="miss all">✔ 모두 기록했어요!</div>`);
+  if (sayOn()) speak(miss.length ? "저장했어요. 아직 안 한 것은 " + miss.map(x => x.replace(/^\S+\s/, "")).join(", ") + " 이에요." : "모두 기록했어요!");
   saveMe();
 };
 
