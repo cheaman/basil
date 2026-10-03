@@ -1376,7 +1376,7 @@ function buildWX(){
   const c = WXCFG, key = c.region + c.start, dflt = c.region === "대전" && c.start === "2025-10-05";
   if (c.mode === "today" || c.mode === "record"){
     WX = c._fetched && c._fetched.key === key ? wxFromRecord(c._fetched.data) : wxFromRecord(WX_DAEJEON_2025);
-    WX_SRC = c.mode === "today" ? `오늘 실제 날씨 · ${c.region} — 실제 앱은 매일 아침 그날 날씨와 예보를 받아 옴 (목업은 지난 기록으로 대신)` : `${c.region} ${c.start} 부터 21일 실제 기록`;
+    WX_SRC = c.mode === "today" ? `오늘 실제 날씨 · ${c.region} — 날마다 그날 날씨와 예보를 받아 반 모두 같은 날씨로 (못 받으면 지난 기록)` : `${c.region} ${c.start} 부터 21일 실제 기록`;
     if (!dflt && !(c._fetched && c._fetched.key === key)) WX_SRC += " — 받는 중… (못 받으면 대전 2025 기록)";
   } else if (c.mode === "preset"){ WX = genWX(PRESETS[c.preset], c.seed); WX_SRC = `시나리오 · ${PRESETS[c.preset].name} · 🎲 ${c.seed}`; }
   else if (c.mode === "random"){ WX = genWX({sunny:c.sunny, rainy:c.rainy, tmax:[24,19], tmin:[14,9], cold:c.cold, hot:c.hot}, c.seed); WX_SRC = `무작위 · 맑음 ${c.sunny}% · 비 ${c.rainy}% · 추운 밤 ${c.cold} · 더운 날 ${c.hot} · 🎲 ${c.seed}`; }
