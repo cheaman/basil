@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>바질 키우기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
@@ -353,6 +353,12 @@ body{margin:0;overflow:hidden;background:#dfe6d8}
 .setup input[type=text],.setup input[type=password],.setup input[type=date],.setup select{font:16px "Noto Sans KR";border:2px solid #cfe3c4;border-radius:10px;padding:5px 9px}
 .setup textarea{font:15px/1.5 "Noto Sans KR";border:2px solid #cfe3c4;border-radius:10px;padding:8px 10px;height:250px;width:100%}
 .dows{display:flex;gap:6px}
+/* 아이패드 · 갤럭시탭 : 길게 누르기 메뉴 · 글자 선택 · 두 번 눌러 확대 막기 (입력 칸은 그대로) */
+.app,.tapp{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.app input,.app textarea,.tapp input,.tapp textarea,.setup input,.setup textarea{-webkit-user-select:text;user-select:text}
+button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
+#rotateHint{display:none;position:fixed;left:0;right:0;bottom:0;padding:14px;background:#22302a;color:#fff;font:20px "Jua",sans-serif;text-align:center;z-index:999}
+@media (orientation:portrait) and (max-width:1100px){#rotateHint{display:block}}
 /* 따라 하기 */
 .tut{position:absolute;inset:0;z-index:40}
 .tut .hole{position:absolute;border-radius:16px;box-shadow:0 0 0 3000px rgba(18,28,22,.62);outline:4px solid #ffcf4a;transition:all .35s;pointer-events:none}
@@ -366,6 +372,7 @@ body{margin:0;overflow:hidden;background:#dfe6d8}
 </style>
 </head>
 <body>
+<div id="rotateHint">📱 ↔ 패드를 가로로 돌려 주세요 — 화면이 크게 보여요</div>
 
 
 
@@ -2534,6 +2541,14 @@ function appStart(){
   applyCfg(); fetchToday();
   show("p1"); renderLogin(); fit();
 }
+/* 사파리 · 크롬은 사람이 처음 누르기 전엔 소리를 막음 → 첫 터치에 소리 · 읽어 주기를 풀어 둠 */
+document.addEventListener("pointerdown", function unlock(){
+  try { if (window.speechSynthesis){ const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
+  try { ac().resume(); } catch (e) {}
+  document.removeEventListener("pointerdown", unlock, true);
+}, true);
+window.addEventListener("resize", () => setTimeout(fit, 100));
+window.addEventListener("orientationchange", () => setTimeout(fit, 300));
 window.addEventListener("beforeunload", saveMe);
 document.addEventListener("visibilitychange", () => { if (document.hidden) saveMe(); });
 
