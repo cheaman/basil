@@ -499,6 +499,27 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .bdg .ln b{font-weight:400;color:var(--leaf)}
 .bdg.cele .bi{animation:bdgPop .7s ease-out}
 @keyframes bdgPop{0%{transform:scale(.3) rotate(-20deg);opacity:0}60%{transform:scale(1.15) rotate(6deg);opacity:1}100%{transform:none}}
+/* 🛒 상점 · 🍳 요리 그림 */
+.shop2 .pv{height:200px;display:flex;justify-content:center;background:linear-gradient(#f3faff,#fbfdf8);border-radius:14px;margin-bottom:6px}
+.shop2 .pv svg{height:200px;width:auto}
+.shop2 .tabs{display:flex;gap:4px;margin-bottom:6px}
+.shop2 .tabs button{flex:1;border:2px solid #cfe3c4;background:#fff;border-radius:12px;padding:3px 2px;font:15px "Jua";color:#3b4a40;cursor:pointer}
+.shop2 .tabs button.on{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.shop2 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.shop2 .it{border:2px solid var(--line);border-radius:14px;padding:4px 2px;text-align:center;font:13px/1.2 "Jua";cursor:pointer;position:relative;background:#fff}
+.shop2 .it .ic{font-size:28px;height:34px;display:flex;align-items:center;justify-content:center}
+.shop2 .it .sw{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.1)}
+.shop2 .it small{display:block;font:11px "Noto Sans KR";color:#8a6400}
+.shop2 .it.own{border-color:#bfe0b0}
+.shop2 .it.on{border-color:var(--leaf);background:#eaf6e3}
+.shop2 .it.on:after{content:"✔";position:absolute;right:4px;top:0;color:var(--leaf);font-size:15px}
+.shop2 .it.poor{opacity:.5}
+.recipes i.rpic{font-size:0!important;line-height:0}
+.recipes i.rpic svg{width:100%;height:58px}
+.rbig{background:#fffaf0;border-radius:16px;margin:6px 0}
+.rbig svg{width:100%;height:170px}
+.minirec svg{width:100%;height:44px;display:block}
+.recipes div.off svg,.minirec div.off svg{filter:grayscale(1);opacity:.45}
 </style>
 </head>
 <body>
@@ -1232,7 +1253,7 @@ function openRecipe(id){
   if (p.harvested < r.need){ toast(`잎 ${r.need - p.harvested}장 더 거두면 열려요`); return; }
   if (!$("p5").classList.contains("on")) show("p5");
   const cooked = p.cooked.includes(id);
-  $("rcpBox").innerHTML = `<h2>${r.icon} ${r.name}</h2><div style="color:var(--sub)">내가 키운 바질로 만들어 봐요 · 「${esc(plantName)}」에서 거둔 잎 ${p.harvested}장</div>
+  $("rcpBox").innerHTML = `<h2>${r.icon} ${r.name}</h2><div class="rbig">${recipeSVG(r.id)}</div><div style="color:var(--sub)">내가 키운 바질로 만들어 봐요 · 「${esc(plantName)}」에서 거둔 잎 ${p.harvested}장</div>
     <h4>🧺 필요한 것</h4><ul>${r.items.map(i=>`<li>${i}</li>`).join("")}</ul>
     <h4>👩‍🍳 만드는 법</h4><ol>${r.steps.map(i=>`<li>${i}</li>`).join("")}</ol>
     <div class="safe">⚠ ${r.safe}</div>
@@ -1265,7 +1286,7 @@ function renderRewards(){
   let g = ""; for (let i = 0; i < n; i++) g += `<span style="left:${2 + (i % 12) * 8}%;bottom:${i < 12 ? 6 : 34}px;font-size:${20 + (i * 7) % 12}px">${["🌿","🌱","🌿","🪴"][i % 4]}</span>`;
   $("rwCook").innerHTML = `<h3>다. 요리 카드 + 반 정원<span class="tag">거둔 잎 ${p.harvested}장</span></h3>
     <div class="recipes">${RECIPES.map(r => { const open = p.harvested >= r.need;
-      return `<div class="${open?"":"off"}" onclick="openRecipe('${r.id}')"><i>${r.icon}</i>${r.name}<small>${open ? (p.cooked.includes(r.id) ? "✓ 만들어 봤어요" : "눌러서 보기") : `잎 ${r.need - p.harvested}장 더`}</small></div>`; }).join("")}</div>
+      return `<div class="${open?"":"off"}" onclick="openRecipe('${r.id}')"><i class="rpic">${recipeSVG(r.id)}</i>${r.name}<small>${open ? (p.cooked.includes(r.id) ? "✓ 만들어 봤어요" : "눌러서 보기") : `잎 ${r.need - p.harvested}장 더`}</small></div>`; }).join("")}</div>
     <div class="garden">${g}<div style="position:absolute;left:8px;top:6px;font:14px Jua;color:#2f6a2a">우리 반 거둔 잎 ${sum}장 / 목표 ${goal}장 ${sum >= goal ? "🎉 달성!" : ""}</div></div>
     <p>요리 카드에는 재료 · 만드는 법 · 안전 주의가 있어요. 집에서 만든 사진은 클래스룸에 올려 나눠요.</p>`;
 }
@@ -1279,7 +1300,7 @@ function renderHarvest(){
     <button class="big" ${lockFinal?"disabled":""} onclick="doFinal()">🌾 남은 잎 모두 거두기</button>
     ${lockFinal ? `<div class="why" style="text-align:center">🔒 ${lockFinal}</div>` : ""}
     <div style="font:19px Jua;margin-top:6px">🍳 열린 요리 카드</div>
-    <div class="minirec">${RECIPES.map(r => `<div class="${p.harvested >= r.need ? "" : "off"}" onclick="openRecipe('${r.id}')">${r.icon} ${r.name}<br><small style="font:12px 'Noto Sans KR';color:#a06a2c">${p.harvested >= r.need ? "눌러서 보기" : "잎 " + r.need + "장"}</small></div>`).join("")}</div>`;
+    <div class="minirec">${RECIPES.map(r => `<div class="${p.harvested >= r.need ? "" : "off"}" onclick="openRecipe('${r.id}')">${recipeSVG(r.id)}${r.name}<br><small style="font:12px 'Noto Sans KR';color:#a06a2c">${p.harvested >= r.need ? "눌러서 보기" : "잎 " + r.need + "장"}</small></div>`).join("")}</div>`;
 }
 function doPick(){ const n = pickLeaves(me); renderMe(); toast(`잎 ${n}장을 땄어요! 🌱 +${Math.ceil(n/2)} · 곁눈에서 새 잎이 나요`); }
 function doFinal(){ const n = finalHarvest(me); renderMe(); toast(`잎 ${n}장을 거뒀어요! 모두 ${me.harvested}장 🎉`); }
@@ -3775,6 +3796,126 @@ function checkBadges(){
     }
   }
   _earned = now;
+}
+
+
+/* ═════════ 🛒 화분 꾸미기 상점 (네 칸) — 산 것은 눌러서 붙였다 뗐다 · 코인은 처음 한 번만 ═════════
+   p.deco = {pot: 화분 색, pat: 무늬, tag: 이름표 모양, items: [붙인 친구 · 장식]} · p.owned = 산 것
+   보상은 노력으로 받고 자라는 데는 영향 없음 (공정) */
+const SHOP2 = {
+  pot: [["potOrg","처음 화분","#d9805a",0],["potBlue","파랑","#6f9fd8",8],["potYel","노랑","#e8bf4a",8],["potPink","분홍","#e59ab8",9],["potGreen","초록","#7cbf6a",8],["potPurple","보라","#a58bd6",9],["potWhite","하양","#f2efe6",10],["potNavy","남색","#3f5a8a",10],
+        ["patStripe","줄무늬","≡",10],["patDot","물방울","⋯",10],["patStar","별무늬","★",12]],
+  tag: [["tag","나무 이름표","🪵",3],["tagHeart","하트 이름표","💗",6],["tagCloud","구름 이름표","☁️",6],["tagStar","별 이름표","⭐",7]],
+  friend: [["lady","무당벌레","🐞",5],["snail","달팽이","🐌",6],["butter","나비","🦋",7],["bee","꿀벌","🐝",6],["frog","개구리","🐸",8],["worm","지렁이","🪱",4],["bird","참새","🐦",9],["hedge","고슴도치","🦔",10]],
+  deco: [["ribbon","리본","🎀",4],["crown","왕관","👑",10],["rainbow","무지개","🌈",12],["sparkle","반짝이","✨",6],["fence","울타리","🚧",8],["pebble","조약돌","🪨",5]],
+};
+const SHOP_TABS = [["pot","🪴 화분"],["tag","🏷️ 이름표"],["friend","🐞 친구"],["deco","✨ 장식"]];
+let _shopTab = "pot";
+function shopItem(id){ for (const [cat, list] of Object.entries(SHOP2)){ const x = list.find(r => r[0] === id); if (x) return {cat, id: x[0], name: x[1], icon: x[2], price: x[3]}; } return null; }
+/* 예전 판에서 산 이름표(아이템)는 «나무 이름표» 모양으로 옮김 */
+function decoFix(p){
+  p.deco = p.deco || {pot: null, items: []}; p.deco.items = p.deco.items || []; p.owned = p.owned || [];
+  if (p.deco.items.includes("tag")){ p.deco.items = p.deco.items.filter(x => x !== "tag"); if (!p.deco.tag) p.deco.tag = "tag"; }
+}
+function isOn(p, it){
+  const d = p.deco;
+  if (it.id.startsWith("pat")) return d.pat === it.id;
+  if (it.cat === "pot") return (d.pot || "#d9805a") === it.icon;
+  if (it.cat === "tag") return d.tag === it.id;
+  return d.items.includes(it.id);
+}
+function buy(id){
+  const it = shopItem(id), p = me; if (!it) return; decoFix(p);
+  const own = it.price === 0 || p.owned.includes(id);
+  if (!own){
+    if (p.coins < it.price){ sfx("bad"); toast(`🌱 ${it.price - p.coins}개 더 모아요`); return; }
+    addCoin(p, -it.price, "상점 : " + it.name); p.owned.push(id); sfx("chime");
+  }
+  const d = p.deco, on = isOn(p, it);
+  if (it.id.startsWith("pat")) d.pat = on ? null : id;
+  else if (it.cat === "pot") d.pot = it.icon;
+  else if (it.cat === "tag") d.tag = on ? null : id;
+  else d.items = on ? d.items.filter(x => x !== id) : d.items.concat(id);
+  renderMe();
+  toast(!own ? `${it.name} 샀어요! 내 바질에 붙였어요` : it.cat === "pot" && !it.id.startsWith("pat") ? `${it.name}(으)로 바꿨어요` : on ? `${it.name} 뗐어요` : `${it.name} 붙였어요`);
+}
+function renderShop(p){
+  const el = $("rwShop"); if (!el) return; decoFix(p);
+  const list = SHOP2[_shopTab];
+  const cell = r => { const it = {cat: _shopTab, id: r[0], name: r[1], icon: r[2], price: r[3]}, own = it.price === 0 || p.owned.includes(it.id), on = isOn(p, it);
+    const ic = _shopTab === "pot" && !it.id.startsWith("pat") ? `<span class="sw" style="background:${it.icon}"></span>` : `<span>${it.icon}</span>`;
+    const st = own ? (on ? "붙임" : _shopTab === "pot" && !it.id.startsWith("pat") ? "바꾸기" : "붙이기") : p.coins < it.price ? `🌱${it.price}` : `🌱${it.price}`;
+    return `<div class="it ${own ? "own" : ""} ${on ? "on" : ""} ${!own && p.coins < it.price ? "poor" : ""}" onclick="buy('${it.id}')"><div class="ic">${ic}</div>${it.name}<small>${st}</small></div>`; };
+  el.innerHTML = `<h3>가. 화분 꾸미기 상점<span class="tag">🌱 ${p.coins}</span></h3><div class="shop2">
+    <div class="pv">${basilSVG(p).replace('viewBox="0 0 300 400"', 'viewBox="0 70 300 330"')}</div>
+    <div class="tabs">${SHOP_TABS.map(([k, n]) => `<button class="${_shopTab === k ? "on" : ""}" onclick="_shopTab='${k}';renderShop(me)">${n}</button>`).join("")}</div>
+    <div class="grid">${list.map(cell).join("")}</div></div>
+    <p>🌱 코인은 돌볼 때마다 생겨요 · 산 것은 다시 누르면 붙였다 뗐다 (코인은 처음 한 번만)</p>`;
+}
+const _renderExtrasShop = renderExtras;
+renderExtras = function(p){ _renderExtrasShop(p); renderShop(p); };
+/* 바질 그림에 꾸미기 더하기 — 무늬 · 이름표 모양 · 새 친구 · 장식 (예전 것 : 리본 · 무당벌레 · 달팽이 · 나비는 원래 그림이 그림) */
+const _basilSVGDeco = basilSVG;
+basilSVG = function(p, opt){
+  let svg = _basilSVGDeco(p, opt);
+  if (!p || !p.deco) return svg;
+  const d = p.deco, it = d.items || [], tY = 284 - Math.min(p.h || 0, 18) * 9.5;
+  let back = "", g = "";
+  if (it.includes("rainbow")) back += `<g opacity=".85"><path d="M14 150 A70 70 0 0 1 154 150" stroke="#f26b5b" stroke-width="7" fill="none"/><path d="M21 150 A63 63 0 0 1 147 150" stroke="#f7c34a" stroke-width="7" fill="none"/><path d="M28 150 A56 56 0 0 1 140 150" stroke="#7cc46a" stroke-width="7" fill="none"/><path d="M35 150 A49 49 0 0 1 133 150" stroke="#6aa8e8" stroke-width="7" fill="none"/></g>`;
+  // 화분 무늬 (얼굴은 피해서)
+  if (d.pat === "patStripe") g += `<g fill="#fff" opacity=".45"><rect x="72" y="291" width="156" height="5" rx="2"/><path d="M84 372 L216 372 L215 378 L85 378 Z"/><path d="M87 384 L213 384 L212 389 L88 389 Z"/></g>`;
+  if (d.pat === "patDot") g += `<g fill="#fff" opacity=".55">${[[98,318],[108,346],[100,374],[202,318],[192,346],[200,374],[122,385],[150,388],[178,385]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.5"/>`).join("")}</g>`;
+  if (d.pat === "patStar") g += `<g fill="#fff6b0" opacity=".9">${[[100,322],[104,370],[198,322],[194,370],[150,386]].map(([x, y]) => `<path transform="translate(${x} ${y}) scale(.55)" d="M0 -10 L3 -3 L10 -3 L4 2 L6 9 L0 5 L-6 9 L-4 2 L-10 -3 L-3 -3 Z"/>`).join("")}</g>`;
+  // 이름표 모양
+  if (d.tag){
+    const S = {tag: ["#fff8e1", "#c9a96a", "#6a4a1a", "", ""], tagHeart: ["#ffe1ec", "#e58aa8", "#a0305a", "💗", "💗"], tagCloud: ["#ffffff", "#9cc8ee", "#2f6aa0", "☁️", "☁️"], tagStar: ["#fff3b0", "#e0b43a", "#7a5a00", "⭐", "⭐"]}[d.tag] || ["#fff8e1", "#c9a96a", "#6a4a1a", "", ""];
+    g += `<rect x="108" y="362" width="84" height="24" rx="${d.tag === "tagCloud" ? 12 : 6}" fill="${S[0]}" stroke="${S[1]}" stroke-width="2"/><text x="150" y="379" font-size="14" text-anchor="middle" font-family="Jua" fill="${S[2]}">${esc(p.name || "")}</text>`;
+    if (S[3]) g += `<text x="94" y="381" font-size="15">${S[3]}</text><text x="190" y="381" font-size="15">${S[4]}</text>`;
+  }
+  if (it.includes("pebble")) g += `<g fill="#a7a39a"><ellipse cx="118" cy="288" rx="7" ry="3.5"/><ellipse cx="176" cy="289" rx="6" ry="3"/><ellipse cx="160" cy="291" rx="4.5" ry="2.5" fill="#c2beb4"/></g>`;
+  if (it.includes("fence")) for (const x0 of [24, 236]) for (let i = 0; i < 3; i++){ const x = x0 + i * 13; g += `<path d="M${x} 394 L${x} 362 L${x + 5} 356 L${x + 10} 362 L${x + 10} 394 Z" fill="#fffaf0" stroke="#c9b48a" stroke-width="1.5"/>`; }
+  if (it.includes("fence")) g += `<rect x="22" y="372" width="40" height="4" fill="#e6d6b5"/><rect x="234" y="372" width="40" height="4" fill="#e6d6b5"/>`;
+  if (it.includes("worm"))   g += `<text x="178" y="292" font-size="16">🪱</text>`;
+  if (it.includes("bee"))    g += `<text x="236" y="${Math.max(80, tY + 20)}" font-size="22">🐝</text>`;
+  if (it.includes("frog"))   g += `<text x="4" y="392" font-size="28">🐸</text>`;
+  if (it.includes("bird"))   g += `<text x="58" y="286" font-size="24">🐦</text>`;
+  if (it.includes("hedge"))  g += `<text x="256" y="393" font-size="26">🦔</text>`;
+  if (it.includes("crown"))  g += `<text x="136" y="${Math.max(34, tY + 4)}" font-size="26">👑</text>`;
+  if (it.includes("sparkle")) g += `<text x="96" y="${tY + 40}" font-size="18">✨</text><text x="196" y="${tY + 14}" font-size="16">✨</text><text x="210" y="${tY + 70}" font-size="14">✨</text>`;
+  if (back) svg = svg.replace(/(<svg[^>]*>)/, "$1" + back);
+  return g ? svg.replace(/<\/svg>$/, g + "</svg>") : svg;
+};
+
+/* ═════════ 🍳 요리 그림 — 요리 카드 넷 (직접 그림 · 바질 잎이 보이게) ═════════ */
+const rLeaf = (x, y, r, s) => `<g transform="translate(${x} ${y}) rotate(${r}) scale(${s || 1})"><path d="M0 0 C6 -9 20 -9 27 0 C20 9 6 9 0 0 Z" fill="#3e8e3a"/><path d="M1 0 L25 0" stroke="#8fd36a" stroke-width="1.2"/></g>`;
+function recipeSVG(id){
+  let g = "";
+  if (id === "lemon"){
+    g = `<rect x="104" y="6" width="5" height="70" rx="2" fill="#f26b5b" transform="rotate(14 106 40)"/>
+      <path d="M68 30 L132 30 L123 128 Q122 135 114 135 L86 135 Q78 135 77 128 Z" fill="#f4fbff" stroke="#c9d8e2" stroke-width="2"/>
+      <path d="M70.5 50 L129.5 50 L123 128 Q122 135 114 135 L86 135 Q78 135 77 128 Z" fill="#f7e36b" opacity=".92"/>
+      <rect x="82" y="60" width="16" height="15" rx="3" fill="#fff" opacity=".7" transform="rotate(-12 90 67)"/><rect x="102" y="70" width="15" height="14" rx="3" fill="#fff" opacity=".7" transform="rotate(10 110 77)"/>
+      ${rLeaf(86, 52, -10, .9)}${rLeaf(104, 56, 20, .8)}
+      <circle cx="132" cy="34" r="14" fill="#f7d33a" stroke="#e8b52a" stroke-width="2"/><circle cx="132" cy="34" r="9" fill="#fbe98a"/><path d="M132 25 L132 43 M123 34 L141 34 M126 28 L138 40 M138 28 L126 40" stroke="#f7d33a" stroke-width="1.5"/>`;
+  }
+  if (id === "caprese"){
+    g = `<ellipse cx="100" cy="82" rx="94" ry="50" fill="#fff" stroke="#e3e3e3" stroke-width="2"/><ellipse cx="100" cy="82" rx="78" ry="38" fill="#fafafa"/>`;
+    const pts = [[46,78],[70,58],[100,52],[130,58],[154,78],[130,102],[100,108],[70,102]];
+    pts.forEach(([x, y], i) => { g += i % 2 ? `<circle cx="${x}" cy="${y}" r="15" fill="#fffef4" stroke="#ece8d8" stroke-width="1.5"/>` : `<circle cx="${x}" cy="${y}" r="15" fill="#e5533d"/><circle cx="${x}" cy="${y}" r="9" fill="#f07a62"/><circle cx="${x - 3}" cy="${y - 2}" r="1.5" fill="#fbe7a1"/><circle cx="${x + 3}" cy="${y + 2}" r="1.5" fill="#fbe7a1"/>`; });
+    g += rLeaf(82, 80, -20, 1.1) + rLeaf(104, 74, 30, 1.1) + rLeaf(96, 90, 160, 1) + `<path d="M48 60 Q100 40 150 62" stroke="#d9c25a" stroke-width="2" fill="none" opacity=".7"/>`;
+  }
+  if (id === "pizza"){
+    g = `<ellipse cx="100" cy="128" rx="80" ry="8" fill="#e8e2d6"/><rect x="44" y="18" width="112" height="104" rx="16" fill="#e2a95c"/><rect x="52" y="26" width="96" height="88" rx="11" fill="#d9472f"/>
+      ${[[70,44,13,9],[104,40,15,10],[132,56,12,9],[80,74,15,10],[118,82,14,10],[70,100,12,8],[106,104,13,8]].map(([x, y, rx, ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#ffd75e"/>`).join("")}
+      ${rLeaf(64, 58, -30, .9)}${rLeaf(100, 62, 15, 1)}${rLeaf(120, 96, -60, .85)}${rLeaf(84, 92, 40, .8)}`;
+  }
+  if (id === "pesto"){
+    g = `<ellipse cx="100" cy="86" rx="92" ry="46" fill="#fff" stroke="#e3e3e3" stroke-width="2"/><ellipse cx="100" cy="84" rx="66" ry="30" fill="#f4f8ec"/>`;
+    for (let i = 0; i < 9; i++){ const y = 64 + i * 5, x = 50 + (i % 3) * 6; g += `<path d="M${x} ${y} q12 -10 24 0 t24 0 t24 0 t24 0" stroke="${i % 2 ? "#7cb342" : "#8bc34a"}" stroke-width="5" fill="none" stroke-linecap="round"/>`; }
+    g += [[78,70],[118,76],[96,96],[134,92]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="4" ry="2.6" fill="#f3e0b5" stroke="#d9c08a" stroke-width=".8"/>`).join("") + [[86,84],[110,90],[124,70]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.8" fill="#fff"/>`).join("");
+    g += rLeaf(92, 60, -25, 1.2) + rLeaf(106, 58, 25, 1.1);
+  }
+  return `<svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid meet">${g}</svg>`;
 }
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
