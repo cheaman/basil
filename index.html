@@ -562,6 +562,9 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .night{display:none!important}
 .demo{bottom:auto!important;top:12px}
 #jrSave{white-space:nowrap}
+/* 상태판(아래 바닥 · 높이 약 125)만큼 장면 아래를 늘 비워 화분을 올림 — 시험기를 펼치면 .testing(170) 이 이김 */
+.scene{padding-bottom:142px!important}
+#sayBtn.sayon{background:var(--leaf)!important;color:#fff!important;box-shadow:0 0 0 3px #cfe9c4}
 </style>
 </head>
 <body>
@@ -4175,6 +4178,23 @@ document.addEventListener("click", ev => {
 }, true);
 const _toastSay = toast;
 toast = function(msg){ _toastSay(msg); if (stuName && me && sayOn()) speakQ(String(msg).replace(/<[^>]+>/g, " ")); };
+
+
+/* ═════════ 🔈 읽어 주기 — 켬/끔이 한눈에 (10-03 밤 전무님 «누르면 켜지기만 한다») ═════════
+   켬 = 초록 바탕 🔊 · 끔 = 🔇 · 화면을 그릴 때마다 단추를 지금 상태에 맞춤 (전에는 처음 그림이 상태와 달랐음) */
+function sayIcon(){
+  const b = $("sayBtn"); if (!b) return;
+  const on = !!(stuName && me && sayOn());
+  b.textContent = on ? "🔊" : "🔇"; b.classList.toggle("sayon", on); b.title = on ? "읽어 주기 끄기" : "읽어 주기 켜기";
+}
+toggleSay = function(){
+  me.readAloud = !sayOn();
+  if (me.readAloud) speak("읽어 주기를 켰어요. 단추나 글을 누르면 읽어 줄게요.");
+  else { try { speechSynthesis.cancel(); } catch (e) {} toast("🔇 읽어 주기를 껐어요"); }
+  sayIcon(); saveMe();
+};
+const _renderMeSay = renderMe;
+renderMe = function(){ const r = _renderMeSay.apply(this, arguments); sayIcon(); return r; };
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
