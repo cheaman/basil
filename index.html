@@ -426,7 +426,7 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .ib.lock{background:#eef0ec;color:#a6aea8}
 .ib.lock:after{content:"🔒";position:absolute;right:-5px;top:-7px;font-size:16px}
 /* 🩺 상태판 (화분 왼쪽) · 어젯밤 줄 */
-.stat{position:absolute;left:10px;top:258px;width:228px;z-index:4;background:rgba(255,255,255,.95);border-radius:18px;padding:8px 10px;box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:5px}
+.stat{position:absolute;left:10px;top:258px;width:228px;z-index:4;background:rgba(255,255,255,.95);border-radius:18px;padding:6px 10px;box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;flex-direction:column;gap:3px}
 .stat .t{font:17px "Jua"}
 .stat .g{display:flex;align-items:center;gap:6px;font:15px "Jua"}
 .stat .g .ic{width:24px;text-align:center;font-size:19px}
@@ -3260,7 +3260,7 @@ function todayScore(p){
   else s.water = 0;
   const sun = spotNow(p, p.spot, w).sun, night = nightsAhead(p, nSpot(p), g);
   s.spot = (sun >= 6 || sun >= bestOf(p, x => spotNow(p, x, w).sun) - .3 ? 10 : 0) + (night >= 10 || night >= bestOf(p, x => nightsAhead(p, x, g)) - .3 ? 10 : 0);
-  const need = (p.saucer > 0 ? 1 : 0) + (p.moist > 95 ? 1 : 0) + (p.bug ? 1 : 0) + (sickList(p).filter(x => x !== "bug" && x !== "wet").length && !td.diag ? 1 : 0) + (LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert ? 1 : 0);
+  const need = (p.saucer > 0 ? 1 : 0) + (p.moist > 95 ? 1 : 0) + ((p.air ?? 80) < 50 && !td.vent ? 1 : 0) + (p.bug ? 1 : 0) + (sickList(p).filter(x => x !== "bug" && x !== "wet").length && !td.diag ? 1 : 0) + (LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert ? 1 : 0);
   s.care = Math.max(0, 15 - need * 5 - (td.fert && p.day - (p.prevFert ?? -99) < 6 ? 5 : 0));
   s.jr = td.journal && td.jrH ? 10 + (td.jrAcc ? 5 : 0) : 0;   // 키를 적어야 10 · 처음 적은 키가 정확하면 +5
   const ch = [];
@@ -3288,7 +3288,7 @@ function scoreWhy(p, k){
   }
   if (k === "spot"){ const sun = spotNow(p, p.spot, w).sun, nt = nightsAhead(p, nSpot(p), g); return top + `낮 햇빛 6시간+ ${sun.toFixed(1)}h ${Y(sc.spot === 20 || sun >= 6)} · 밤 10°+ ${Math.round(nt)}° ${Y(nt >= 10)} (밤이 추우면 «🌙 밤 자리» 를 안쪽으로 · 가장 좋은 곳이면 만점)`; }
   if (k === "care"){
-    const need = [p.saucer > 0 && "🍽 받침 물", p.moist > 95 && "💦 흙물 너무 많음", p.bug && "🐛 벌레", sickList(p).filter(x => x !== "bug" && x !== "wet").length && !td.diag && "🩺 진찰", LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert && "🧪 거름"].filter(Boolean);
+    const need = [p.saucer > 0 && "🍽 받침 물", p.moist > 95 && "💦 흙물 너무 많음", (p.air ?? 80) < 50 && !td.vent && "🌬 환기", p.bug && "🐛 벌레", sickList(p).filter(x => x !== "bug" && x !== "wet").length && !td.diag && "🩺 진찰", LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert && "🧪 거름"].filter(Boolean);
     return top + (need.length ? `남은 일 : ${need.join(" · ")} (하나에 −5)` : "오늘 해 줄 일이 없어요 → 만점");
   }
   if (k === "jr") return top + `키 적기 10 ${Y(td.jrH)} · 처음 적은 키가 정확 +5 ${td.jrH ? Y(td.jrAcc) : "—"}`;
@@ -3382,7 +3382,7 @@ function renderMe(){
     <div class="row tight">${B("🗺", "낮 자리", "openMap()", dead ? "dead" : "")}${B("🌙", p.nightSpot && p.nightSpot !== p.spot ? SPOTS[p.nightSpot].icon + " 밤" : "밤 자리", "openNightMap()", dead ? "dead" : "", nightsAhead(p, nSpot(p), gapToNext(p)) < 10 ? "main" : p.nightSpot && p.nightSpot !== p.spot ? "sel" : "")}${L !== "easy" && (p.spot === "window" || p.spot === "side") ? B("🪟", p.blind ? "올리기" : "내리기", `doBlind(${!p.blind})`, dead ? "dead" : "", p.blind ? "sel" : "") : ""}${L === "hard" ? B("🧥", p.cover ? "벗기기" : "덮개", "toggleCover()", dead ? "dead" : "", p.cover ? "sel" : "") : ""}</div>`;
   // ④ 가꾸기
   const prog = [lk.pinch === "grow" ? (p.h < 10 ? `✂ 📏${p.h.toFixed(1)}/10` : `✂ 🍃${leaves(p)}/8`) : "", lk.pick === "pick" && !p.done ? (leaves(p) < 10 ? `🧺 🍃${leaves(p)}/10` : `🧺 ⏳${3 - (p.day - p.lastPick)}일`) : p.harvested ? `🧺 ${p.harvested}장` : ""].filter(Boolean).join("　");   // 가장 가까운 조건 하나씩만
-  const garden = `<div class="row">${L === "easy" ? "" : B("🧪", "거름", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}</div><div class="tiny">${prog}</div>`;
+  const garden = `<div class="row tight">${B("🌬", "환기", "ventNow()", dead ? "dead" : p.today.vent ? "done" : "", (p.air ?? 80) < 50 ? "main" : "")}${L === "easy" ? "" : B("🧪", "거름", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}</div><div class="tiny">${prog}</div>`;
   // ⑤ 일지
   const lp = lastPred(p), n = p.notes[p.notes.length - 1];
   const jrNote = p.today.journal && n ? `📏 ${n.hIn}${n.lIn != null && L !== "easy" ? ` · 🍃 ${n.lIn}` : ""}` : (lp && !lp.checked && L !== "easy") ? `🔮 지난 예상 ${lp.pred}?` : "";
@@ -3404,7 +3404,8 @@ const STAT_HELP = {
   s: "☀ 햇빛 = 지금 자리에서 오늘 받는 햇빛 시간. 6시간 넘으면 좋아요",
   n: "🌙 밤 = 다음 수업까지 가장 추운 밤 온도(밤 자리). 10℃ 넘으면 좋아요. 추우면 «🌙 밤 자리» 를 안쪽으로",
   f: "🧪 양분 = 흙 속 거름. 날마다 줄어요. 25~80이 좋아요",
-  h: "❤ 건강 = 바질 기운. 위 넷이 초록 칸이면 밤마다 올라가요",
+  a: "🌬 공기 = 교실 공기가 얼마나 상쾌한가. «🌬 환기» 를 누르면 100, 안 하면 하루에 20씩 줄어요. 50 넘으면 좋아요",
+  h: "❤ 건강 = 바질 기운. 위 줄들이 초록 칸이면 밤마다 올라가요",
 };
 let _statKey = "";
 function statHelp(k){ _statKey = _statKey === k ? "" : k; renderStat(me); if (_statKey && sayOn()) speak(STAT_HELP[k]); }
@@ -3425,6 +3426,7 @@ function renderStat(p){
     + G("s", "☀", "햇빛", s.sun, 6, 12, 12, s.sun.toFixed(1) + "h")
     + (L === "easy" ? "" : G("n", "🌙", "밤", night, 10, 30, 30, Math.round(night) + "°"))
     + (L === "easy" ? "" : G("f", "🧪", "양분", p.nutr, 25, 80, 100, Math.round(p.nutr)))
+    + G("a", "🌬", "공기", p.air ?? 80, 50, 100, 100, Math.round(p.air ?? 80))
     + G("h", "❤", "건강", p.health, 60, 100, 100, Math.round(p.health))
     + `<div class="hl">${_statKey ? STAT_HELP[_statKey] : "👆 줄을 누르면 뜻이 나와요"}</div>`;
   // 어젯밤 줄 — 지난번 들어온 뒤 밤마다 건강이 오르내린 것
@@ -3440,7 +3442,7 @@ function renderStat(p){
 const SICK_PIC = {dry: ["😩", "잎이 축 처졌어"], wet: ["💛", "아래 잎이 노래"], dark: ["🥢", "줄기만 길쭉해"], cold: ["🖤", "잎이 거무스름해"], scorch: ["🍂", "잎 끝이 갈색이야"], mildew: ["⚪", "하얀 가루가…"], bug: ["🐛", "잎 뒤가 간질간질"]};
 const ACT2 = {
   drain: ["🍽", "버리기", () => doDrain()], tilt: ["🪴", "물 빼기", () => tiltDrain()], noWater: ["🚱", "오늘 그만", () => skipWater()], water: ["💧", "물 주기", () => LV() === "easy" ? easyWater() : goWater()],
-  inside: ["🗺", "안쪽으로", () => openMap()], nightIn: ["🌙", "밤엔 안쪽", () => openNightMap()], bright: ["🗺", "밝은 곳", () => openMap()], diag: ["🩺", "진찰", () => openDiag()],
+  inside: ["🗺", "안쪽으로", () => openMap()], nightIn: ["🌙", "밤엔 안쪽", () => openNightMap()], vent: ["🌬", "환기", () => ventNow()], bright: ["🗺", "밝은 곳", () => openMap()], diag: ["🩺", "진찰", () => openDiag()],
   fert: ["🧪", "거름", () => doFert()], pinch: ["✂", "자르기", () => doPinch()], pick: ["🧺", "따기", () => doPick()], replant: ["🌈", "다시 심기", () => openDead()],
 };
 const WRONG2 = {more: ["💧", "더 주기"], shade: ["🗺", "옮기기"], lots: ["💧", "듬뿍"], blindC: ["🪟", "블라인드"]};
@@ -3467,6 +3469,7 @@ function alertsOf(p){
   if (L === "normal" && !p.chill && nt < 10) add("cold", `🌙🥶`, `밤에 ${Math.round(nt)}°, 추워!`, ["nightIn"], ["blindC", "❌ 블라인드로는 못 막아요"]);
   if (stage(p) >= 1 && here.sun < 3) add("dark", "🌑", "햇빛 줘!", ["bright"], ["more", "❌ 햇빛이 모자라요"]);
   if (L === "normal" && stage(p) >= 2 && p.nutr < 25 && !p.today.fert) add("fert", "🍂🧪", "배고파!", ["fert"], ["more", "❌ 양분이 모자라요"]);
+  if ((p.air ?? 80) < 50 && !p.today.vent) add("air", "😮‍💨", "답답해!", ["vent"], ["more", "❌ 물보다 바람이 필요해요"]);
   if (p.health < 40 && !out.length) add("weak", "🤒", "아파…", ["diag"]);
   if (canPinch) add("pinch", "✂🌿", "순지르기 할 때!", ["pinch"]);
   else if (!pickLock(p)) add("pick", "🧺🍃", "잎 따도 돼!", ["pick"]);
@@ -3614,6 +3617,39 @@ function saveJournal(){
   $("jrRes").innerHTML = msg; $("jrSave").textContent = "고쳐서 저장"; $("jrWhy").textContent = "✔ 저장했어요 — 더 고쳐도 돼요";
   sfx(p.today.accH ? "chime" : "pop"); renderMe();
 }
+
+
+/* ═════════ 🌬 환기 — 공기(p.air 0~100) ═════════
+   환기한 날 밤 : 100 → 80 · 안 한 날 밤 : −20 (덮개를 씌우면 −30)
+   공기가 50 아래면 : 덜 자람(×0.85 · 쉬움 ×0.9) · 어려움은 잎이 잘 안 말라 흰가루 쪽으로 · 30 아래면 진딧물(보통 · 어려움)
+   추운 날(낮 14° 아래) 창가 · 창가 옆 벽에서 환기하면 찬 바람에 건강 −2 */
+function ventNow(){
+  if (busy || me.dead) return;
+  visit(me);
+  const w = wxOf(me.day), cold = w.tmax < 14 && (me.spot === "window" || me.spot === "side");
+  me.air = 100; sfx("whoosh");
+  if (!me.today.vent){ me.today.vent = true; addCoin(me, 1, "환기"); }
+  if (cold){ me.health = clamp(me.health - 2, 0, 100); }
+  renderMe();
+  if (cold){ sad("🥶"); toast("🌬 환기했어요 — 그런데 찬 바람! 추운 날엔 창가에서 짧게"); }
+  else { happy(); toast("🌬 창문을 열었어요 — 공기 상쾌! 🌱 +1"); }
+}
+const _dayStepAir = dayStep;
+dayStep = function(p){
+  const vent = !!(p.today && p.today.vent), a0 = p.air ?? 80, h0 = p.h, l0 = p.leafAcc, covered = LV() === "hard" && p.cover;
+  _dayStepAir(p);
+  const stuffy = a0 < 50 && !vent;
+  if (stuffy && !p.dead){
+    const k = LV() === "easy" ? .1 : .15;
+    p.h -= Math.max(0, p.h - h0) * k; p.leafAcc -= Math.max(0, p.leafAcc - l0) * k;
+    if (LV() === "hard") p.leafWet += .3;
+    if (LV() !== "easy" && a0 < 30 && !p.bug && !p.bugDone) p.bug = true;
+  }
+  p.air = clamp((vent ? 100 : a0) - 20 - (covered ? 10 : 0), 0, 100);
+};
+/* 반 친구 · 시험기 «꼼꼼히 돌봄» 도 환기를 함 */
+const _autoCareAir = autoCare;
+autoCare = function(p, e, r){ _autoCareAir(p, e, r); if (p.today && p.today.visited && r() < e) p.today.vent = true; };
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
