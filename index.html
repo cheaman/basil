@@ -544,7 +544,7 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
           <div class="fact"><h4>🌡 좋아하는 온도</h4><p>따뜻한 걸 좋아해요(20~30℃). <b>10℃보다 추우면</b> 잘 자라지 못해요.</p></div>
           <div class="fact"><h4>☀ 햇빛</h4><p>하루 <b>6시간 넘게</b> 햇빛을 받아야 잘 자라요. 어두우면 줄기만 가늘고 길게 자라요(웃자람).</p></div>
           <div class="fact"><h4>💧 물</h4><p><b>겉흙이 마르면</b> 화분 밑으로 물이 나올 만큼 줘요. 늘 젖어 있으면 뿌리가 썩어요.</p></div>
-          <div class="fact"><h4>🌱 싹 트기</h4><p>씨앗을 심고 <b>5~10일</b>쯤 지나면 싹이 나요. 동그란 <b>떡잎 2장</b>이 먼저 나와요.</p></div>
+          <div class="fact"><h4>🌱 싹 트기 · 모종</h4><p>씨앗을 심고 <b>1~2주</b>면 떡잎, <b>3주</b>쯤 첫 본잎이 나요. 우리 바질은 씨앗을 심고 약 <b>4주</b> 키운 <b>모종</b>(본잎 2쌍)을 화분에 옮겨 심어 시작해요.</p></div>
           <div class="fact"><h4>🍃 잎과 줄기</h4><p>잎이 한 마디에 두 장씩 <b>마주나요</b>. 줄기를 잘라 보면 <b>네모</b> 모양이에요.</p></div>
           <div class="fact"><h4>✂ 순지르기</h4><p>본잎이 6~8장일 때 <b>꼭대기 순</b>을 자르면 곁가지가 나와 잎이 많아져요.</p></div>
           <div class="fact"><h4>👃 향기와 쓰임</h4><p>잎을 문지르면 좋은 향이 나요. 피자 · 파스타 · 페스토에 넣어 먹어요.</p></div>
@@ -1096,15 +1096,15 @@ const RECIPES = [
    items:["바질 잎 4장","레몬즙 2큰술 (레몬 반 개)","꿀 1큰술","시원한 물 1컵","얼음 조금"],
    steps:["바질 잎을 흐르는 물에 살살 씻어요","컵에 바질 잎을 넣고 숟가락으로 살짝 눌러 향을 내요","레몬즙과 꿀을 넣고 물을 부어 잘 저어요","얼음을 넣고 바질 잎 한 장을 띄우면 끝!"],
    safe:"레몬 자르기는 어른이 해 주세요.", tip:"바질 잎을 살짝 누르면 잎 속 향기 기름이 나와 향이 진해져요."},
-  {id:"caprese", icon:"🥗", name:"카프레제 샐러드", need:8,
+  {id:"caprese", icon:"🥗", name:"카프레제 샐러드", need:9,
    items:["바질 잎 6장","방울토마토 6개","생모차렐라 치즈 조금","올리브유 · 소금 조금"],
    steps:["방울토마토를 반으로 잘라요 (칼은 어른과 함께)","접시에 토마토 · 치즈 · 바질 잎을 번갈아 놓아요","올리브유를 한 바퀴 두르고 소금을 살짝 뿌려요"],
    safe:"칼을 쓸 때는 꼭 어른과 함께해요.", tip:"이탈리아 국기 색(초록 · 하양 · 빨강)과 같아서 이탈리아 사람들이 좋아하는 요리예요."},
-  {id:"pizza", icon:"🍕", name:"바질 식빵 피자", need:13,
+  {id:"pizza", icon:"🍕", name:"바질 식빵 피자", need:15,
    items:["바질 잎 6장","식빵 1장","토마토소스 2큰술","피자 치즈 한 줌"],
    steps:["식빵에 토마토소스를 고루 펴 발라요","피자 치즈를 올려요","에어프라이어나 오븐에서 치즈가 녹을 때까지 구워요 (어른과 함께)","다 구운 뒤에 바질 잎을 손으로 찢어 올려요"],
    safe:"에어프라이어 · 오븐은 아주 뜨거워요. 꼭 어른과 함께해요.", tip:"바질은 오래 익히면 향이 약해져요. 다 익힌 뒤 마지막에 올려요."},
-  {id:"pesto", icon:"🍝", name:"바질 페스토 파스타", need:18,
+  {id:"pesto", icon:"🍝", name:"바질 페스토 파스타", need:22,
    items:["바질 잎 30장","잣 1큰술","마늘 반 쪽","치즈가루 2큰술","올리브유 4큰술","삶은 파스타 1인분"],
    steps:["바질 · 잣 · 마늘 · 치즈가루를 믹서에 넣어요","올리브유를 조금씩 넣으며 곱게 갈아요 (어른과 함께)","삶은 파스타에 페스토를 넣고 골고루 섞어요"],
    safe:"믹서 칼날과 끓는 물은 어른이 다뤄요. 잣(견과류) 알레르기가 있으면 잣을 빼요.", tip:"페스토는 이탈리아 제노바 지방에서 처음 만들었어요."},
@@ -1143,7 +1143,7 @@ function renderRewards(){
   $("rwBadge").innerHTML = `<h3>나. 배지 도감<span class="tag">${BADGES.filter(b=>b[3](p)).length} / ${BADGES.length}</span></h3><div class="badges">${BADGES.map(b =>
       `<div class="${b[3](p)?"":"off"}" title="${b[4]}"><i>${b[1]}</i>${b[2]}</div>`).join("")}</div>
     <p>배지를 받으면 「왜 받았나」가 실과 내용으로 나옵니다. 보기 : 주말 대비 = ${BADGES[6][4]}</p>`;
-  const sum = classHarvest() + p.harvested, goal = 250, n = Math.min(24, Math.round(sum / goal * 24));
+  const sum = classHarvest() + p.harvested, goal = 320, n = Math.min(24, Math.round(sum / goal * 24));
   let g = ""; for (let i = 0; i < n; i++) g += `<span style="left:${2 + (i % 12) * 8}%;bottom:${i < 12 ? 6 : 34}px;font-size:${20 + (i * 7) % 12}px">${["🌿","🌱","🌿","🪴"][i % 4]}</span>`;
   $("rwCook").innerHTML = `<h3>다. 요리 카드 + 반 정원<span class="tag">거둔 잎 ${p.harvested}장</span></h3>
     <div class="recipes">${RECIPES.map(r => { const open = p.harvested >= r.need;
@@ -1172,7 +1172,7 @@ function jumpTo21(){ const r = rng(77); while (me.day < 21){ dayStep(me); autoCa
    돌보기 단추를 누르면 ① 상태를 먼저 바꾸고 ② 움직임을 1~2초 보여 준 뒤 ③ 화면을 다시 그린다.
    움직임은 «fx» 겹(바질 그림과 같은 300×400 좌표) 위에 그렸다가 지운다. 아래 do○○ 함수가 v2 의 것을 대신한다. */
 let busy = false, soundOn = true, actx = null;
-const topYOf = p => 268 - Math.min(p.h, 18) * 9.5;
+const topYOf = p => 284 - Math.min(p.h, 18) * 9.5;
 function fxAdd(svg, ms){
   const id = "f" + Math.random().toString(36).slice(2);
   $("fx").insertAdjacentHTML("beforeend", `<g id="${id}">${svg}</g>`);
@@ -1416,8 +1416,8 @@ function gapToNext(p){ let g = 1; while (g < 7 && !CLASS_DOW.includes(dateOf(p.d
 function nightsAhead(p, k, g){ let m = 99; for (let i = 0; i < g; i++) m = Math.min(m, spotNow(p, k, wxOf(p.day + i)).nightT); return m; }
 
 /* ── 3. 바질 상태 ── moist = 속흙 · surf = 겉흙 · saucer = 받침에 고인 물(mL) */
-function newPlant(){
-  return { day:0, sowDay:0, moist:60, surf:60, saucer:0, health:80, h:0, leafAcc:0, nutr:40, spot:"window", blind:false,
+function newPlantBase(){
+  return { day:0, sowDay:0, moist:60, surf:60, saucer:0, health:80, h:0, leafAcc:0, nutr:40, spot:"window", blind:false, pinchH:0, pinchNode:0,
            pinched:false, lastFert:-99, bug:false, bugDone:false, bugDay:9, windowDays:0, leafWet:0, mildew:false, scorch:0, chill:0, recover:0, soggy:0,
            lowDays:0, dead:false, deadSeen:false, plantNo:1, lastVisit:-1, sunToday:8,
            harvested:0, picks:0, lastPick:-99, done:false, quiz:0, deco:{pot:null, items:[]}, owned:[], cooked:[],
@@ -1500,10 +1500,10 @@ function dayStep(p){
   p.health = clamp(p.health, 0, 100);
   const age = p.day - p.sowDay;
   if (age >= 4 && !p.dead){
-    const base = stage(p) <= 1 ? .45 : 1.0, pickBoost = p.day - p.lastPick <= 4 ? 1.35 : 1;
+    const base = stage(p) <= 1 ? .45 : .7, pickBoost = p.day - p.lastPick <= 4 ? 1.35 : 1;
     const rate = base * ms * ss * ns * ts * (.35 + .65 * p.health / 100) * (p.chill ? .3 : 1);
     p.h += rate + (sun < 3 ? .15 : 0);
-    p.leafAcc += rate * 1.5 * (p.pinched ? 1.5 : 1) * pickBoost;
+    p.leafAcc += rate * 2.1 * (p.pinched ? 1.4 : 1) * pickBoost;
     if (age === 4 && p.h < .3) p.h = .4;
   }
   if (p.day === p.bugDay && !p.bugDone) p.bug = true;
@@ -1599,7 +1599,7 @@ function replantP(p, how){
   Object.assign(p, newPlant(), keep);
   p.log = oldLog; p.today.replant = how;
   p.bugDay = p.day + 6; p.lastPick = p.day; p.sowDay = how === "cutting" ? p.day - 10 : p.day;
-  if (how === "cutting"){ p.h = 3.2; p.leafAcc = 4; p.health = 75; }
+  if (how === "cutting"){ p.h = 3.2; p.leafAcc = 4; p.health = 75; } else { p.h = 0; p.leafAcc = 0; p.hist.push({d:p.day, h:0}); }
 }
 function doReplant(how){ replantP(me, how); $("deadModal").classList.remove("on"); renderMe(); happy(); toast(how === "cutting" ? "꺾꽂이 모종을 심었어요! 이번엔 더 잘 키워 봐요 🌈" : "새 씨앗을 심었어요! 다시 시작 🌈"); }
 
@@ -1641,7 +1641,7 @@ function autoCare(p, e, r){
   else if (r() < .35){ const ks = Object.keys(SPOTS); p.spot = ks[Math.floor(r() * ks.length)]; }
   if (stage(p) >= 2 && p.day - p.lastFert >= 7 && r() < e) fertilize(p);
   else if (stage(p) >= 2 && r() < (1 - e) * .25) fertilize(p);
-  if (!p.pinched && p.h >= 8 && r() < e) pinch(p);
+  if (!p.pinched && p.h >= 10 && leaves(p) >= 8 && r() < e) pinch(p);
   if (!pickLock(p) && r() < e) pickLeaves(p);
   if (r() < e * .9) writeJournal(p, "관찰", {acc: r() < e, pred: r() < e ? +(p.h + 1.5).toFixed(1) : null});
 }
@@ -1765,7 +1765,7 @@ function renderMe(){
   const lockDrain = dead || (p.saucer > 0 ? "" : "받침이 비었어요");
   const lockBlind = dead || (p.spot === "window" || p.spot === "side" ? "" : "블라인드는 창가에서만 쓸 수 있어요");
   const lockFert = dead || (st < 2 ? "떡잎일 때는 씨앗 속 양분으로 자라요. 본잎이 나오면 열려요" : (p.today.fert ? "오늘은 이미 영양분을 줬어요" : ""));
-  const lockPinch = dead || (p.pinched ? "이미 순을 질렀어요" : (p.h < 8 ? "키 8cm(본잎 6장)부터" : ""));
+  const lockPinch = dead || (p.pinched ? "이미 순을 질렀어요" : (p.h < 10 || leaves(p) < 8 ? "키 10cm · 본잎 3쌍부터" : ""));
   const lockPick = pickLock(p), lockJr = p.today.journal ? "오늘 일지는 이미 썼어요" : "";
   const s = spotNow(p, p.spot, wxOf(p.day));
   const res = p.today.checked ? `겉흙 : ${p.today.surfWord || "안 만져 봄"} · 속흙 : ${p.today.deepWord || "안 만져 봄"}` : "겉흙(손가락 끝)과 속흙(한 마디 깊이)은 다를 수 있어요";
@@ -2006,7 +2006,7 @@ function journalLine(p){
 /* 기록 : 맞게 쟀나 · 지난 예상은 맞았나 */
 function writeJournal(p, txt, m){
   m = m || {}; visit(p); p.today.journal = true; p.care.journals++; addCoin(p, 2, "관찰일지");
-  const realH = +p.h.toFixed(1), realL = drawnLeaves(p);
+  const realH = drawnHeightCM(p), realL = drawnLeaves(p);   // 정답 = 그림에서 잰 높이 (아이가 자로 읽는 값과 같게)
   const hIn = m.hIn != null ? m.hIn : (m.acc ? realH : +(realH + (Math.random() < .5 ? -1.5 : 1.5)).toFixed(1));
   const lIn = m.lIn != null ? m.lIn : realL;
   const easy = CFG && CFG.level === "easy", accH = Math.abs(hIn - realH) <= (easy ? 1 : .5), accL = Math.abs(lIn - realL) <= (easy ? 2 : 1);
@@ -2022,10 +2022,10 @@ let jrDraft = {};
 function openJournal(){
   const p = me, lp = lastPred(p);
   jrDraft = {h:"", l:"", color:"", txt:"", pred:"", why:""};
-  // 자 : 0 은 떡잎 자리(y=268) · 1cm = 9.5 칸 (바질 그림과 같은 비율)
-  let ruler = `<rect x="22" y="${268 - 18 * 9.5}" width="26" height="${18 * 9.5 + 6}" rx="4" fill="#fff6d6" stroke="#d9b65a"/>`;
-  for (let c = 0; c <= 18; c++){ const y = 268 - c * 9.5; ruler += `<line x1="48" y1="${y}" x2="${c % 2 ? 40 : 34}" y2="${y}" stroke="#8a6a2a" stroke-width="1.4"/>`; if (c % 2 === 0) ruler += `<text x="29" y="${y + 4}" font-size="10" font-family="Jua" fill="#6a4a1a" text-anchor="middle">${c}</text>`; }
-  ruler += `<line x1="48" y1="268" x2="120" y2="268" stroke="#d9b65a" stroke-dasharray="3 3"/><text x="52" y="280" font-size="10" fill="#8a6a2a">0 = 떡잎 자리</text>`;
+  // 자 : 0 은 흙 높이(y=284) · 1cm = 9.5 칸 (바질 그림과 같은 비율)
+  let ruler = `<rect x="22" y="${284 - 18 * 9.5}" width="26" height="${18 * 9.5 + 6}" rx="4" fill="#fff6d6" stroke="#d9b65a"/>`;
+  for (let c = 0; c <= 18; c++){ const y = 284 - c * 9.5; ruler += `<line x1="48" y1="${y}" x2="${c % 2 ? 40 : 34}" y2="${y}" stroke="#8a6a2a" stroke-width="1.4"/>`; if (c % 2 === 0) ruler += `<text x="29" y="${y + 4}" font-size="10" font-family="Jua" fill="#6a4a1a" text-anchor="middle">${c}</text>`; }
+  ruler += `<line x1="48" y1="284" x2="120" y2="284" stroke="#d9b65a" stroke-dasharray="3 3"/><text x="52" y="298" font-size="10" fill="#8a6a2a">0 = 흙 높이</text>`;
   const colors = ["진초록", "연두", "노랑", "갈색", "거무스름"];
   $("jrBox").innerHTML = `<h2 style="font:28px Jua;margin:0 0 8px">📏 관찰일지 — D+${p.day} ${dateLab(p.day).split(" · ")[1]}</h2>
     ${lp && !lp.checked ? `<div class="prev">🔮 지난번(D+${lp.d})에 <b>「다음 수업 때 ${lp.pred}cm」</b>${lp.why ? ` (까닭 : ${lp.why})` : ""} 라고 예상했어요. 오늘 키를 재면 견줘 볼게요!</div>` : ""}
@@ -2033,7 +2033,7 @@ function openJournal(){
       <div class="pic">${basilSVG(p)}<svg viewBox="0 0 300 400" width="100%" height="100%">${ruler}</svg></div>
       <div class="f">
         <div class="row"><span class="lab">① 키 재기</span><input type="number" step="0.5" min="0" max="25" id="jrH" oninput="jrDraft.h=this.value;jrLock()"> cm <span class="hint">자의 눈금으로 꼭대기까지</span></div>
-        <div class="row"><span class="lab">② 잎 세기</span><input type="number" step="1" min="0" max="60" id="jrL" oninput="jrDraft.l=this.value;jrLock()"> 장 <span class="hint">떡잎도 세요</span></div>
+        <div class="row"><span class="lab">② 잎 세기</span><input type="number" step="1" min="0" max="60" id="jrL" oninput="jrDraft.l=this.value;jrLock()"> 장 <span class="hint">큰 잎 · 떡잎만 · 새순 · 곁눈은 빼고</span></div>
         <div class="row"><span class="lab">③ 잎 색</span>${colors.map(c => `<button class="b" data-c="${c}" onclick="jrDraft.color='${c}';document.querySelectorAll('#jrBox [data-c]').forEach(b=>b.classList.toggle('sel',b.dataset.c==='${c}'));jrLock()">${c}</button>`).join("")}</div>
         <div class="row"><span class="lab">④ 흙</span><span style="font:15px 'Noto Sans KR'">${p.today.checked ? `겉흙 ${p.today.surfWord || "—"} · 속흙 ${p.today.deepWord || "—"}` : "오늘은 아직 안 만져 봤어요 (돌보기 ①)"}</span></div>
         <div class="row"><span class="lab">⑤ 오늘 본 것</span><input type="text" id="jrT" placeholder="예: 잎이 두 장 더 났다. 속흙은 촉촉했다" oninput="jrDraft.txt=this.value;jrLock()"></div>
@@ -2054,8 +2054,8 @@ function saveJournal(){
   const d = jrDraft, p = me;
   const r = writeJournal(p, d.txt.trim(), {hIn: +d.h, lIn: +d.l, color: d.color, pred: d.pred === "" ? null : +d.pred, why: d.why});
   let msg = `<div class="tip" style="background:#eaf6e3">`;
-  msg += r.accH ? `<div class="ok">📏 키를 정확히 쟀어요! (실제 ${r.realH}cm) 🌱 +2</div>` : `<div class="no">📏 다시 보면 ${r.realH}cm 예요 — 자의 0을 떡잎 자리에 맞추고 꼭대기를 봐요</div>`;
-  msg += r.accL ? `<div class="ok">🍃 잎을 정확히 셌어요! (${r.realL}장) 🌱 +1</div>` : `<div class="no">🍃 그림의 잎은 ${r.realL}장이에요 — 마주 난 두 장을 함께 세어 봐요</div>`;
+  msg += r.accH ? `<div class="ok">📏 키를 정확히 쟀어요! (실제 ${r.realH}cm) 🌱 +2</div>` : `<div class="no">📏 다시 보면 ${r.realH}cm 예요 — 자의 0은 흙 높이예요. 바질 꼭대기 새순까지 봐요</div>`;
+  msg += r.accL ? `<div class="ok">🍃 잎을 정확히 셌어요! (${r.realL}장) 🌱 +1</div>` : `<div class="no">🍃 그림의 잎은 ${r.realL}장이에요 — 마주 난 두 장을 함께 · 새순과 곁눈은 빼고 세어 봐요</div>`;
   if (d.color !== leafColorName(p)) msg += `<div class="no">🎨 잎 색은 「${leafColorName(p)}」에 가까워요 ${leafColorName(p) === "노랑" ? "— 아픈 곳이 없는지 진찰해 봐요" : ""}</div>`;
   if (r.predRes){ const x = r.predRes; msg += `<div style="margin-top:6px">🔮 지난 예상 ${x.pred}cm → 실제 ${x.real}cm : ${Math.abs(x.diff) <= 1 ? "<b>거의 맞았어요! 🌱 +2</b>" : x.diff < 0 ? `예상보다 <b>${-x.diff}cm 덜</b> 자랐어요 — 그동안 날씨 · 햇빛 · 물이 어땠는지 떠올려 봐요` : `예상보다 <b>${x.diff}cm 더</b> 자랐어요 — 무엇이 잘 맞았을까요?`}</div>`; }
   msg += `</div>`;
@@ -2452,8 +2452,8 @@ function loginAs(name, pw, fail){
   if (rec && rec.plant){ me = rec.plant; plantName = rec.plantName || "초록이"; }
   else {
     const d = beforeStart() ? 0 : todayIdx();
-    me = newPlant(); me.day = d; me.sowDay = d; me.bugDay = d + 9; me.lastPick = -99;
-    me.hist = Array.from({length: d + 1}, (_, i) => ({d: i, h: 0}));
+    me = newPlant(); me.day = d; me.sowDay = d - 28; me.bugDay = d + 9; me.lastPick = -99;
+    me.hist = Array.from({length: d + 1}, (_, i) => ({d: i, h: me.h}));
     plantName = "초록이"; first = true;
     LS.set("basil.stu." + name, {pw, plantName, plant: me, createdAt: Date.now()});
   }
@@ -2577,7 +2577,7 @@ function waterCup(ml){
 
 /* 따라 하기 — 볼 곳만 밝히고 손가락이 짚음 */
 const TUT = [
-  {sel: "#plantBig",              tx: "이게 내 바질이에요! 날마다 조금씩 자라요. 내가 돌본 만큼 다르게 자라요."},
+  {sel: "#plantBig",              tx: "이게 내 바질 모종이에요! 본잎 두 쌍이 난 모종을 화분에 옮겨 심었어요. 내가 돌본 만큼 다르게 자라요."},
   {sel: "#care .wxcard",          tx: "오늘 날씨와 다음 수업까지 날씨예요. 날씨에 따라 돌보는 방법이 달라져요."},
   {sel: "#care .step", i: 0,      tx: "① 먼저 흙을 만져 봐요. 손가락 끝은 겉흙, 한 마디 깊이는 속흙이에요."},
   {sel: "#care .step", i: 1,      tx: "② 물 주기예요. 흙이 말랐을 때만 알맞게! 넘친 물은 받침에 고여요."},
@@ -2614,6 +2614,117 @@ function saveName(){
   plantName = $("nmIn").value.trim(); me.name = plantName; $("nm").textContent = plantName; $("nameModal").classList.remove("on");
   renderMe(); toast(`안녕, ${plantName}! 잘 키워 줄게`); if (sayOn()) speak(`안녕, ${plantName}! 잘 키워 줄게`);
   const s = LS.get("basil.stu." + stuName, {}); if (!s.tutorialDone) setTimeout(startTutorial, 700);
+}
+
+/* ═════════ 모종으로 시작 · 실제 바질 생김새 그림 ═════════
+   근거 : 씨앗 6~14일 발아 · 약 21일 첫 본잎 · 약 56일 첫 순지르기(마디 위를 자르면 줄기 둘) — Mind & Soil 씨앗~수확 안내
+   그래서 3주 수업은 «약 4주 된 모종(본잎 2쌍 · 4.5cm)» 에서 시작 → 3주 뒤 약 8주 바질(12~15cm · 본잎 5~6쌍 · 순지르기 · 수확) */
+function newPlant(){ const p = newPlantBase(); p.h = 4.5; p.leafAcc = 4; p.sowDay = -28; p.hist = [{d:0, h:4.5}]; return p; }
+/* 순지르기 : 꼭대기를 잘라 멈추고 → 자른 마디에서 줄기 둘 (Y자) */
+function pinch(p){
+  visit(p); p.pinched = true; p.today.pinch = true;
+  p.pinchNode = clamp(Math.floor((leaves(p) - 2) / 2) - 1, 2, 4); p.pinchH = p.h;
+  p.h = Math.max(1.5, p.h - .7); p.leafAcc = Math.max(0, p.leafAcc - 2);
+  addCoin(p, 3, "순지르기");
+}
+const CMV = 9.5;   // 1cm = 9.5 칸 — 관찰일지 자와 같음 (0 = 흙 높이 y 284)
+function plantLayout(p){
+  const st = stage(p), tp = Math.max(0, Math.floor((leaves(p) - 2) / 2));
+  if (p.pinched){ const node = p.pinchNode || 3; return {st, main: node, br: clamp(Math.ceil(Math.max(0, tp - node) / 2), 1, 4), cot: false, axil: true}; }
+  return {st, main: Math.min(tp, 8), br: 0, cot: st >= 1 && tp < 6, cotOld: tp >= 4, axil: tp >= 5};
+}
+/* 아이가 자로 재는 정답 = 그림에서 흙(y 284)부터 가장 높은 곳까지 (보이지 않는 칸에 그려 잼) */
+let _hBox = null;
+function drawnHeightCM(p){
+  try {
+    if (!_hBox){ _hBox = document.createElement("div"); _hBox.style.cssText = "position:fixed;left:-9999px;top:0;width:300px;height:400px;visibility:hidden"; document.body.appendChild(_hBox); }
+    _hBox.innerHTML = basilSVG(p); const g = _hBox.querySelector(".plantg"), b = g.getBBox();
+    return b.height ? +Math.max(0, (284 - b.y) / CMV).toFixed(1) : 0;
+  } catch (e){ return +p.h.toFixed(1); }
+}
+/* 아이가 세는 정답 = 그림에 보이는 큰 잎 + 떡잎 (새순 · 곁눈 빼고) */
+function drawnLeaves(p){ if (stage(p) === 0) return 0; const L = plantLayout(p); return (L.cot ? 2 : 0) + L.main * 2 + L.br * 4; }
+function leafNew(L, col, light, o){
+  o = o || {};
+  const pl = L * .22, W = L * .62, b = L;
+  let g = `<line x1="0" y1="0" x2="${pl}" y2="0" stroke="${col}" stroke-width="${Math.max(1.2, L / 22)}" stroke-linecap="round"/>`;
+  g += `<path d="M${pl} 0 C${pl + .05 * L} ${-.56 * W} ${pl + .55 * L} ${-.6 * W} ${b} 0 C${pl + .55 * L} ${.6 * W} ${pl + .05 * L} ${.52 * W} ${pl} 0 Z" fill="${col}"/>`;
+  g += `<path d="M${pl} 0 C${pl + .05 * L} ${-.56 * W} ${pl + .55 * L} ${-.6 * W} ${b} 0 C${pl + .5 * L} ${-.18 * W} ${pl + .1 * L} ${-.2 * W} ${pl} 0 Z" fill="${light}" opacity=".5"/>`;
+  g += `<path d="M${pl} 0 L${b * .97} 0" stroke="rgba(255,255,255,.55)" stroke-width="${Math.max(.8, L / 40)}"/>`;
+  for (const tt of [.3, .5, .7]){ const x = pl + (b - pl) * tt, w = W * .42 * (1 - tt * .5);
+    g += `<path d="M${x} 0 Q${x + L * .08} ${-w * .6} ${x + L * .16} ${-w}" stroke="rgba(255,255,255,.32)" stroke-width=".8" fill="none"/><path d="M${x} 0 Q${x + L * .08} ${w * .6} ${x + L * .16} ${w}" stroke="rgba(0,0,0,.12)" stroke-width=".8" fill="none"/>`; }
+  if (o.tip) g += `<path d="M${b * .82} ${-W * .18} Q${b * 1.01} 0 ${b * .82} ${W * .18} Z" fill="#8a5a2a"/>`;             // 잎 탐 : 끝이 갈색
+  if (o.dots) g += `<circle cx="${pl + L * .3}" cy="${-W * .15}" r="${L / 16}" fill="#f4f4ee"/><circle cx="${pl + L * .55}" cy="${W * .12}" r="${L / 18}" fill="#f4f4ee"/><circle cx="${pl + L * .45}" cy="${-W * .3}" r="${L / 20}" fill="#f4f4ee"/>`;   // 흰가루
+  return g;
+}
+const placeL = (x, y, rot, sx, sy, inner) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sx} ${sy})">${inner}</g>`;
+function basilSVG(p, opt = {}){
+  const st = stage(p), dead = p.dead, dry = (p.moist < 18 && !(p.saucer > 0)) || dead, L = plantLayout(p);
+  const leggy = st >= 1 && p.stress && p.stress.dark >= 2 && (p.sunToday ?? 8) < 3.5;
+  const sm = p.surf ?? p.moist;
+  const soilC = sm < 20 ? "#c9a77c" : sm < 40 ? "#a07a52" : sm <= 80 ? "#6b4a2f" : "#3d2a1c";
+  const potC = opt.pot || (p.deco && p.deco.pot) || "#d9805a";
+  const C = dead ? {base:"#a3824e", light:"#c4a36a", young:"#a3824e", back:"#8a6a3a", stem:"#8a6a3a"}
+          : p.chill ? {base:"#4b6347", light:"#6f8a68", young:"#5f7a58", back:"#33463a", stem:"#4c6a3e"}
+          : {base: p.health > 70 ? "#3e8e3a" : p.health > 45 ? "#7aa642" : "#b5a945", light: p.health > 45 ? "#7fcf5f" : "#d6cc6a", young: p.health > 45 ? "#8fd36a" : "#c9c86a", back:"#2c6a2a", stem: leggy ? "#a9c870" : "#4c8a36"};
+  const lo = {tip: p.scorch >= 1, dots: p.mildew};
+  let g = `<ellipse cx="150" cy="393" rx="84" ry="7" fill="#b9694a"/>`;
+  if (p.saucer > 0) g += `<ellipse cx="150" cy="392" rx="${Math.min(78, 36 + p.saucer / 3)}" ry="4.5" fill="#7fbfea" opacity=".95"/>`;
+  g += `<path d="M78 300 L222 300 L208 386 Q206 394 198 394 L102 394 Q94 394 92 386 Z" fill="${potC}"/><rect x="70" y="284" width="160" height="22" rx="8" fill="${potC}" stroke="rgba(0,0,0,.08)"/>`;
+  if (dead) g += `<path d="M126 332 L138 340 M138 332 L126 340 M162 332 L174 340 M174 332 L162 340" stroke="#5a2f1e" stroke-width="3.5" stroke-linecap="round"/><path d="M135 362 Q150 350 165 362" stroke="#5a2f1e" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  else { const mood = p.health > 70 ? "M135 352 Q150 366 165 352" : p.health > 45 ? "M136 358 L164 358" : "M135 362 Q150 350 165 362";
+    g += `<circle cx="132" cy="336" r="5" fill="#5a2f1e"/><circle cx="168" cy="336" r="5" fill="#5a2f1e"/><path d="${mood}" stroke="#5a2f1e" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+    if (p.health > 70) g += `<circle cx="118" cy="350" r="7" fill="#f2a08a" opacity=".6"/><circle cx="182" cy="350" r="7" fill="#f2a08a" opacity=".6"/>`; }
+  g += `<ellipse cx="150" cy="286" rx="72" ry="10" fill="${soilC}"/>`;
+  if (p.moist > 95) g += `<ellipse cx="170" cy="286" rx="22" ry="4" fill="#8fc3e8" opacity=".8"/>`;
+  g += `<g class="plantg">`;
+  if (st === 0){
+    g += `<ellipse cx="150" cy="281" rx="9" ry="4" fill="#5a3f28"/>`;
+    if (p.day - (p.sowDay || 0) >= 2) g += `<path d="M146 280 Q150 275 154 280" stroke="#d8ecb0" stroke-width="2.4" fill="none"/>`;
+  } else {
+    let back = "", stemS = "", mid = "", front = "";
+    const nodeH = p.pinched ? Math.max(1.2, (p.pinchH || p.h) - 1.2) : p.h, H = p.h * CMV, endY = 284 - nodeH * CMV + (p.pinched ? 0 : 11);   // 새순 끝 = 키 (자로 잴 때 맞게)
+    const cotY = 284 - Math.min(nodeH * CMV, 2.2 * CMV), n = L.main;
+    const bend = dead ? 34 : dry ? 12 : 0, xAt = y => 150 + bend * Math.pow(Math.max(0, 284 - y) / Math.max(1, 284 - endY), 1.6);
+    const droopX = dry ? 40 : 0, ls = leggy ? .6 : 1;
+    stemS += `<path d="M148 285 Q${149 + bend * .3} ${(285 + endY) / 2} ${xAt(endY) - .6} ${endY} L${xAt(endY) + 1.2} ${endY} Q${151.5 + bend * .3} ${(285 + endY) / 2} 153 285 Z" fill="${C.stem}"/>`;
+    stemS += `<path d="M150 284 Q${150 + bend * .3} ${(284 + endY) / 2} ${xAt(endY) + .3} ${endY + 2}" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none"/>`;
+    if (L.cot){ const cc = L.cotOld ? "#d2c36a" : "#86c860";
+      for (const sd of [-1, 1]) mid += `<g transform="translate(${xAt(cotY)} ${cotY}) scale(${sd} 1) rotate(${dry ? 25 : 0})"><line x1="0" y1="0" x2="5" y2="-1" stroke="${cc}" stroke-width="1.5"/><ellipse cx="13" cy="-2.5" rx="9.5" ry="6" fill="${cc}" transform="rotate(-12 13 -2.5)"/></g>`; }
+    const nodes = []; for (let k = 1; k <= n; k++) nodes.push(cotY - (cotY - (p.pinched ? endY : endY + 6)) * (k / Math.max(1, n)));
+    const Lmax = clamp(28 + n * 7 + L.br * 4, 30, 64) * ls;
+    nodes.forEach((y, i) => {
+      const k = i + 1, age = (n - k) / Math.max(1, n - 1), x = xAt(y);
+      let Ln = Lmax * (.55 + .45 * age); if (k === n && !p.pinched) Ln *= .55;
+      const col = k >= n - 1 && !p.pinched ? C.young : C.base, d0 = 4 + 30 * (1 - age);
+      if (k % 2 === 1) mid += placeL(x + 1, y, -d0 + droopX, 1, 1, leafNew(Ln, col, C.light, lo)) + placeL(x - 1, y, 180 + d0 - droopX, 1, -1, leafNew(Ln, col, C.light, lo));
+      else { back += placeL(x, y, -98 + droopX * 1.5, .62, .85, leafNew(Ln * .9, C.back, C.back, lo)); front += placeL(x + 1, y, 72 + droopX * .4, .72, .95, leafNew(Ln, col, C.light, lo)); }
+      if (L.axil && !dead && k <= n - 2) for (const sd of [-1, 1]) front += placeL(x + sd * 2, y - 2, sd > 0 ? -55 : -125, 1, sd > 0 ? 1 : -1, leafNew(7 * ls, C.young, C.light));
+    });
+    if (!p.pinched && !dead){ const x = xAt(endY); front += placeL(x, endY + 2 - 6, -75 + droopX, 1, 1, leafNew(9 * ls, C.young, C.light)) + placeL(x, endY + 2 - 6, -105 - droopX, 1, -1, leafNew(9 * ls, C.young, C.light)); }
+    if (p.pinched){
+      const x0 = xAt(endY), rise = Math.max(.8, p.h - nodeH) * CMV;
+      for (const sd of [-1, 1]){
+        const x1 = x0 + sd * rise * .5, y1 = 284 - p.h * CMV + 6;
+        stemS += `<path d="M${x0} ${endY} Q${x0 + sd * rise * .38} ${endY - rise * .35} ${x1} ${y1}" stroke="${C.stem}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+        for (let j = 1; j <= L.br; j++){ const tt = j / (L.br + .6), bx = x0 + sd * rise * .5 * Math.pow(tt, .8), by = endY - rise * tt, LL = clamp(22 + rise * .3, 24, 44) * (1.1 - tt * .45) * ls, cl = tt > .7 ? C.young : C.base;
+          mid += placeL(bx, by, -18 - 15 * tt + droopX, 1, 1, leafNew(LL, cl, C.light, lo)) + placeL(bx, by, 198 + 15 * tt - droopX, 1, -1, leafNew(LL, cl, C.light, lo)); }
+        if (!dead) front += placeL(x1, y1 + 2, -80, 1, 1, leafNew(8 * ls, C.young, C.light)) + placeL(x1, y1 + 2, -100, 1, -1, leafNew(8 * ls, C.young, C.light));
+      }
+      stemS += `<circle cx="${x0}" cy="${endY - 1}" r="2.4" fill="#6b5a3a"/>`;
+    }
+    if (p.bug){ const by = Math.min(270, 284 - p.h * CMV + 26); for (let i = 0; i < 6; i++) front += `<circle cx="${144 + i * 3}" cy="${by + (i % 2) * 4}" r="2.4" fill="#6f8f2a"/>`; }
+    g += back + stemS + mid + front;
+  }
+  g += `</g>`;
+  if (opt.deco) g += opt.deco;
+  const it = (p.deco && p.deco.items) || [], tY = 284 - Math.min(p.h, 18) * CMV;
+  if (it.includes("tag"))    g += `<rect x="112" y="364" width="76" height="22" rx="6" fill="#fff8e1" stroke="#c9a96a"/><text x="150" y="380" font-size="14" text-anchor="middle" font-family="Jua" fill="#6a4a1a">${esc(p.name || "")}</text>`;
+  if (it.includes("ribbon")) g += `<text x="62" y="304" font-size="30">🎀</text>`;
+  if (it.includes("lady"))   g += `<text x="192" y="${Math.min(262, tY + 60)}" font-size="22">🐞</text>`;
+  if (it.includes("snail"))  g += `<text x="226" y="392" font-size="26">🐌</text>`;
+  if (it.includes("butter")) g += `<text x="40" y="${Math.max(60, tY - 10)}" font-size="28">🦋</text>`;
+  return `<svg viewBox="0 0 300 400" width="100%" height="100%">${g}</svg>`;
 }
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
