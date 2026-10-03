@@ -538,6 +538,7 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #jrBox .stk{border:2px solid var(--line);border-radius:16px;padding:6px 12px;font:19px "Jua";background:#fff;cursor:pointer;white-space:nowrap}
 #jrBox .stk.on{border-color:var(--leaf);background:#eaf6e3;box-shadow:0 0 0 2px var(--leaf) inset}
 #jrBox .sws{display:flex;gap:10px;align-items:flex-end}
+#jrBox .cl{font:18px "Jua";width:108px;flex:0 0 auto}
 #jrBox .sw{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;cursor:pointer;font:13px "Noto Sans KR";color:var(--sub);padding:0}
 #jrBox .sw i{width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);display:block}
 #jrBox .sw.on i{box-shadow:0 0 0 4px var(--leaf)}
@@ -4026,9 +4027,9 @@ const JR_OTHER_WHY = {연두: "꼭대기 새잎은 연두색 — 어린 잎이�
 function jrRulerSVG(v){
   const rx = v.x + 3, top = 284 - 24 * CMV;
   let s = `<rect x="${rx}" y="${top}" width="20" height="${24 * CMV + 5}" rx="3" fill="#fff6d6" stroke="#d9b65a" stroke-width=".8"/>`;
-  for (let c = 0; c <= 24; c++){ const y = 284 - c * CMV;
-    s += `<line x1="${rx + 20}" y1="${y}" x2="${rx + (c % 2 ? 14 : 10)}" y2="${y}" stroke="#8a6a2a" stroke-width=".8"/>`;
-    if (c % 2 === 0) s += `<text x="${rx + 6}" y="${y + 2.6}" font-size="7" font-family="Jua" fill="#6a4a1a" text-anchor="middle">${c}</text>`; }
+  for (let m = 0; m <= 240; m++){ const c = m / 10, y = 284 - c * CMV, cm = m % 10 === 0;   // 1mm 눈금 (0.1cm)
+    s += `<line x1="${rx + 20}" y1="${y}" x2="${rx + (cm ? (m % 20 ? 14 : 10) : m % 5 === 0 ? 15.5 : 17.5)}" y2="${y}" stroke="#8a6a2a" stroke-width="${cm ? .8 : .35}"/>`;
+    if (cm && m % 20 === 0) s += `<text x="${rx + 6}" y="${y + 2.6}" font-size="7" font-family="Jua" fill="#6a4a1a" text-anchor="middle">${c}</text>`; }
   s += `<line x1="${rx + 20}" y1="284" x2="${v.x + v.w}" y2="284" stroke="#d9b65a" stroke-width=".8" stroke-dasharray="3 2"/>`;
   s += `<rect class="hit" x="${v.x}" y="${v.y}" width="${rx + 24 - v.x}" height="${v.h}" fill="transparent"/>`;   // 자 기둥을 눌러도 줄이 옴
   const kx = v.x + v.w - 40;
@@ -4038,14 +4039,22 @@ function jrRulerSVG(v){
   return `<svg class="rul" id="jrRul" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" width="100%" height="100%">${s}</svg>`;
 }
 function jrSetH(cm){
-  cm = clamp(Math.round(cm * 2) / 2, 0, 24); jrDraft.h = String(cm);
+  cm = clamp(Math.round(cm * 10) / 10, 0, 24); jrDraft.h = String(cm);   // 0.1cm 단위 (10-04 전무님)
   const ln = $("jrLine"); if (ln) ln.setAttribute("transform", `translate(0 ${284 - cm * CMV})`);
-  const t = $("jrLineT"); if (t) t.textContent = cm;
-  const v = $("jrHv"); if (v){ v.textContent = cm; v.classList.remove("empty"); }
+  const t = $("jrLineT"); if (t) t.textContent = cm.toFixed(1);
+  const v = $("jrHv"); if (v){ v.textContent = cm.toFixed(1); v.classList.remove("empty"); }
   const s = $("jrHs"); if (s) s.textContent = "cm";
   jrLock();
 }
 function jrNudge(d){ jrSetH((jrDraft.h === "" ? 0 : +jrDraft.h) + d); }
+/* ▼▲ 꾹 누르면 계속 0.1cm 씩 (처음 0.4초 뒤부터 빠르게) */
+let _jrHoldT = null;
+function jrHold(d, w){ const f = w === "p" ? jrNudgeP : jrNudge; f(d); clearTimeout(_jrHoldT); _jrHoldT = setTimeout(function rep(){ f(d); _jrHoldT = setTimeout(rep, w === "p" ? 160 : 80); }, 400); }
+/* 🔮 어려움 예상 — 처음 누르면 오늘 잰 키(없으면 0)에서 시작 */
+function jrSetP(v){ v = clamp(Math.round(v * 10) / 10, 0, 30); jrDraft.pred = String(v); const e = $("jrP"); if (e){ e.textContent = v.toFixed(1); e.classList.remove("empty"); } jrLock(); }
+function jrNudgeP(d){ jrSetP(jrDraft.pred === "" ? (jrDraft.h === "" ? 0 : +jrDraft.h) + d : +jrDraft.pred + d); }
+function jrHoldEnd(){ clearTimeout(_jrHoldT); _jrHoldT = null; }
+window.addEventListener("pointerup", jrHoldEnd); window.addEventListener("pointercancel", jrHoldEnd);
 function jrDragInit(){
   const svg = $("jrRul"); if (!svg) return;
   let on = false;
@@ -4104,14 +4113,14 @@ openJournal = function(){
   const none = `<span class="sub">🌱 아직 잎이 없어요</span>`;
   const leafRow = L === "easy" ? "" : `<div class="jrow"><span class="k">🍃</span>${seed ? none
       : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 그림의 잎을 톡톡</span>`}</div>`;
-  const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🎨</span>
-      <div class="sws">${JR_COLORS.map(([c, hx]) => `<button class="sw" data-c="${c}" onclick="jrColor('${c}')"><i style="background:${hx}"></i>${c}</button>`).join("")}</div>
-      <span class="sub" style="margin:0 2px 0 8px">대부분<br>+ 다른 색</span>
-      <div class="sws">${JR_OTHER.map(([c, hx]) => `<button class="sw" data-o2="${c}" onclick="jrOther('${c}')"><i style="background:${hx};width:30px;height:30px"></i>${c}</button>`).join("")}</div></div>`;
+  const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🎨</span><span class="cl">가장 많은 색</span>
+      <div class="sws">${JR_COLORS.map(([c, hx]) => `<button class="sw" data-c="${c}" onclick="jrColor('${c}')"><i style="background:${hx}"></i>${c}</button>`).join("")}</div></div>
+    <div class="jrow" style="margin-top:-6px"><span class="k" style="background:none">➕</span><span class="cl">또 보이는 색</span>
+      <div class="sws">${JR_OTHER.map(([c, hx]) => `<button class="sw" data-o2="${c}" onclick="jrOther('${c}')"><i style="background:${hx};width:30px;height:30px"></i>${c}</button>`).join("")}</div><span class="sub">있으면 모두</span></div>`;
   const soilRow = L !== "hard" ? "" : `<div class="jrow"><span class="k">👆</span><span class="sub" style="font-size:17px">${p.today.checked ? `겉흙 ${p.today.surfWord || "—"} · 속흙 ${p.today.deepWord || "—"}` : "오늘은 아직 안 만져 봤어요"}</span></div>`;
   const predRow = L === "easy" ? "" : L === "normal"
     ? `<div class="jrow"><span class="k">🔮</span><div class="preds">${JR_PREDS.map(([x, ic, sz, w]) => `<button data-x="${x}" onclick="jrPick(${x})"><i style="font-size:${sz}px">${ic}</i>${w}</button>`).join("")}</div><span class="sub" id="jrPv">다음 수업 땐?</span></div>`
-    : `<div class="jrow"><span class="k">🔮</span><input type="number" step="0.5" min="0" max="25" id="jrP" style="width:90px;font:22px Jua;border:2px solid #cfe3c4;border-radius:10px;padding:4px 8px" oninput="jrDraft.pred=this.value;jrLock()"> cm
+    : `<div class="jrow"><span class="k">🔮</span><span class="val empty" id="jrP">?</span><span style="font-size:18px">cm</span><button class="nb" onpointerdown="jrHold(-.5,'p')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(.5,'p')" onpointerleave="jrHoldEnd()">▲</button>
          <span class="sub">${(() => { const g = gapToNext(p), a = []; for (let i = 1; i <= g; i++) a.push(KIND_ICON[kindOf(wxOf(p.day + i))]); return "다음 수업까지 " + a.join(" "); })()}</span></div>
        <div class="jrow" style="margin-top:-4px"><span class="k" style="background:none;font-size:20px">❓</span>${["햇빛", "물", "날씨", "온도", "잘 모르겠어요"].map(w => `<button class="stk" data-w="${w}" onclick="jrDraft.why='${w}';document.querySelectorAll('#jrBox [data-w]').forEach(b=>b.classList.toggle('on',b.dataset.w==='${w}'))">${w}</button>`).join("")}</div>`;
   $("jrBox").innerHTML = `<h2 style="font:28px Jua;margin:0 0 8px">📏 관찰일지 — D+${p.day} ${dateLab(p.day).split(" · ")[1]}</h2>
@@ -4120,7 +4129,7 @@ openJournal = function(){
       <div class="pic"><div class="pl">${plant}</div>${jrRulerSVG(v)}</div>
       <div class="jf">
         <div class="jrow"><span class="k">📏</span><span class="val empty" id="jrHv">?</span><span id="jrHs" style="font-size:18px">cm</span>
-          <button class="nb" onclick="jrNudge(-.5)">▼</button><button class="nb" onclick="jrNudge(.5)">▲</button><span class="sub">✋ 줄을 꼭대기까지</span></div>
+          <button class="nb" onpointerdown="jrHold(-.1)" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(.1)" onpointerleave="jrHoldEnd()">▲</button><span class="sub">✋ 줄을 꼭대기까지</span></div>
         ${leafRow}${colorRow}${soilRow}
         <div class="jrow"><span class="k">👀</span>${JR_TAGS.map(([k, ic, w]) => `<button class="stk" data-tag="${k}" onclick="jrTag('${k}')">${ic} ${w}</button>`).join("")}<button class="stk" onclick="jrPen()" title="쓰기">✏️</button></div>
         <div class="jrow" id="jrTrow" style="display:none"><span class="k" style="background:none">✏️</span><input type="text" id="jrT" style="flex:1;font:17px 'Noto Sans KR';border:2px solid #cfe3c4;border-radius:10px;padding:6px 10px" placeholder="더 쓰고 싶으면 (안 써도 돼요)" oninput="jrDraft.txt=this.value;jrLock()"></div>
@@ -4141,7 +4150,7 @@ openJournal = function(){
     if (L === "hard" && n.color && n.color !== "없음" && !seed) jrColor(n.color);
     (n.other || []).forEach(c => jrOther(c));
     if (n.pred != null){ if (L === "normal"){ const x = Math.round((n.pred - (n.hIn || 0)) * 2) / 2; if ([0, 1, 2].includes(x)) jrPick(x); else { jrDraft.pred = String(n.pred); $("jrPv").textContent = `→ ${n.pred}cm`; } }
-                         else if ($("jrP")){ $("jrP").value = n.pred; jrDraft.pred = String(n.pred); } }
+                         else if ($("jrP")) jrSetP(n.pred); }
     if (n.why){ jrDraft.why = n.why; document.querySelectorAll("#jrBox [data-w]").forEach(b => b.classList.toggle("on", b.dataset.w === n.why)); }
     $("jrSave").textContent = "✅ 고쳐서 저장";
   }
