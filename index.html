@@ -391,6 +391,16 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .demo .b{font-size:15px;padding:5px 10px;background:#fff1d6;color:#7a4a00}
 .step.flash{animation:stepFlash .5s 4}
 @keyframes stepFlash{50%{box-shadow:0 0 0 4px #ffcf4a}}
+/* 🧪 시험기 (개발용 · ?test) */
+.testp{position:absolute;left:10px;bottom:78px;width:620px;z-index:30;background:rgba(255,253,243,.97);border:3px solid #e0a43a;border-radius:16px;padding:8px 12px;font:15px "Jua";color:#5a3a00;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.testp .th{display:flex;align-items:center;gap:8px;font-size:18px}
+.testp .th small{font:13px "Noto Sans KR";color:#8a6a2a}
+.testp .tr{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:4px}
+.scene.testing{padding-bottom:170px!important}
+.testp .tr>span{width:62px;font-size:14px;color:#8a6a2a}
+.testp .b{font-size:14px;padding:3px 8px;background:#fff1d6;color:#6a4000}
+.testp .b.sel{background:#e0a43a;color:#fff}
+.testchip{position:absolute;left:10px;bottom:78px;z-index:30;border:2px solid #e0a43a;background:#fff8e6;border-radius:999px;padding:5px 14px;font:16px "Jua";color:#6a4000;cursor:pointer}
 </style>
 </head>
 <body>
@@ -3050,6 +3060,92 @@ function saveJournal(){
   msg += `</div>`;
   $("jrRes").innerHTML = msg; $("jrSave").disabled = true; $("jrWhy").textContent = "기록했어요 — 닫기를 누르세요";
   sfx(r.accH ? "chime" : "pop"); renderMe();
+}
+
+
+/* ═════════ 🧪 시험기 — 개발용 (주소 끝 ?test) ═════════
+   날짜를 앞당기는 것은 «시연 모드» 와 같은 CFG.dayOffset 을 씀 → 다시 들어와도 날짜 · 바질이 어긋나지 않음 */
+const TEST = /[?&#]test/.test(location.href) || (() => { try { return sessionStorage.getItem("basil.test") === "1"; } catch (e) { return false; } })();
+if (TEST){ try { sessionStorage.setItem("basil.test", "1"); } catch (e) {} }
+/* 시험 모드에서 반 설정이 없으면 시험 반을 저절로 만듦 (오늘 시작 · 매일 수업 · 비밀번호 0000) */
+if (TEST && !LS.get("basil.cfg", null)){
+  const d0 = new Date(); d0.setHours(0, 0, 0, 0); const f = x => new Date(x - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라"], pin: "0000", level: "normal", speed: 1, startAs: "seedling", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "record", region: "대전", dir: "남향"}});
+}
+function nowDate(){ const now = new Date(); now.setHours(0, 0, 0, 0); if (CFG && (CFG.demo || TEST) && CFG.dayOffset) now.setDate(now.getDate() + CFG.dayOffset); return now; }
+let testOpen = true, testCare = "";
+/* 날짜 n 일 앞으로 — 지나는 동안 «꼼꼼히 돌봄 / 안 돌봄 / 그냥» */
+function testPass(n){
+  if (busy || !stuName) return;
+  const target = Math.min(21, todayIdx() + n), add = target - todayIdx();
+  if (add <= 0 && me.day >= 21){ toast("21일째예요 — 더 지날 날이 없어요"); return; }
+  CFG.dayOffset = (CFG.dayOffset || 0) + add; LS.set("basil.cfg", CFG); TEACHER_DAY = todayIdx(); repDay = TEACHER_DAY;
+  const gap = target - me.day; if (gap <= 0){ renderMe(); return; }
+  if (!testCare && gap <= 3){ passDays(gap); return; }          // 1~3일 그냥 지나기는 타임랩스로
+  const r = rng(Date.now() % 100000);
+  for (let i = 0; i < gap; i++){ if (testCare === "care") autoCare(me, 1, r); dayStep(me); }
+  renderMe(); toast(`⏩ ${gap}일 지남${testCare === "care" ? " (꼼꼼히 돌봄)" : testCare === "lazy" ? " (안 돌봄)" : ""} · 키 ${me.h.toFixed(1)}cm · 잎 ${leaves(me)}장${me.dead ? " · 🥀 시듦" : ""}`);
+}
+/* 첫날로 — 이 학생 바질을 새로 (열쇠 · 이름은 그대로) */
+function testFirstDay(){
+  if (busy || !stuName) return;
+  const real = new Date(); real.setHours(0, 0, 0, 0);
+  CFG.dayOffset = Math.round((START - real) / DAYMS); LS.set("basil.cfg", CFG); TEACHER_DAY = 0; repDay = 0;
+  const seed = CFG.startAs === "seed", keep = me.name;
+  me = seed ? newPlantBase() : newPlant(); me.day = 0; me.sowDay = seed ? 0 : -28; me.bugDay = 9; me.lastPick = -99; me.hist = [{d: 0, h: me.h}]; me.name = keep;
+  _earned = null; renderMe(); toast("⏪ 첫날로 — 바질을 새로 심었어요");
+}
+/* 아프게 해 보기 (목업 v6 의 것과 같은 상황 · 날짜도 함께 맞춤) */
+function testSick(k){
+  if (busy || !stuName) return; const p = me, d0 = p.day;
+  if (k === "dry"){ for (let i = 0; i < 5 && p.day < 21; i++) dayStep(p); }
+  if (k === "wet"){ water(p, 260, "soil"); if (p.day < 21) dayStep(p); water(p, 200, "soil"); }
+  if (k === "leaf"){ for (let i = 0; i < 3 && p.day < 21; i++){ water(p, 60, "leaf"); dayStep(p); } }
+  if (k === "cold"){ p.spot = "window"; WX[p.day] = {...WX[p.day], tmin: 2}; if (p.day < 21) dayStep(p); }
+  if (k === "bug"){ p.bug = true; }
+  if (k === "dead"){ p.moist = 5; p.surf = 5; p.health = 3; p.lowDays = 3; if (p.day < 21) dayStep(p); p.dead = true; }
+  if (p.day > d0){ CFG.dayOffset = (CFG.dayOffset || 0) + (p.day - todayIdx()); LS.set("basil.cfg", CFG); TEACHER_DAY = todayIdx(); repDay = TEACHER_DAY; }
+  renderMe();
+  const note = (k === "cold" || k === "bug") && LV() === "easy" ? " — 쉬움 단계에선 안 생겨요" : (k === "leaf" && LV() !== "hard") ? " — 흰가루병은 어려움 단계에서만" : "";
+  toast("🧪 " + {dry: "물 안 주고 5일", wet: "물을 넘치게", leaf: "잎에만 물 3번", cold: "추운 밤 창가", bug: "진딧물", dead: "시들게 함"}[k] + note);
+}
+function testSet(key, v){ CFG[key] = v; LS.set("basil.cfg", CFG); applyLevelSpeed(); fixSpot(me); renderMe(); toast(key === "level" ? "난이도 : " + {easy: "쉬움", normal: "보통", hard: "어려움"}[v] : "속도 ×" + v); }
+function testClearAll(){
+  if (!confirm("이 패드의 학생 바질을 모두 지우고 날짜를 오늘로 되돌릴까요? (시험용)")) return;
+  (CFG.roster || []).forEach(n => { try { localStorage.removeItem("basil.stu." + n); } catch (e) {} });
+  CFG.dayOffset = 0; LS.set("basil.cfg", CFG); stuName = ""; me = newPlant(); show("p1"); renderLogin(); toast("🧹 모두 지웠어요");
+}
+/* 시험 학생으로 바로 — 열쇠 확인 없이 명단 첫 학생 */
+function testLogin(){
+  const n = (CFG.roster || [])[0]; if (!n) return;
+  const rec = LS.get("basil.stu." + n, null); loginAs(n, (rec && rec.pw) || ["🍎", "🍎", "🍎"], () => {}, true);
+}
+function renderTest(){
+  let el = document.getElementById("testBox");
+  if (!TEST || !stuName){ if (el) el.innerHTML = ""; $("scene").classList.remove("testing"); return; }
+  if (!el){ el = document.createElement("div"); el.id = "testBox"; document.querySelector("#p2 .frame").appendChild(el); }
+  const L = LV(), sp = SPEED(), B = (on, js, t) => `<button class="b ${on ? "sel" : ""}" onclick="${js}">${t}</button>`;
+  $("scene").classList.toggle("testing", testOpen);   // 펼친 동안 바질을 위로 (시험기에 안 가리게)
+  if (!testOpen){ el.innerHTML = `<div class="testchip" onclick="testOpen=true;renderTest()">🧪 시험기 · D+${me.day}</div>`; return; }
+  el.innerHTML = `<div class="testp">
+    <div class="th">🧪 시험기 <small>개발용 · 주소 끝 ?test 일 때만 · D+${me.day} / 21 · ${dateLab(me.day).split(" · ")[1]}</small><button class="b" style="margin-left:auto" onclick="testOpen=false;renderTest()">접기 ▾</button></div>
+    <div class="tr"><span>날짜</span>${B(0, "testPass(1)", "⏩ 1일")}${B(0, "testPass(3)", "⏩ 3일")}${B(0, "testPass(7)", "⏩ 7일")}${B(0, "testPass(21)", "⏭ 21일째로")}${B(0, "testFirstDay()", "⏪ 첫날로")}</div>
+    <div class="tr"><span>지나는 동안</span>${B(testCare === "", "testCare='';renderTest()", "그냥")}${B(testCare === "care", "testCare='care';renderTest()", "🤖 꼼꼼히 돌봄")}${B(testCare === "lazy", "testCare='lazy';renderTest()", "😴 안 돌봄")}</div>
+    <div class="tr"><span>아프게</span>${B(0, "testSick('dry')", "🏜 마름")}${B(0, "testSick('wet')", "💦 물 많음")}${B(0, "testSick('leaf')", "🍃 잎에 물")}${B(0, "testSick('cold')", "🥶 추운 밤")}${B(0, "testSick('bug')", "🐛 벌레")}${B(0, "testSick('dead')", "🥀 시듦")}</div>
+    <div class="tr"><span>바로 바꾸기</span>${B(L === "easy", "testSet('level','easy')", "쉬움")}${B(L === "normal", "testSet('level','normal')", "보통")}${B(L === "hard", "testSet('level','hard')", "어려움")} · ${B(sp === 1, "testSet('speed',1)", "×1")}${B(sp === 1.5, "testSet('speed',1.5)", "×1.5")}${B(sp === 2, "testSet('speed',2)", "×2")}<button class="b" style="margin-left:auto" onclick="testClearAll()">🧹 모두 지우기</button></div>
+  </div>`;
+}
+/* renderMe 끝에 — 알림 · 시연 단추 · 시험기 */
+function renderExtras(p){
+  if (LV() !== "hard") waterTarget = "soil";
+  renderAlerts(p);
+  const db = $("demoBar");
+  if (db){ db.innerHTML = CFG && CFG.demo && !TEST && stuName ? `<b>🧪 시연</b><button class="b" onclick="demoPass(1)">⏩ 하루</button><button class="b" onclick="demoPass(3)">⏩ 3일</button>` : ""; db.style.display = db.innerHTML ? "flex" : "none"; }
+  renderTest();
+}
+if (TEST){
+  const card = document.querySelector("#p1 .login .card");
+  if (card) card.insertAdjacentHTML("beforeend", `<button class="b" style="margin-top:10px;width:100%;background:#fff1d6;color:#6a4000" onclick="testLogin()">🧪 시험 학생으로 바로 들어가기 (개발용)</button>`);
 }
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
