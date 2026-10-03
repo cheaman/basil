@@ -520,6 +520,48 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .rbig svg{width:100%;height:170px}
 .minirec svg{width:100%;height:44px;display:block}
 .recipes div.off svg,.minirec div.off svg{filter:grayscale(1);opacity:.45}
+/* 📏 관찰일지 그림 먼저 */
+#jrBox{width:1060px!important}
+#jrBox .jr .pic{width:360px;height:470px;overflow:hidden}
+#jrBox .jr .pic .pl{position:absolute;inset:0}
+#jrBox .pic .pl *{pointer-events:none}
+#jrBox .pic .pl .lf,#jrBox .pic .pl .lf *{pointer-events:visiblePainted;cursor:pointer}
+#jrBox .pic .rul{pointer-events:none;touch-action:none}
+#jrBox .pic .rul .hit{pointer-events:all;cursor:ns-resize}
+#jrBox .jf{flex:1;display:flex;flex-direction:column;gap:12px;min-width:0}
+#jrBox .jrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font:22px "Jua"}
+#jrBox .jrow .k{width:52px;height:52px;border-radius:15px;background:#e8f3e1;display:flex;align-items:center;justify-content:center;font-size:28px;flex:0 0 auto}
+#jrBox .jrow .val{font:34px "Jua";color:var(--leaf);min-width:74px;text-align:right}
+#jrBox .jrow .val.empty{color:#b9c4b4}
+#jrBox .jrow .sub{font:15px "Noto Sans KR";color:var(--sub)}
+#jrBox .nb{border:0;border-radius:12px;width:46px;height:46px;font:22px "Jua";background:#eaf5e3;color:#24502a;cursor:pointer}
+#jrBox .stk{border:2px solid var(--line);border-radius:16px;padding:6px 12px;font:19px "Jua";background:#fff;cursor:pointer;white-space:nowrap}
+#jrBox .stk.on{border-color:var(--leaf);background:#eaf6e3;box-shadow:0 0 0 2px var(--leaf) inset}
+#jrBox .sws{display:flex;gap:10px;align-items:flex-end}
+#jrBox .sw{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;cursor:pointer;font:13px "Noto Sans KR";color:var(--sub);padding:0}
+#jrBox .sw i{width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);display:block}
+#jrBox .sw.on i{box-shadow:0 0 0 4px var(--leaf)}
+#jrBox .sw.on{color:#24332a}
+#jrBox .preds{display:flex;gap:10px}
+#jrBox .preds button{width:96px;height:96px;border:2px solid var(--line);border-radius:16px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:6px;font:17px "Jua";cursor:pointer}
+#jrBox .preds button i{font-style:normal;line-height:1.1}
+#jrBox .preds button.on{border-color:var(--leaf);background:#eaf6e3}
+#jrBox .jbtns{display:flex;gap:10px;align-items:center;margin-top:auto}
+#jrBox .why{font:15px "Noto Sans KR";color:var(--sub)}
+#jrBox .tip{border-radius:12px;padding:8px 12px}
+/* ② 바질이 잘 보이게 — 🩺 상태판 · 지난밤 줄은 화분 아래 바닥으로 · 💬 말풍선은 오른쪽 끝 · 바질은 왼쪽으로 조금 */
+.scene .pwrap,.scene .chips{transform:translateX(-34px)}
+.bubble{top:14px!important;right:8px!important;min-width:166px!important;max-width:174px!important;padding:8px 10px!important}
+.bubble .bw{font:21px/1.25 "Jua"}
+.bubble .bp{font-size:38px}
+.stat{left:10px!important;right:10px;top:auto!important;bottom:8px;width:auto!important;display:grid!important;grid-template-columns:repeat(3,1fr);column-gap:14px;row-gap:3px;padding:6px 12px!important}
+.stat .t,.stat .hl{grid-column:1/-1}
+.stat .t{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;white-space:nowrap}
+.stat .t .nl{margin-left:auto;background:#fff6d6;border:2px solid #f1d47a;border-radius:999px;padding:1px 10px;font:15px "Jua"}
+.stat .hl{padding:2px 6px}
+.night{display:none!important}
+.demo{bottom:auto!important;top:12px}
+#jrSave{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -572,7 +614,7 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
     <div class="app">
       <div class="bar">
         <span class="logo">🌿 바질 키우기</span>
-        <span class="who">🙂 <span class="whoKid"></span> · 🌱 <span id="nm">초록이</span><button class="nmbtn" onclick="openName()" title="이름 바꾸기">✏</button></span>
+        <span class="who">🙂 <span class="whoKid"></span> · 🌱 <span id="nm">초록이</span><button class="nmbtn" onclick="openName()" title="이름 바꾸기">✏️</button></span>
         <span class="day" id="dayLab"></span><span class="chip" id="wxLab" style="padding:3px 12px"></span><button class="nmbtn rnd" onclick="startTutorial()" title="따라 하기">❓</button><button class="nmbtn rnd" id="sayBtn" onclick="toggleSay()" title="읽어 주기">🔈</button><button class="nmbtn rnd" onclick="logout()" title="나가기">🚪</button>
         <button class="coin" style="cursor:pointer" onclick="openCoins()" title="눌러서 코인 기록장 보기">🌱 <span id="coinLab">0</span></button>
       </div>
@@ -1003,7 +1045,7 @@ function tipOf(p){
   return "꽃대가 올라오면 잘라 주세요. 그래야 잎을 더 오래 딸 수 있어요.";
 }
 
-/* 바질 이름 — 처음 들어온 날 짓고, ✏ 로 언제든 바꿈. 선생님 화면 · 성장 카드에도 나옴 */
+/* 바질 이름 — 처음 들어온 날 짓고, ✏️ 로 언제든 바꿈. 선생님 화면 · 성장 카드에도 나옴 */
 let plantName = "초록이";
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const KID_NAMES = ["바질이","쑥쑥이","향긋이","초롱이","새싹왕","민트","잎새","푸름이","방울이","토토","그린","햇살이","콩이","바바","싱싱이","뽀송이","초코","루루","꼬물이","별이","보리","솔이","까망이","피자"];
@@ -2461,7 +2503,7 @@ function awardReport(L){
         <td>${on && r ? (a.multi ? `<span class="cand">${r.reason}</span>` : `<input type="text" style="width:100%" value="${esc(r.reason)}" oninput="awardSt.why['${a.k}${repDay}']=this.value">`) : ""}</td>
         <td class="cand">${on && r ? r.cands.slice(0, 3).map((c, i) => `${i + 1}. ${c.q.name} (${Math.round(c.v)})`).join(" · ") || "조건에 맞는 학생 없음" : ""}</td>
         <td>${on && r && r.winners.length && !a.multi ? `<button class="b" style="font-size:13px;padding:3px 8px" onclick="printCerts('${a.k}')">상장</button>` : ""}</td></tr>`; }).join("")}
-    ${awardSt.custom.map((c, i) => `<tr><td>✏</td><td><input type="text" style="width:44px" value="${esc(c.icon || "⭐")}" oninput="awardSt.custom[${i}].icon=this.value"> <input type="text" style="width:120px" value="${esc(c.name)}" oninput="awardSt.custom[${i}].name=this.value"></td>
+    ${awardSt.custom.map((c, i) => `<tr><td>✏️</td><td><input type="text" style="width:44px" value="${esc(c.icon || "⭐")}" oninput="awardSt.custom[${i}].icon=this.value"> <input type="text" style="width:120px" value="${esc(c.name)}" oninput="awardSt.custom[${i}].name=this.value"></td>
         <td><select onchange="awardSt.custom[${i}].who=this.value;renderReport()"><option value="">— 고르기 —</option>${sorted.map(q => `<option ${c.who === q.name ? "selected" : ""}>${q.name}</option>`).join("")}</select></td>
         <td><input type="text" style="width:100%" value="${esc(c.why)}" oninput="awardSt.custom[${i}].why=this.value" placeholder="사유"></td><td class="cand">선생님이 만든 상</td><td><button class="b" style="font-size:13px;padding:3px 8px" onclick="awardSt.custom.splice(${i},1);renderReport()">빼기</button></td></tr>`).join("")}
     </table>
@@ -2816,6 +2858,7 @@ function leafNew(L, col, light, o){
   return g;
 }
 const placeL = (x, y, rot, sx, sy, inner) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sx} ${sy})">${inner}</g>`;
+const LF = s => `<g class="lf">${s}</g>`;   // 아이가 세는 잎(큰 잎 · 떡잎) 표시 — 관찰일지에서 톡톡 눌러 셈 (새순 · 곁눈은 안 붙임)
 function basilSVG(p, opt = {}){
   const st = stage(p), dead = p.dead, dry = (p.moist < 18 && !(p.saucer > 0)) || dead, L = plantLayout(p);
   const leggy = st >= 1 && p.stress && p.stress.dark >= 2 && (p.sunToday ?? 8) < 3.5;
@@ -2848,15 +2891,15 @@ function basilSVG(p, opt = {}){
     stemS += `<path d="M148 285 Q${149 + bend * .3} ${(285 + endY) / 2} ${xAt(endY) - .6} ${endY} L${xAt(endY) + 1.2} ${endY} Q${151.5 + bend * .3} ${(285 + endY) / 2} 153 285 Z" fill="${C.stem}"/>`;
     stemS += `<path d="M150 284 Q${150 + bend * .3} ${(284 + endY) / 2} ${xAt(endY) + .3} ${endY + 2}" stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none"/>`;
     if (L.cot){ const cc = L.cotOld ? "#d2c36a" : "#86c860";
-      for (const sd of [-1, 1]) mid += `<g transform="translate(${xAt(cotY)} ${cotY}) scale(${sd} 1) rotate(${dry ? 25 : 0})"><line x1="0" y1="0" x2="5" y2="-1" stroke="${cc}" stroke-width="1.5"/><ellipse cx="13" cy="-2.5" rx="9.5" ry="6" fill="${cc}" transform="rotate(-12 13 -2.5)"/></g>`; }
+      for (const sd of [-1, 1]) mid += LF(`<g transform="translate(${xAt(cotY)} ${cotY}) scale(${sd} 1) rotate(${dry ? 25 : 0})"><line x1="0" y1="0" x2="5" y2="-1" stroke="${cc}" stroke-width="1.5"/><ellipse cx="13" cy="-2.5" rx="9.5" ry="6" fill="${cc}" transform="rotate(-12 13 -2.5)"/></g>`); }
     const nodes = []; for (let k = 1; k <= n; k++) nodes.push(cotY - (cotY - (p.pinched ? endY : endY + 6)) * (k / Math.max(1, n)));
     const Lmax = clamp(28 + n * 7 + L.br * 4, 30, 64) * ls;
     nodes.forEach((y, i) => {
       const k = i + 1, age = (n - k) / Math.max(1, n - 1), x = xAt(y);
       let Ln = Lmax * (.55 + .45 * age); if (k === n && !p.pinched) Ln *= .55;
       const col = k >= n - 1 && !p.pinched ? C.young : C.base, d0 = 4 + 30 * (1 - age);
-      if (k % 2 === 1) mid += placeL(x + 1, y, -d0 + droopX, 1, 1, leafNew(Ln, col, C.light, lo)) + placeL(x - 1, y, 180 + d0 - droopX, 1, -1, leafNew(Ln, col, C.light, lo));
-      else { back += placeL(x, y, -98 + droopX * 1.5, .62, .85, leafNew(Ln * .9, C.back, C.back, lo)); front += placeL(x + 1, y, 72 + droopX * .4, .72, .95, leafNew(Ln, col, C.light, lo)); }
+      if (k % 2 === 1) mid += LF(placeL(x + 1, y, -d0 + droopX, 1, 1, leafNew(Ln, col, C.light, lo))) + LF(placeL(x - 1, y, 180 + d0 - droopX, 1, -1, leafNew(Ln, col, C.light, lo)));
+      else { back += LF(placeL(x, y, -98 + droopX * 1.5, .62, .85, leafNew(Ln * .9, C.back, C.back, lo))); front += LF(placeL(x + 1, y, 72 + droopX * .4, .72, .95, leafNew(Ln, col, C.light, lo))); }
       if (L.axil && !dead && k <= n - 2) for (const sd of [-1, 1]) front += placeL(x + sd * 2, y - 2, sd > 0 ? -55 : -125, 1, sd > 0 ? 1 : -1, leafNew(7 * ls, C.young, C.light));
     });
     if (!p.pinched && !dead){ const x = xAt(endY); front += placeL(x, endY + 2 - 6, -75 + droopX, 1, 1, leafNew(9 * ls, C.young, C.light)) + placeL(x, endY + 2 - 6, -105 - droopX, 1, -1, leafNew(9 * ls, C.young, C.light)); }
@@ -2866,7 +2909,7 @@ function basilSVG(p, opt = {}){
         const x1 = x0 + sd * rise * .5, y1 = 284 - p.h * CMV + 6;
         stemS += `<path d="M${x0} ${endY} Q${x0 + sd * rise * .38} ${endY - rise * .35} ${x1} ${y1}" stroke="${C.stem}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
         for (let j = 1; j <= L.br; j++){ const tt = j / (L.br + .6), bx = x0 + sd * rise * .5 * Math.pow(tt, .8), by = endY - rise * tt, LL = clamp(22 + rise * .3, 24, 44) * (1.1 - tt * .45) * ls, cl = tt > .7 ? C.young : C.base;
-          mid += placeL(bx, by, -18 - 15 * tt + droopX, 1, 1, leafNew(LL, cl, C.light, lo)) + placeL(bx, by, 198 + 15 * tt - droopX, 1, -1, leafNew(LL, cl, C.light, lo)); }
+          mid += LF(placeL(bx, by, -18 - 15 * tt + droopX, 1, 1, leafNew(LL, cl, C.light, lo))) + LF(placeL(bx, by, 198 + 15 * tt - droopX, 1, -1, leafNew(LL, cl, C.light, lo))); }
         if (!dead) front += placeL(x1, y1 + 2, -80, 1, 1, leafNew(8 * ls, C.young, C.light)) + placeL(x1, y1 + 2, -100, 1, -1, leafNew(8 * ls, C.young, C.light));
       }
       stemS += `<circle cx="${x0}" cy="${endY - 1}" r="2.4" fill="#6b5a3a"/>`;
@@ -3917,6 +3960,221 @@ function recipeSVG(id){
   }
   return `<svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid meet">${g}</svg>`;
 }
+
+
+/* ═════════ 📏 관찰일지 그림 먼저 판 (10-03 밤 · 손질안 4번 탭) ═════════
+   치는 칸 0 — ① 자 위 줄을 손가락으로 끌어 키 재기 (▼ ▲ 로 0.5cm 씩 맞춤)
+              ② 그림의 잎을 톡톡 눌러 세기 (누른 차례대로 1 · 2 · 3 번호가 붙음 · 다시 누르면 빠짐)
+              ③ 👀 그림 딱지만 골라도 저장 · ✏️ 는 쓰고 싶은 아이만
+              🔮 예상 : 보통 = 바질 그림 셋(그대로 · 조금 · 많이) · 어려움 = 숫자 + 까닭
+   쉬움 : 📏 키 + 👀 딱지 · 보통 : + 🍃 잎 + 🔮 그림 셋 · 어려움 : + 🎨 잎 색(대부분 색 하나 + 다른 색 여럿) · 👆 흙 · 🔮 숫자
+   그림은 바질 키에 맞춰 당겨 크게 보임 (작은 바질도 잎을 손가락으로 누를 수 있게) */
+const JR_TAGS = [["new", "🌱", "새 잎"], ["grow", "📏", "컸다"], ["wet", "💧", "흙 젖음"], ["droop", "🥀", "처짐"], ["bug", "🐛", "벌레"]];
+const JR_COLORS = [["진초록", "#3e8e3a"], ["연두", "#8fd36a"], ["노랑", "#d2c36a"], ["갈색", "#a3824e"], ["거무스름", "#3f5640"]];
+const JR_OTHER = [["연두", "#8fd36a"], ["노랑", "#d2c36a"], ["갈색", "#a3824e"], ["흰색", "#f4f4ee"]];
+const JR_PREDS = [[0, "🌱", 34, "그대로"], [1, "🌿", 44, "조금"], [2, "🪴", 54, "많이"]];
+let jrView = null, jrSeq = 0;
+
+/* 그림을 당겨 볼 칸 — 바질 꼭대기 위 2.5cm 부터 화분 얼굴 위까지 (칸 비율 360 : 470) */
+function jrViewOf(p){
+  const h = stage(p) === 0 ? 0 : Math.max(p.h || 0, drawnHeightCM(p));
+  const top = clamp(284 - (h + 2.5) * CMV, 30, 170), H = 360 - top, W = H * 360 / 470;
+  return {x: 150 - W * .58, y: top, w: W, h: H};
+}
+/* 그림에 보이는 «다른 색 잎» — 대부분 색(leafColorName)과 다른 것만 */
+function jrOtherColors(p){
+  const s = []; if (stage(p) === 0 || p.dead) return s;
+  const main = leafColorName(p), L = plantLayout(p);
+  if (!p.chill && p.health > 45 && main !== "연두") s.push("연두");     // 꼭대기 새잎 · 새순은 연두
+  if (L.cot && L.cotOld && main !== "노랑") s.push("노랑");             // 오래된 떡잎이 누레짐
+  if (p.scorch >= 1 && main !== "갈색") s.push("갈색");                 // 잎 끝이 탐
+  if (p.mildew) s.push("흰색");                                         // 흰가루
+  return s;
+}
+const JR_OTHER_WHY = {연두: "꼭대기 새잎은 연두색 — 어린 잎이라 그래요", 노랑: "아래 떡잎이 누레졌어요 — 본잎이 자라면 떡잎은 할 일을 마쳐요 · 괜찮아요",
+                      갈색: "잎 끝이 갈색 — 햇빛이 너무 세거나 더웠나 봐요", 흰색: "잎에 흰 가루 — 흰가루병일 수 있어요 · 진찰해 봐요"};
+
+/* 자 + 끄는 줄 (그림과 같은 칸 · 같은 눈금 1cm = CMV) */
+function jrRulerSVG(v){
+  const rx = v.x + 3, top = 284 - 24 * CMV;
+  let s = `<rect x="${rx}" y="${top}" width="20" height="${24 * CMV + 5}" rx="3" fill="#fff6d6" stroke="#d9b65a" stroke-width=".8"/>`;
+  for (let c = 0; c <= 24; c++){ const y = 284 - c * CMV;
+    s += `<line x1="${rx + 20}" y1="${y}" x2="${rx + (c % 2 ? 14 : 10)}" y2="${y}" stroke="#8a6a2a" stroke-width=".8"/>`;
+    if (c % 2 === 0) s += `<text x="${rx + 6}" y="${y + 2.6}" font-size="7" font-family="Jua" fill="#6a4a1a" text-anchor="middle">${c}</text>`; }
+  s += `<line x1="${rx + 20}" y1="284" x2="${v.x + v.w}" y2="284" stroke="#d9b65a" stroke-width=".8" stroke-dasharray="3 2"/>`;
+  s += `<rect class="hit" x="${v.x}" y="${v.y}" width="${rx + 24 - v.x}" height="${v.h}" fill="transparent"/>`;   // 자 기둥을 눌러도 줄이 옴
+  const kx = v.x + v.w - 40;
+  s += `<g id="jrLine" transform="translate(0 284)"><rect class="hit" x="${rx}" y="-7" width="${v.w - 6}" height="14" fill="transparent"/>
+          <line x1="${rx}" y1="0" x2="${v.x + v.w - 4}" y2="0" stroke="#e06a3a" stroke-width="1.6" stroke-dasharray="5 3"/>
+          <g class="hit"><rect x="${kx}" y="-9" width="36" height="16" rx="8" fill="#e06a3a"/><text id="jrLineT" x="${kx + 18}" y="3" font-size="9.5" text-anchor="middle" fill="#fff" font-family="Jua">✋ ↑</text></g></g>`;
+  return `<svg class="rul" id="jrRul" viewBox="${v.x} ${v.y} ${v.w} ${v.h}" width="100%" height="100%">${s}</svg>`;
+}
+function jrSetH(cm){
+  cm = clamp(Math.round(cm * 2) / 2, 0, 24); jrDraft.h = String(cm);
+  const ln = $("jrLine"); if (ln) ln.setAttribute("transform", `translate(0 ${284 - cm * CMV})`);
+  const t = $("jrLineT"); if (t) t.textContent = cm;
+  const v = $("jrHv"); if (v){ v.textContent = cm; v.classList.remove("empty"); }
+  const s = $("jrHs"); if (s) s.textContent = "cm";
+  jrLock();
+}
+function jrNudge(d){ jrSetH((jrDraft.h === "" ? 0 : +jrDraft.h) + d); }
+function jrDragInit(){
+  const svg = $("jrRul"); if (!svg) return;
+  let on = false;
+  const move = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const y = pt.matrixTransform(svg.getScreenCTM().inverse()).y; jrSetH((284 - y) / CMV); };
+  svg.querySelectorAll(".hit").forEach(h => h.addEventListener("pointerdown", e => { on = true; move(e); e.preventDefault(); }));
+  const mv = e => { if (on) move(e); }, up = () => { on = false; };
+  window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+  jrDragInit.off = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); };
+}
+/* 잎 톡톡 — 누른 잎에 차례 번호 */
+function jrLeafInit(){
+  const svg = document.querySelector("#jrBox .pic .pl svg"); if (!svg) return;
+  svg.addEventListener("click", e => { const lf = e.target.closest(".lf"); if (!lf) return;
+    if (lf.dataset.o){ delete lf.dataset.o; } else lf.dataset.o = ++jrSeq;
+    jrMarks(true); sfx("tap"); });
+}
+function jrMarks(touched){
+  const svg = document.querySelector("#jrBox .pic .pl svg"); if (!svg) return;
+  let g = svg.querySelector(".ckm"); if (!g){ g = document.createElementNS("http://www.w3.org/2000/svg", "g"); g.setAttribute("class", "ckm"); svg.appendChild(g); }
+  const on = [...svg.querySelectorAll(".lf[data-o]")].sort((a, b) => a.dataset.o - b.dataset.o);
+  g.innerHTML = on.map((lf, i) => { const b = lf.getBBox(), x = b.x + b.width / 2, y = b.y + b.height / 2;
+    return `<circle cx="${x}" cy="${y}" r="5.2" fill="#2f7a2a" stroke="#fff" stroke-width="1"/><text x="${x}" y="${y + 2.4}" font-size="7" text-anchor="middle" fill="#fff" font-family="Jua">${i + 1}</text>`; }).join("");
+  if (touched || on.length) jrDraft.l = String(on.length);
+  const v = $("jrLv"); if (v){ v.textContent = jrDraft.l === "" ? "?" : jrDraft.l; v.classList.toggle("empty", jrDraft.l === ""); }
+  jrLock();
+}
+function jrLeafClear(){ document.querySelectorAll("#jrBox .lf[data-o]").forEach(lf => delete lf.dataset.o); jrSeq = 0; jrDraft.l = ""; jrMarks(false); }
+function jrTag(k){ const a = jrDraft.tags, i = a.indexOf(k); if (i < 0) a.push(k); else a.splice(i, 1);
+  document.querySelectorAll("#jrBox [data-tag]").forEach(b => b.classList.toggle("on", a.includes(b.dataset.tag))); jrLock(); }
+function jrPen(){ const r = $("jrTrow"); r.style.display = r.style.display === "none" ? "flex" : "none"; if (r.style.display !== "none") $("jrT").focus(); }
+function jrColor(c){ jrDraft.color = c; document.querySelectorAll("#jrBox [data-c]").forEach(b => b.classList.toggle("on", b.dataset.c === c)); jrLock(); }
+function jrOther(c){ const a = jrDraft.other, i = a.indexOf(c); if (i < 0) a.push(c); else a.splice(i, 1);
+  document.querySelectorAll("#jrBox [data-o2]").forEach(b => b.classList.toggle("on", a.includes(b.dataset.o2))); }
+jrPick = function(x){
+  if (jrDraft.h === ""){ toast("📏 줄을 끌어 키를 먼저 재요"); return; }
+  jrDraft.pred = String(+(+jrDraft.h + x).toFixed(1)); jrDraft.predX = x;
+  document.querySelectorAll("#jrBox [data-x]").forEach(b => b.classList.toggle("on", +b.dataset.x === x));
+  $("jrPv").textContent = `→ ${jrDraft.pred}cm`; jrLock();
+};
+jrLock = function(){
+  const d = jrDraft, L = LV(), seed = stage(me) === 0, miss = [];
+  if (d.h === "") miss.push("📏");
+  if (L !== "easy" && !seed && d.l === "") miss.push("🍃");
+  if (L === "hard" && !seed && !d.color) miss.push("🎨");
+  if (!d.tags.length && !d.txt.trim()) miss.push("👀");
+  if (L === "hard" && d.pred === "") miss.push("🔮");
+  const b = $("jrSave"); if (!b) return;
+  b.disabled = false;
+  $("jrWhy").textContent = miss.length ? "💡 아직 : " + miss.join(" ") + " (그래도 저장돼요)" : "";
+};
+openJournal = function(){
+  const p = me, lp = lastPred(p), L = LV(), seed = stage(p) === 0, v = jrView = jrViewOf(p);
+  jrDraft = {h: "", l: seed ? "0" : "", color: seed ? "없음" : "", txt: "", pred: "", why: "", tags: [], other: []}; jrSeq = 0;
+  if (jrDragInit.off) jrDragInit.off();
+  const plant = basilSVG(p).replace('viewBox="0 0 300 400"', `viewBox="${v.x} ${v.y} ${v.w} ${v.h}"`);
+  const none = `<span class="sub">🌱 아직 잎이 없어요</span>`;
+  const leafRow = L === "easy" ? "" : `<div class="jrow"><span class="k">🍃</span>${seed ? none
+      : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 그림의 잎을 톡톡</span>`}</div>`;
+  const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🎨</span>
+      <div class="sws">${JR_COLORS.map(([c, hx]) => `<button class="sw" data-c="${c}" onclick="jrColor('${c}')"><i style="background:${hx}"></i>${c}</button>`).join("")}</div>
+      <span class="sub" style="margin:0 2px 0 8px">대부분<br>+ 다른 색</span>
+      <div class="sws">${JR_OTHER.map(([c, hx]) => `<button class="sw" data-o2="${c}" onclick="jrOther('${c}')"><i style="background:${hx};width:30px;height:30px"></i>${c}</button>`).join("")}</div></div>`;
+  const soilRow = L !== "hard" ? "" : `<div class="jrow"><span class="k">👆</span><span class="sub" style="font-size:17px">${p.today.checked ? `겉흙 ${p.today.surfWord || "—"} · 속흙 ${p.today.deepWord || "—"}` : "오늘은 아직 안 만져 봤어요"}</span></div>`;
+  const predRow = L === "easy" ? "" : L === "normal"
+    ? `<div class="jrow"><span class="k">🔮</span><div class="preds">${JR_PREDS.map(([x, ic, sz, w]) => `<button data-x="${x}" onclick="jrPick(${x})"><i style="font-size:${sz}px">${ic}</i>${w}</button>`).join("")}</div><span class="sub" id="jrPv">다음 수업 땐?</span></div>`
+    : `<div class="jrow"><span class="k">🔮</span><input type="number" step="0.5" min="0" max="25" id="jrP" style="width:90px;font:22px Jua;border:2px solid #cfe3c4;border-radius:10px;padding:4px 8px" oninput="jrDraft.pred=this.value;jrLock()"> cm
+         <span class="sub">${(() => { const g = gapToNext(p), a = []; for (let i = 1; i <= g; i++) a.push(KIND_ICON[kindOf(wxOf(p.day + i))]); return "다음 수업까지 " + a.join(" "); })()}</span></div>
+       <div class="jrow" style="margin-top:-4px"><span class="k" style="background:none;font-size:20px">❓</span>${["햇빛", "물", "날씨", "온도", "잘 모르겠어요"].map(w => `<button class="stk" data-w="${w}" onclick="jrDraft.why='${w}';document.querySelectorAll('#jrBox [data-w]').forEach(b=>b.classList.toggle('on',b.dataset.w==='${w}'))">${w}</button>`).join("")}</div>`;
+  $("jrBox").innerHTML = `<h2 style="font:28px Jua;margin:0 0 8px">📏 관찰일지 — D+${p.day} ${dateLab(p.day).split(" · ")[1]}</h2>
+    ${L !== "easy" && lp && !lp.checked ? `<div class="prev">🔮 지난번 예상 <b>${lp.pred}cm</b> — 오늘 재면 견줘 봐요</div>` : ""}
+    <div class="jr" style="margin-top:8px">
+      <div class="pic"><div class="pl">${plant}</div>${jrRulerSVG(v)}</div>
+      <div class="jf">
+        <div class="jrow"><span class="k">📏</span><span class="val empty" id="jrHv">?</span><span id="jrHs" style="font-size:18px">cm</span>
+          <button class="nb" onclick="jrNudge(-.5)">▼</button><button class="nb" onclick="jrNudge(.5)">▲</button><span class="sub">✋ 줄을 꼭대기까지</span></div>
+        ${leafRow}${colorRow}${soilRow}
+        <div class="jrow"><span class="k">👀</span>${JR_TAGS.map(([k, ic, w]) => `<button class="stk" data-tag="${k}" onclick="jrTag('${k}')">${ic} ${w}</button>`).join("")}<button class="stk" onclick="jrPen()" title="쓰기">✏️</button></div>
+        <div class="jrow" id="jrTrow" style="display:none"><span class="k" style="background:none">✏️</span><input type="text" id="jrT" style="flex:1;font:17px 'Noto Sans KR';border:2px solid #cfe3c4;border-radius:10px;padding:6px 10px" placeholder="더 쓰고 싶으면 (안 써도 돼요)" oninput="jrDraft.txt=this.value;jrLock()"></div>
+        ${predRow}
+        <div id="jrRes"></div>
+        <div class="jbtns"><button class="big" id="jrSave" style="width:auto;padding:10px 30px" onclick="saveJournal()">✅ 기록</button><button class="b" style="font-size:22px;padding:8px 18px" onclick="$('jrModal').classList.remove('on')">✕</button><span class="why" id="jrWhy"></span></div>
+      </div></div>`;
+  $("jrModal").classList.add("on");
+  jrDragInit(); jrLeafInit();
+  // 오늘 이미 쓴 일지면 그대로 불러와 고침
+  const n = p.today.journal ? p.notes.filter(x => x.d === p.day).pop() : null;
+  if (n){
+    if (n.hIn != null) jrSetH(n.hIn);
+    if (n.lIn != null && !seed){ [...document.querySelectorAll("#jrBox .pic .lf")].slice(0, n.lIn).forEach(lf => lf.dataset.o = ++jrSeq); jrDraft.l = String(n.lIn); jrMarks(true); }
+    (n.tags || []).forEach(k => jrTag(k));
+    const free = n.tx != null ? n.tx : (n.tags ? "" : n.t || "");
+    if (free){ jrDraft.txt = free; $("jrT").value = free; $("jrTrow").style.display = "flex"; }
+    if (L === "hard" && n.color && n.color !== "없음" && !seed) jrColor(n.color);
+    (n.other || []).forEach(c => jrOther(c));
+    if (n.pred != null){ if (L === "normal"){ const x = Math.round((n.pred - (n.hIn || 0)) * 2) / 2; if ([0, 1, 2].includes(x)) jrPick(x); else { jrDraft.pred = String(n.pred); $("jrPv").textContent = `→ ${n.pred}cm`; } }
+                         else if ($("jrP")){ $("jrP").value = n.pred; jrDraft.pred = String(n.pred); } }
+    if (n.why){ jrDraft.why = n.why; document.querySelectorAll("#jrBox [data-w]").forEach(b => b.classList.toggle("on", b.dataset.w === n.why)); }
+    $("jrSave").textContent = "✅ 고쳐서 저장";
+  }
+  jrLock();
+};
+/* 저장 — 앞 판(언제나 저장 · 처음 값으로 정답)을 그대로 쓰고, 딱지 · 다른 색만 더함 */
+const _saveJournalPic = saveJournal;
+saveJournal = function(){
+  const d = jrDraft, p = me, free = (d.txt || "").trim(), tags = d.tags.slice(), other = d.other.slice();
+  d.txt = [...tags.map(k => { const t = JR_TAGS.find(x => x[0] === k); return t ? t[1] + " " + t[2] : ""; }), free].filter(Boolean).join(" · ");
+  _saveJournalPic();
+  d.txt = free;
+  const n = p.notes.filter(x => x.d === p.day).pop();
+  if (n){ n.tags = tags; n.tx = free; if (LV() === "hard" && stage(p) > 0) n.other = other; }
+  // 🎨 다른 색 — 점수 없이 알려만 줌
+  if (LV() === "hard" && stage(p) > 0){
+    const real = jrOtherColors(p); let m = "";
+    real.forEach(c => { m += other.includes(c) ? `<div class="ok">🎨 ${c} 잎도 잘 봤어요 — ${JR_OTHER_WHY[c]}</div>` : `<div class="no">🎨 ${c} 잎도 있어요 — ${JR_OTHER_WHY[c]}</div>`; });
+    other.filter(c => !real.includes(c)).forEach(c => { m += `<div class="no">🔍 ${c} 잎은 다시 보면 안 보여요</div>`; });
+    const tip = document.querySelector("#jrRes .tip"); if (m && tip) tip.insertAdjacentHTML("beforeend", m);
+  }
+  $("jrSave").textContent = "✅ 고쳐서 저장";
+  saveMe();
+};
+
+
+/* ═════════ ② 바질이 잘 보이게 (10-03 밤) ═════════
+   지난밤 줄(어젯밤 ❤ · 💧 ☀ …)은 상태판 머리줄 오른쪽으로 옮김 — 따로 떠 있으면 바질 잎을 가림 */
+const _renderStatSee = renderStat;
+renderStat = function(p){
+  _renderStatSee(p);
+  const nl = $("nightLine"), t = document.querySelector("#stat .t");
+  if (nl && t && nl.style.display !== "none" && nl.innerHTML) t.insertAdjacentHTML("beforeend", `<span class="nl">${nl.innerHTML}</span>`);
+};
+
+/* ═════════ 🔈 읽어 주기 — 단추를 누르면 이름을 읽고, 이어서 뜨는 알림도 읽음 (10-03 밤 전무님) ═════════
+   단추는 그대로 동작함 · 그림만 있는 단추는 title 이나 아래 낱말표로 이름을 정함 */
+const SAY_WORD = {"꾹": "꾹 눌러 물 주기", "겉": "겉흙 만지기", "속": "속흙 만지기", "순": "순지르기", "잎": "잎 따기", "거름": "거름 주기", "흙에": "흙에 물 주기", "잎에": "잎에 물 뿌리기",
+                  "✕": "닫기", "↺": "처음부터", "▼": "내리기", "▲": "올리기", "✏️": "쓰기", "✏️": "쓰기", "❓": "따라 하기", "🚪": "나가기", "🔈": "읽어 주기", "🔊": "읽어 주기"};
+const noEmoji = s => String(s || "").replace(/\p{Extended_Pictographic}|️|‍/gu, "").replace(/\s+/g, " ").trim();
+function speakQ(txt){   // 앞 소리를 끊지 않고 이어서 읽음 (단추 이름 → 알림)
+  try { if (!window.speechSynthesis) return; const s = noEmoji(txt); if (!s) return;
+    const u = new SpeechSynthesisUtterance(s); u.lang = "ko-KR"; u.rate = .95; speechSynthesis.speak(u); } catch (e) {}
+}
+function sayName(el){
+  // 보이는 낱말이 먼저 (title 은 긴 풀이일 때가 있음) → 낱말이 없을 때만 aria-label · title
+  const raw = (el.innerText || "").trim(), word = noEmoji(raw);
+  if (SAY_WORD[word]) return SAY_WORD[word];
+  if (word) return word;
+  if (SAY_WORD[raw]) return SAY_WORD[raw];
+  return noEmoji(el.getAttribute("aria-label") || el.title || "");
+}
+document.addEventListener("click", ev => {
+  if (!stuName || !sayOn()) return;
+  const b = ev.target.closest("button,.stk,.sw"); if (!b || b.id === "sayBtn") return;
+  const w = sayName(b); if (!w) return;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  speakQ(w);
+}, true);
+const _toastSay = toast;
+toast = function(msg){ _toastSay(msg); if (stuName && me && sayOn()) speakQ(String(msg).replace(/<[^>]+>/g, " ")); };
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
