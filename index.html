@@ -611,6 +611,30 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #evModal .big{width:auto;padding:12px 34px}
 .bubble .evh{font:17px "Jua";color:#2f7a2a;margin-top:4px}
 #plantBig .evtap{cursor:pointer}
+/* 🌱 씨앗 체험 */
+#seedModal{z-index:40}
+#seedModal .sbox{width:1180px;height:700px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
+#seedModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
+#seedModal .dots{display:flex;gap:6px;margin-left:auto}
+#seedModal .dots span{width:34px;height:34px;border-radius:50%;background:#eef2ea;color:#8c968f;display:flex;align-items:center;justify-content:center;font:16px "Jua"}
+#seedModal .dots span.on{background:var(--leaf);color:#fff}
+#seedModal .dots span.ok{background:#cfe9c4;color:#2f7a2a}
+#seedModal .sbody{flex:1;display:flex;gap:26px;min-height:0}
+#seedModal .stage{width:470px;flex:0 0 auto;background:linear-gradient(#e7f5ff,#f6fbff 66%,#efe6d6 66.3%);border-radius:22px;position:relative;overflow:hidden;touch-action:none}
+#seedModal .stage svg{position:absolute;inset:0;width:100%;height:100%}
+#seedModal .side{flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center}
+#seedModal .say{font:34px/1.35 "Jua";color:#24332a}
+#seedModal .say small{display:block;font:20px/1.4 "Jua";color:#6b7a70;margin-top:6px}
+#seedModal .acts{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+#seedModal .acts .big{width:auto;padding:14px 30px;font-size:26px}
+#seedModal .acts .big.hold{background:#5aa0d8}
+#seedModal .meter{height:16px;border-radius:999px;background:#eef2ea;overflow:hidden}
+#seedModal .meter i{display:block;height:100%;width:0;background:var(--leaf);transition:width .15s}
+#seedModal .dayc{position:absolute;left:16px;top:12px;background:rgba(255,255,255,.92);border-radius:14px;padding:4px 14px;font:26px "Jua";color:#2f7a2a}
+#seedModal .cap{position:absolute;left:0;right:0;top:64px;text-align:center;font:24px "Jua";color:#24332a;text-shadow:0 1px 0 #fff}
+#seedModal .thirst{animation:sdBounce .7s ease-in-out infinite}
+@keyframes sdBounce{50%{transform:translateY(-8px)}}
+#seedModal .skip{margin-left:12px;font-size:15px}
 </style>
 </head>
 <body>
@@ -2606,7 +2630,7 @@ function applyCfg(){
 /* 오늘 실제 날씨 — 매일 받아 패드에 둠 (지난 날 값은 바꾸지 않음 → 같은 반이 같은 날씨) */
 async function fetchToday(){
   if (WXCFG.mode !== "today") return;
-  const [la, lo] = REGIONS[WXCFG.region], s = START, e = new Date(Math.min(+START + 21 * DAYMS, Date.now() + 15 * DAYMS)), f = x => new Date(x - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const [la, lo] = REGIONS[WXCFG.region], s = START, e = new Date(Math.min(+START + 21 * DAYMS, Date.now() + 13 * DAYMS)), f = x => new Date(x - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   const key = WXCFG.region + WXCFG.start, old = LS.get("basil.wx", null);
   if (old && old.key === key && Date.now() - (old.at || 0) < 3 * 3600000) return;
   try {
@@ -2706,7 +2730,7 @@ function loginAs(name, pw, fail){
   show("p2"); renderMe();
   const gap = beforeStart() ? 0 : todayIdx() - me.day;
   if (gap > 0) setTimeout(() => passDays(gap), 500);
-  if (first) setTimeout(() => openName(), 350);
+  if (first) setTimeout(() => seedIntro(openName), 350);
   if (beforeStart()) toast(`아직 시작 전이에요 — ${dateLab(0).split(" · ")[1]}에 시작해요`);
 }
 function setWho(){ document.querySelectorAll(".whoName").forEach(e => e.textContent = `${CFG.className} ${stuName}`); }
@@ -3061,7 +3085,7 @@ function loginAs(name, pw, fail, sure){
   show("p2"); setHomeLabels(); renderMe();
   const gap = beforeStart() ? 0 : todayIdx() - me.day;
   if (gap > 0) setTimeout(() => passDays(gap), 500);
-  if (first) setTimeout(() => openName(), 350);
+  if (first) setTimeout(() => seedIntro(openName), 350);
   if (beforeStart()) toast(`아직 시작 전이에요 — ${dateLab(0).split(" · ")[1]}에 시작해요`);
 }
 function keyConfirm(name, pw, fail){
@@ -4614,6 +4638,158 @@ function evTry(n){
     if (!me || !stuName || me.evShown === me.day || !evPending(me).length){ _evTrying = false; return; }
     if (ready){ _evTrying = false; evCard(); } else if (n > 0) evTry(n - 1); else _evTrying = false;
   }, n === 12 ? 700 : 1000);
+}
+
+
+/* ═════════ 🌱 씨앗에서 모종까지 — 처음 들어오면 1분 체험 (10-04 · 손질안 2_목업\4_다음판_손질안_씨앗체험.html) ═════════
+   ① 흙 담기 (🟫 톡 ×3) ② 씨 뿌리기 (흙 위 톡 ×3) ③ 흙 살짝 덮기 (손가락으로 쓱) ④ 분무기 (💦 꾹 — 흙이 진해지면 그만)
+   ⑤ 빨리 감기 4주 → 약 20초 (중간에 «목말라!» 두 번 → 💧 톡) ⑥ 큰 화분으로 옮겨 심기 (끌기 또는 ✋ 톡) ⑦ 🎉 → 이름 짓기
+   · 반 설정 «시작 모습 🌰 씨앗(정석)» 이면 ①~④ 만 하고 실제 날짜로 싹을 기다림
+   · 처음 한 번 🌱 3 + 배지 «첫 씨앗» · 📖 알기 탭에서 언제든 다시 (코인 없음) · 실패 없음 */
+let SD = null;
+const SD_STEPS = ["흙", "씨", "덮기", "물", "⏩", "옮기기", "🎉"];
+const SD_POT = `<path d="M78 300 L222 300 L208 386 Q206 394 198 394 L102 394 Q94 394 92 386 Z" fill="#d9805a"/><rect x="70" y="284" width="160" height="22" rx="8" fill="#d9805a" stroke="rgba(0,0,0,.08)"/>
+  <circle cx="132" cy="336" r="5" fill="#5a2f1e"/><circle cx="168" cy="336" r="5" fill="#5a2f1e"/><path d="M135 352 Q150 366 165 352" stroke="#5a2f1e" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="393" rx="84" ry="7" fill="#b9694a"/>`;
+function seedIntro(next, replay){
+  const full = CFG.startAs !== "seed";
+  SD = {step: 0, next, replay: !!replay, full, fill: 0, seeds: [], cover: 0, wet: 0, day: 0, thirst: 0, moved: false};
+  let m = $("seedModal");
+  if (!m){ m = document.createElement("div"); m.id = "seedModal"; m.className = "modal"; $("jrModal").parentNode.appendChild(m); }
+  m.classList.add("on"); sdRender();
+}
+function sdSay(t){ if (sayOn()) speak(t.replace(/<[^>]+>/g, " ")); }
+function sdStageSVG(){
+  const s = SD, wetC = s.wet >= 1 ? "#4a3220" : s.wet > .4 ? "#5a3e28" : "#6b4a2f";
+  let g = SD_POT;
+  if (s.fill > 0){ const y = 306 - s.fill * 7; g += `<ellipse cx="150" cy="${y}" rx="${60 + s.fill * 4}" ry="9" fill="${s.step >= 3 ? wetC : "#6b4a2f"}"/>`; }
+  s.seeds.forEach(x => { g += `<ellipse cx="${x}" cy="285" rx="4" ry="2.6" fill="#2a1c12" opacity="${1 - s.cover * .85}"/>`; });
+  if (s.cover > 0) g += `<ellipse cx="150" cy="286" rx="${70 * s.cover}" ry="${8 * s.cover}" fill="${s.step >= 3 ? wetC : "#7a5638"}" opacity=".9"/>`;
+  if (s.spray) for (let i = 0; i < 7; i++) g += `<circle cx="${110 + ((i * 41 + Date.now() / 30) % 80)}" cy="${200 + ((i * 29 + Date.now() / 12) % 80)}" r="3.4" fill="#7fbfea"/>`;
+  return `<svg viewBox="20 140 280 270" id="sdSvg">${g}${s.step === 0 ? `<text x="232" y="250" font-size="54" class="sdbag">🟫</text>` : ""}${s.step === 3 ? `<text x="214" y="200" font-size="48">🧴</text>` : ""}</svg>`;
+}
+function sdGrowPlant(d){   // 빨리 감기 — 날짜 d(0~28)의 바질 (실제 그림 그대로 · 키로 단계가 정해짐)
+  const p = Object.assign(newPlant(), {deco: null, health: 92, moist: 62, surf: 58, saucer: 0, leafWet: 0, snail: 0, flower: false, tipped: 0, ev: [], day: d, sowDay: 0});
+  p.h = d < 5 ? 0 : d < 15 ? .3 + (d - 5) * .16 : d < 22 ? 2 + (d - 15) * .22 : 3.6 + (d - 22) * .15;
+  p.leafAcc = d < 15 ? 0 : d < 22 ? (d - 15) * .3 : 2 + (d - 22) * .34;
+  return p;
+}
+function sdRender(){
+  const s = SD, m = $("seedModal"); if (!m || !s) return;
+  const steps = s.full ? SD_STEPS : SD_STEPS.slice(0, 4).concat(["🎉"]), cur = s.full ? s.step : Math.min(s.step, 4);
+  const dots = steps.map((t, i) => `<span class="${i === cur ? "on" : i < cur ? "ok" : ""}">${i < cur ? "✔" : i === steps.length - 1 ? "🎉" : i + 1}</span>`).join("");
+  let say = "", acts = "", stage = "";
+  if (s.step <= 3) stage = sdStageSVG();
+  if (s.step === 0){ say = `화분에 흙을 담아요<small>🟫 흙 봉지를 세 번 톡톡</small>`; acts = `<button class="big" onclick="sdAct('fill')">🟫 흙 붓기</button><div class="meter" style="flex:1"><i style="width:${s.fill / 3 * 100}%"></i></div>`; }
+  if (s.step === 1){ say = `씨앗을 뿌려요<small>👆 흙 위를 톡톡 세 번 — 바질 씨앗은 아주 작아요</small>`; acts = `<button class="big" onclick="sdAct('seed')">🌰 씨앗 톡</button><span style="font:24px Jua">${s.seeds.length} / 3</span>`; }
+  if (s.step === 2){ say = `흙을 살짝 덮어요<small>👉 손가락으로 흙 위를 쓱쓱 — 아주 얇게! 깊으면 싹이 못 올라와요</small>`; acts = `<button class="big" onclick="sdAct('cover')">👉 쓱</button><div class="meter" style="flex:1"><i style="width:${s.cover * 100}%"></i></div>`; }
+  if (s.step === 3){ say = `분무기로 촉촉하게<small>💦 꾹 누르고 있어요 — 흙 색이 진해지면 그만</small>`; acts = `<button class="big hold" onpointerdown="sdSpray(true)" onpointerup="sdSpray(false)" onpointerleave="sdSpray(false)">💦 칙칙 (꾹)</button><div class="meter" style="flex:1"><i style="width:${Math.min(1, s.wet) * 100}%"></i></div>`; }
+  if (s.step === 4){ const p = sdGrowPlant(s.day);
+    stage = basilSVG(p).replace('viewBox="0 0 300 400"', 'viewBox="40 150 220 255"') + `<div class="dayc">${s.day}일째</div><div class="cap">${s.day < 5 ? "씨앗이 물을 먹고 불어요" : s.day < 8 ? "뿌리가 내려가고 싹이 고개를 들어요" : s.day < 15 ? "🌱 떡잎이 났어요!" : s.day < 22 ? "🌿 첫 본잎이 나와요" : "🪴 본잎 2쌍 — 모종이 됐어요!"}</div>`;
+    say = s.thirst ? `목말라!<small>💧 톡 눌러 물을 줘요</small>` : s.day >= 28 ? `4주 만에 모종이 됐어요!<small>씨앗 → 떡잎(1~2주) → 본잎(3주) → 본잎 2쌍(4주)</small>` : `빨리 감기 — 4주를 20초에<small>날짜가 휙휙 지나가요</small>`;
+    acts = s.thirst ? `<button class="big thirst" onclick="sdAct('drink')">💧 물 주기</button>` : `<div class="meter" style="flex:1"><i style="width:${s.day / 28 * 100}%"></i></div>`; }
+  if (s.step === 5){ const p = sdGrowPlant(28);
+    stage = `<svg viewBox="0 150 470 380" id="sdMove"><g transform="translate(${s.moved ? 120 : -6} ${s.moved ? 40 : 250}) scale(${s.moved ? 1.15 : .62})" id="sdSmall">${basilSVG(p).replace(/^<svg[^>]*>|<\/svg>$/g, "")}</g>
+      ${s.moved ? "" : `<g transform="translate(150 60) scale(1.15)" opacity=".75">${SD_POT}<ellipse cx="150" cy="286" rx="72" ry="10" fill="#6b4a2f"/></g><text x="150" y="470" font-size="40" text-anchor="middle">➡</text>`}</svg>`;
+    say = s.moved ? `쏙! 큰 화분으로 옮겼어요<small>이제부터는 진짜 날짜로 키워요</small>` : `큰 화분으로 옮겨 심어요<small>✋ 작은 모종을 큰 화분으로 끌어요</small>`;
+    acts = s.moved ? "" : `<button class="big" onclick="sdAct('move')">✋ 옮겨 심기</button>`; }
+  if (s.step === 6 || (!s.full && s.step === 4)){
+    stage = s.full ? basilSVG(me).replace('viewBox="0 0 300 400"', 'viewBox="20 120 260 290"') : sdStageSVG();
+    say = s.full ? `🎉 이제 내 바질이에요!<small>${s.replay ? "다시 해 봤어요" : "🌱 +3 · 배지 «첫 씨앗»"} — 이름을 지어 줘요</small>` : `🎉 씨앗을 심었어요!<small>이제 진짜 날짜로 싹이 트기를 기다려요 (1~2주) ${s.replay ? "" : "· 🌱 +3"}</small>`;
+    acts = `<button class="big" onclick="sdEnd()">${s.next ? "🏷️ 이름 짓기 →" : "✔ 끝"}</button>`; }
+  if (s.step === 4 && !s.full) s.step = 6;
+  const doneStep = (s.step === 0 && s.fill >= 3) || (s.step === 1 && s.seeds.length >= 3) || (s.step === 2 && s.cover >= 1) || (s.step === 3 && s.wet >= 1) || (s.step === 4 && s.day >= 28) || (s.step === 5 && s.moved);
+  if (doneStep) acts += `<button class="big" style="background:#e0a43a" onclick="sdGo()">다음 →</button>`;
+  m.innerHTML = `<div class="box sbox"><div class="shd">🌱 씨앗에서 모종까지<div class="dots">${dots}</div>${TEST || s.replay ? `<button class="b skip" onclick="sdEnd()">건너뛰기</button>` : ""}</div>
+    <div class="sbody"><div class="stage" id="sdStage">${stage}</div><div class="side"><div class="say">${say}</div><div class="acts">${acts}</div></div></div></div>`;
+  sdBind();
+}
+function sdBind(){
+  const st = $("sdStage"), s = SD; if (!st) return;
+  const pt = (e, id) => { const svg = $(id); if (!svg) return null; const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(svg.getScreenCTM().inverse()); };
+  st.onpointerdown = e => {
+    if (s.step === 0){ const q = pt(e, "sdSvg"); if (q && (q.x > 200 || (q.y > 270 && q.y < 320))) sdAct("fill"); }
+    if (s.step === 1){ const q = pt(e, "sdSvg"); if (q && q.x > 95 && q.x < 205 && q.y > 262 && q.y < 312) sdAct("seed", q.x); }
+    if (s.step === 2){ s._drag = pt(e, "sdSvg"); }
+    if (s.step === 5 && !s.moved){ s._mv = pt(e, "sdMove"); }
+  };
+  st.onpointermove = e => {
+    if (s.step === 2 && s._drag){ const q = pt(e, "sdSvg"); if (q && q.y > 250 && q.y < 330){ s.cover = Math.min(1, s.cover + Math.hypot(q.x - s._drag.x, q.y - s._drag.y) / 420); s._drag = q; const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = s.cover * 100 + "%"; if (s.cover >= 1){ s._drag = null; sfx("chime"); sdRender(); } } }
+    if (s.step === 5 && s._mv){ const q = pt(e, "sdMove"); if (q && q.x > 210){ s._mv = null; sdAct("move"); } }
+  };
+  st.onpointerup = () => { if (s.step === 2 && s._drag){ s._drag = null; sdRender(); } s._mv = null; };
+}
+function sdAct(a, x){
+  const s = SD; if (!s) return;
+  if (a === "fill" && s.fill < 3){ s.fill++; sfx("tap"); if (s.fill === 3) sdSay("흙이 가득 찼어요!"); }
+  if (a === "seed" && s.seeds.length < 3){ s.seeds.push(x != null ? x : 110 + s.seeds.length * 40 + Math.random() * 10); sfx("pop"); }
+  if (a === "cover"){ s.cover = Math.min(1, s.cover + .34); sfx("tap"); }
+  if (a === "drink"){ s.thirst = 0; sfx("water", .6); sdPlay(); }
+  if (a === "move"){ s.moved = true; sfx("grow"); }
+  sdRender();
+}
+let _sdSprayT = null;
+function sdSpray(on){
+  const s = SD; if (!s || s.step !== 3) return;
+  clearInterval(_sdSprayT); s.spray = on;
+  if (on){ sfx("water", .5); _sdSprayT = setInterval(() => { s.wet += .04; if (s.wet >= 1.5){ s.wet = 1.5; clearInterval(_sdSprayT); s.spray = false; toast("💦 이제 그만! 너무 많으면 씨앗이 떠내려가요"); } const st = $("sdStage"); if (st) st.innerHTML = sdStageSVG(); const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = Math.min(1, s.wet) * 100 + "%"; if (s.wet >= 1 && !s._wetSaid){ s._wetSaid = true; sdSay("흙 색이 진해졌어요. 그만!"); } }, 60); }
+  else sdRender();
+}
+let _sdPlayT = null;
+function sdPlay(){
+  const s = SD; clearInterval(_sdPlayT);
+  _sdPlayT = setInterval(() => {
+    if (!SD || s.step !== 4 || s.thirst){ clearInterval(_sdPlayT); return; }
+    s.day++;
+    if ((s.day === 10 || s.day === 19) && !s["t" + s.day]){ s["t" + s.day] = 1; s.thirst = 1; sfx("pop"); sdSay("목말라!"); }
+    if (s.day === 7) sdSay("떡잎이 났어요!"); if (s.day === 16) sdSay("첫 본잎이 나와요"); if (s.day >= 28){ s.day = 28; clearInterval(_sdPlayT); sfx("grow"); sdSay("4주 만에 모종이 됐어요!"); }
+    sdRender();
+  }, 700);
+}
+function sdGo(){
+  const s = SD; s.step++;
+  const t = ["", "씨앗을 뿌려요", "흙을 살짝 덮어요", "분무기로 촉촉하게", "빨리 감기", "큰 화분으로 옮겨 심어요", "이제 내 바질이에요!"][s.step] || "";
+  if (t) sdSay(t);
+  sdRender(); if (s.step === 4 && s.full) sdPlay();
+}
+function sdEnd(){
+  const s = SD; clearInterval(_sdPlayT); clearInterval(_sdSprayT);
+  $("seedModal").classList.remove("on");
+  if (s && !s.replay && me && !me.seedDone){ me.seedDone = true; addCoin(me, 3, "씨앗 체험"); saveMe(); }   // 배지는 이름을 지은 뒤 renderMe 에서
+  SD = null; if (s && s.next) s.next(); else renderMe();
+}
+BADGES.push(["firstseed", "🌰", "첫 씨앗", p => !!p.seedDone, "씨앗을 심고 모종까지 길러 봤어요"]);
+BADGE_INFO.firstseed = ["처음 들어와서 씨앗 체험을 끝까지 하면", "씨앗 → 떡잎 → 본잎 → 모종 — 바질의 한살이 첫걸음이에요"];
+/* 📖 알기 탭에서 다시 해 보기 (코인 없음) */
+(() => { const bar = document.querySelector("#p8 .bar"); if (bar) bar.insertAdjacentHTML("beforeend", `<button class="b" style="margin-left:10px" onclick="go('p2');setTimeout(()=>seedIntro(null,true),300)">🌱 씨앗 체험 다시</button>`); })();
+
+/* ═════════ 🌦 계절이 바뀌는 3주 — 시나리오가 한 계절에 머물지 않게 (10-04 전무님 «사계절 선택 의미 있나») ═════════ */
+Object.assign(PRESETS, {
+  autumn:  {name: "가을 → 초겨울",   sunny: 55, rainy: 15, tmax: [24, 13], tmin: [14, 3],  cold: 1, hot: 0},
+  monsoon: {name: "초여름 장마",     sunny: 30, rainy: 45, tmax: [25, 29], tmin: [17, 22], cold: 0, hot: 1},
+  winter:  {name: "초겨울 → 한겨울", sunny: 50, rainy: 8,  tmax: [16, 7],  tmin: [9, 1],   cold: 2, hot: 0},
+  summer:  {name: "초여름 → 한여름", sunny: 60, rainy: 20, tmax: [26, 33], tmin: [17, 25], cold: 0, hot: 2},
+  spring:  {name: "늦겨울 → 봄",     sunny: 45, rainy: 25, tmax: [12, 23], tmin: [2, 13],  cold: 1, hot: 0},
+});
+/* 시험 반은 «오늘 실제 날씨» 로 (새 반 설정의 기본과 같게) */
+const _applyCfgWx = applyCfg;   // 설정은 appStart 에서 읽힘 → 그때 바꿈
+applyCfg = function(){ if (TEST && CFG && CFG.className === "시험반" && CFG.wx && CFG.wx.mode === "record"){ CFG.wx.mode = "today"; LS.set("basil.cfg", CFG); } return _applyCfgWx.apply(this, arguments); };
+
+/* ═════════ 🧪 시험기 — 👩‍🏫 선생님 화면 (비밀번호 없이) · 👥 반 친구 채우기 ═════════ */
+const _renderTestT = renderTest;
+renderTest = function(){
+  _renderTestT();
+  const tp = document.querySelector("#testBox .testp"); if (!tp) return;
+  tp.insertAdjacentHTML("beforeend", `<div class="tr"><span>선생님</span><button class="b" onclick="testTeacher()">👩‍🏫 선생님 화면</button><button class="b" onclick="testFillClass()">👥 반 친구 채우기</button><span class="hint" style="font-size:13px;white-space:nowrap">가나 꼼꼼 · 다라 대충</span></div>`);
+};
+function testTeacher(){ saveMe(); TEACHER_DAY = todayIdx(); repDay = TEACHER_DAY; rebuildSims(); show("p6"); renderTeacher(); }
+function testFillClass(){
+  const others = (CFG.roster || []).filter(n => n !== stuName), d0 = todayIdx(), E = [.95, .35, .7, .5], NM = ["바질콩", "초록별", "향긋이", "잎새"];
+  others.forEach((n, i) => {
+    const p = newPlant(), r = rng(500 + i * 77); p.seedDone = true;
+    for (let d = 0; d < d0; d++){ dayStep(p); autoCare(p, E[i % E.length], r); }
+    p.name = NM[i % NM.length]; LS.set("basil.stu." + n, {pw: ["🍎", "🍎", "🍎"], plantName: p.name, plant: p, createdAt: Date.now()});
+  });
+  toast(`👥 반 친구 ${others.length}명을 ${d0}일째까지 키웠어요`);
 }
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
