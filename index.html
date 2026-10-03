@@ -489,6 +489,16 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #care .row.tight .ib{min-width:50px;padding:3px 6px;font-size:14px}
 #care .row.tight .ib i{font-size:22px}
 #care .mmap{height:62px!important}
+/* 🏅 배지 카드 · 축하 카드 */
+.bdg{text-align:center}
+.bdg .bi{font-size:96px;line-height:1.1}
+.bdg .bi.off{filter:grayscale(1);opacity:.45}
+.bdg h2{font:32px "Jua"!important;margin:4px 0 2px!important}
+.bdg .st{font:18px "Jua";color:var(--sub)}
+.bdg .ln{font:20px/1.45 "Jua";text-align:left;background:#f6f9f3;border-radius:14px;padding:8px 14px;margin-top:8px}
+.bdg .ln b{font-weight:400;color:var(--leaf)}
+.bdg.cele .bi{animation:bdgPop .7s ease-out}
+@keyframes bdgPop{0%{transform:scale(.3) rotate(-20deg);opacity:0}60%{transform:scale(1.15) rotate(6deg);opacity:1}100%{transform:none}}
 </style>
 </head>
 <body>
@@ -1249,8 +1259,8 @@ function renderRewards(){
       return `<div class="buy ${on?"own":""} ${!own && p.coins < s.price ? "poor" : ""}" onclick="buy('${s.id}')"><i>${s.icon}</i>${s.name}<br><small>${s.price ? "🌱 " + s.price : "공짜"}</small><em>${why}</em></div>`; }).join("")}</div>
     <p>코인 받는 법 : 들어오기 1 · 흙 확인 1 · 알맞은 물 2 · 일지 2 · 벌레 3 · 순지르기 3 · 잎 따기 · 퀴즈 2 · 집 요리 5</p>`;
   $("rwBadge").innerHTML = `<h3>나. 배지 도감<span class="tag">${BADGES.filter(b=>b[3](p)).length} / ${BADGES.length}</span></h3><div class="badges">${BADGES.map(b =>
-      `<div class="${b[3](p)?"":"off"}" title="${b[4]}"><i>${b[1]}</i>${b[2]}</div>`).join("")}</div>
-    <p>배지를 받으면 「왜 받았나」가 실과 내용으로 나옵니다. 보기 : 주말 대비 = ${BADGES[6][4]}</p>`;
+      `<div class="${b[3](p)?"":"off"}" style="cursor:pointer" onclick="openBadge('${b[0]}')"><i>${b[1]}</i>${b[2]}</div>`).join("")}</div>
+    <p>👆 배지를 누르면 어떻게 받는지 · 왜 중요한지 나와요</p>`;
   const sum = classHarvest() + p.harvested, goal = Math.round(320 * harvestFactor()), n = Math.min(24, Math.round(sum / goal * 24));
   let g = ""; for (let i = 0; i < n; i++) g += `<span style="left:${2 + (i % 12) * 8}%;bottom:${i < 12 ? 6 : 34}px;font-size:${20 + (i * 7) % 12}px">${["🌿","🌱","🌿","🪴"][i % 4]}</span>`;
   $("rwCook").innerHTML = `<h3>다. 요리 카드 + 반 정원<span class="tag">거둔 잎 ${p.harvested}장</span></h3>
@@ -1555,7 +1565,7 @@ function water(p, mL, target){
   p.moist = deep; p.saucer += Math.round(overflow); if (overflow >= 25) p.today.over = true;
   const good = target === "soil" && before < 60 && p.moist >= 60 && p.moist <= 97 && overflow < 25;
   if (good){ p.care.goodWaters++; p.today.gw = true; addCoin(p, 2, "알맞게 물 주기"); }
-  if (good && dateOf(p.day).getDay() === 4 && p.today.checked && p.moist >= 75) p.care.weekendPrep++;
+  if (good && gapToNext(p) >= 3 && p.today.checked && p.moist >= 75) p.care.weekendPrep++;
   return {good, overflow: Math.round(overflow), leaf: target === "leaf"};
 }
 function drainSaucer(p){ visit(p); p.today.drain = true; const n = p.saucer; p.saucer = 0; if (n > 0) addCoin(p, 1, "받침 물 버리기"); return n; }
@@ -3698,6 +3708,74 @@ dayStep = function(p){
   if (cool && p.scorch > sc0){ p.scorch = sc0; p.health = clamp(p.health + 4, 0, 100); if (p.stress) p.stress.scorch = Math.max(0, p.stress.scorch - 1); }
   if (p.leafWet > 0){ p.leafWet = Math.max(0, p.leafWet - (vent ? .4 : 0) - ((p.sunToday ?? 0) >= 6 ? .2 : 0)); }
 };
+
+
+/* ═════════ 🏅 배지 — 어떻게 받나 · 왜 중요한가 (실과 지식) ═════════ */
+const BADGE_INFO = {
+  sprout:  ["본잎이 한 쌍 더 나면 (잎 8장)", "잎이 많아야 햇빛을 받아 양분을 많이 만들어요"],
+  water:   ["흙을 만져 보고 알맞게 물을 3번 주면", "흙이 늘 젖어 있으면 뿌리가 숨을 못 쉬어요. 마를 때 알맞게!"],
+  sun:     ["햇빛 드는 창가에 7일 두면", "바질은 하루 6시간 넘게 햇빛을 받아야 잘 자라요"],
+  pinch:   ["키 10cm · 본잎 3쌍이 되면 꼭대기 순을 자르면", "꼭대기를 자르면 곁가지 둘이 나와 잎이 많아져요"],
+  bug:     ["진딧물을 물로 씻어 내면 (진찰하거나 잎에 물 뿌리기)", "진딧물은 잎의 즙을 빨아 먹어요. 일찍 찾아 씻어 내요"],
+  journal: ["관찰일지를 5번 쓰면", "날마다 적으면 바질이 어떻게 변하는지 보여요"],
+  weekend: ["다음 수업까지 3일 넘게 비는 날, 흙을 보고 넉넉히 주면", "주말엔 아무도 물을 못 줘요. 미리 넉넉히!"],
+  pick:    ["잎이 10장 넘으면 위쪽 잎을 따면", "위쪽 잎을 따면 곁눈에서 새 잎이 나요"],
+  harvest: ["잎을 모두 30장 넘게 거두면", "자주 따 줄수록 바질은 잎을 더 많이 내요"],
+  quiz:    ["바질 알기 퀴즈를 3문제 맞히면", "바질을 잘 알면 더 잘 키울 수 있어요"],
+  cook:    ["요리 카드를 보고 집에서 만들어 보면", "직접 기른 채소로 만든 음식은 더 맛있어요"],
+  doctor:  ["진찰해서 원인을 2번 맞히면", "증상을 보고 원인을 찾아야 알맞게 고칠 수 있어요"],
+  weather: ["날씨에 맞춰 3번 잘 돌보면 (추운 밤엔 안쪽 · 흐린 날엔 물 덜)", "날씨가 바뀌면 바질에게 필요한 것도 바뀌어요"],
+  again:   ["시든 뒤에 다시 심으면", "진짜 농부도 실패하며 배워요"],
+  measure: ["자로 키를 정확히 3번 재면", "정확히 재야 얼마나 자랐는지 알 수 있어요"],
+  predict: ["다음 수업 키를 1cm 안으로 2번 맞히면", "예상하고 확인하면 과학자처럼 생각하게 돼요"],
+};
+/* 잘못된 조건 고침 : 첫 싹(모종이라 저절로 받음) → 새 본잎 · 벌레 퇴치(물 빼기로도 받음) → 진딧물을 씻었을 때만 */
+(() => {
+  const set = (k, v) => { const b = BADGES.find(x => x[0] === k); if (b) Object.assign(b, v); };
+  set("sprout", {1: "🌿", 2: "새 본잎", 3: p => leaves(p) >= 8, 4: "본잎이 한 쌍 더 났어요"});
+  set("bug", {3: p => !!p.bugDone, 4: "진딧물을 물로 씻어 냈어요"});
+  set("weekend", {4: "수업이 며칠 없기 전에 넉넉히 줬어요"});
+})();
+function badgeModal(frameSel){
+  let m = document.getElementById("bdgModal");
+  const fr = document.querySelector(frameSel);
+  if (!m){ m = document.createElement("div"); m.id = "bdgModal"; m.className = "modal"; m.onclick = e => { if (e.target === m) m.classList.remove("on"); }; }
+  if (fr && m.parentNode !== fr) fr.appendChild(m);
+  return m;
+}
+function openBadge(k){
+  const b = BADGES.find(x => x[0] === k); if (!b) return;
+  const got = b[3](me), info = BADGE_INFO[k] || ["", ""], day = (me.badgeDays || {})[k];
+  const m = badgeModal(".mk-page.on .frame");
+  m.innerHTML = `<div class="box bdg" style="width:620px"><div class="bi ${got ? "" : "off"}">${b[1]}</div><h2>${b[2]}</h2>
+    <div class="st">${got ? `🏅 받았어요${day != null ? ` · ${day}일째` : ""}` : "🔒 아직 못 받았어요"}</div>
+    <div class="ln"><b>🎯 어떻게 받나</b> — ${info[0]}</div>
+    <div class="ln"><b>🌿 왜 중요할까</b> — ${info[1]}</div>
+    <div class="rbtns" style="justify-content:center"><button class="b" onclick="speak(this.closest('.box').innerText)">🔈 읽어 줘</button><button class="big" style="width:auto;padding:8px 26px;font-size:20px" onclick="$('bdgModal').classList.remove('on')">닫기</button></div></div>`;
+  m.classList.add("on"); sfx("tap");
+  if (sayOn()) speak(`${b[2]}. ${got ? "받았어요." : "아직 못 받았어요."} ${info[0]} 받아요. ${info[1]}`);
+}
+/* 새 배지를 받으면 — 축하 카드 (그림 크게 · 한 줄 · 🔈) */
+function checkBadges(){
+  const now = BADGES.filter(b => b[3](me)).map(b => b[0]);
+  if (_earned && stuName){
+    const fresh = now.filter(k => !_earned.includes(k));
+    if (fresh.length){
+      me.badgeDays = me.badgeDays || {}; fresh.forEach(k => { if (me.badgeDays[k] == null) me.badgeDays[k] = me.day; });
+      const b = BADGES.find(x => x[0] === fresh[0]), info = BADGE_INFO[b[0]] || ["", ""];
+      setTimeout(() => {
+        const m = badgeModal("#p2 .frame");
+        m.innerHTML = `<div class="box bdg cele" style="width:600px"><div class="st" style="font-size:22px;color:#c98a00">🎉 새 배지를 받았어요!</div><div class="bi">${b[1]}</div><h2>${b[2]}</h2>
+          <div class="ln"><b>👏 잘한 것</b> — ${b[4]}</div><div class="ln"><b>🌿 왜 중요할까</b> — ${info[1]}</div>
+          ${fresh.length > 1 ? `<div class="st" style="margin-top:6px">+ ${fresh.length - 1}개 더 — 보상 화면 배지 도감에서 봐요</div>` : ""}
+          <div class="rbtns" style="justify-content:center"><button class="b" onclick="speak(this.closest('.box').innerText)">🔈 읽어 줘</button><button class="big" style="width:auto;padding:8px 30px;font-size:22px" onclick="$('bdgModal').classList.remove('on')">👍 좋아요</button></div></div>`;
+        m.classList.add("on"); sfx("chime");
+        if (sayOn()) speak(`새 배지를 받았어요. ${b[2]}. ${info[1]}`);
+      }, busy ? 1500 : 500);
+    }
+  }
+  _earned = now;
+}
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
