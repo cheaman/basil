@@ -635,6 +635,10 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #seedModal .thirst{animation:sdBounce .7s ease-in-out infinite}
 @keyframes sdBounce{50%{transform:translateY(-8px)}}
 #seedModal .skip{margin-left:12px;font-size:15px}
+/* 👀 선생님이 학생 화면 보기 */
+.kid .peek{position:absolute;right:6px;top:30px;z-index:2;font-size:15px;padding:3px 9px;border-radius:10px}
+#peekBar{flex:0 1 auto;min-width:0;overflow:hidden;white-space:nowrap;z-index:30;background:#fff3dc;border:2px solid #f2c14e;border-radius:999px;padding:4px 6px 4px 16px;font:17px "Jua";color:#7a4a00;display:flex;gap:12px;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+#peekBar .big{width:auto;padding:4px 14px;font-size:17px}
 </style>
 </head>
 <body>
@@ -4791,6 +4795,43 @@ function testFillClass(){
   });
   toast(`👥 반 친구 ${others.length}명을 ${d0}일째까지 키웠어요`);
 }
+
+
+/* ═════════ 👩‍🏫 선생님 → 👀 학생 화면 (보기만) → 👩‍🏫 선생님 화면으로 (10-04) ═════════
+   · 바둑판 학생 칸의 👀 단추 → 그 학생 화면을 엶 (열쇠 없이 · 이 패드에 저장된 학생만)
+   · 보는 동안은 저장 안 함 (선생님이 눌러 본 것이 학생 기록 · 코인에 남지 않게) · «생긴 일» 카드 · 씨앗 체험 안 뜸
+   · 위쪽 띠 「👩‍🏫 선생님 화면으로」 또는 🚪 → 비밀번호 없이 선생님 화면 (전에는 첫 화면 → 비밀번호 다시) */
+let PEEK = false;
+function teacherPeek(name){
+  const rec = LS.get("basil.stu." + name, null);
+  if (!rec || !rec.plant){ toast("아직 이 패드에서 들어온 적이 없어요"); return; }
+  PEEK = true;
+  loginAs(name, rec.pw || ["🍎", "🍎", "🍎"], () => { PEEK = false; }, true);
+  setTimeout(peekBar, 50);
+}
+function peekBar(){
+  let b = $("peekBar");
+  if (!PEEK){ if (b) b.remove(); return; }
+  if (!b){ b = document.createElement("div"); b.id = "peekBar"; const who = document.querySelector("#p2 .bar .who"); who.insertAdjacentElement("afterend", b); }   // 머리줄 안 한 칸 (이름 칸 옆)
+  b.innerHTML = `👀 ${esc(stuName)} 보는 중 · 저장 안 됨 <button class="big" onclick="backToTeacher()">👩‍🏫 선생님으로</button>`;
+}
+function backToTeacher(){
+  PEEK = false; peekBar();
+  stuName = ""; me = newPlant();
+  TEACHER_DAY = todayIdx(); repDay = TEACHER_DAY; rebuildSims(); show("p6"); renderTeacher();
+}
+const _saveMePeek = saveMe;
+saveMe = function(){ if (PEEK) return; return _saveMePeek.apply(this, arguments); };
+const _logoutPeek = logout;
+logout = function(){ if (PEEK){ backToTeacher(); return; } return _logoutPeek.apply(this, arguments); };
+const _evCardPeek = evCard;
+evCard = function(){ if (PEEK) return; return _evCardPeek.apply(this, arguments); };
+const _renderTeacherPeek = renderTeacher;
+renderTeacher = function(){
+  _renderTeacherPeek.apply(this, arguments);
+  document.querySelectorAll("#tgrid .kid").forEach(k => { const n = k.querySelector(".n"); if (!n) return;
+    k.insertAdjacentHTML("beforeend", `<button class="b peek" data-n="${esc(n.textContent)}" onclick="event.stopPropagation();teacherPeek(this.dataset.n)" title="학생 화면 보기">👀</button>`); });
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
