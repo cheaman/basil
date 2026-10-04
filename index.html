@@ -1853,7 +1853,7 @@ function openDiag(){
   $("diagBox").innerHTML = `<h2 style="font:28px Jua;margin:0">🩺 바질 진찰하기</h2>
     <div style="display:flex;gap:16px;align-items:center;margin-top:8px"><div style="width:180px;height:220px;flex:0 0 auto">${basilSVG(p)}</div>
     <div style="flex:1"><div style="font:19px Jua;margin-bottom:6px">👀 보이는 것</div><div class="symp">${S.sym}</div>
-    <div style="font:19px Jua;margin:12px 0 6px">무엇이 문제일까요?</div>
+    <div style="font:19px Jua;margin:12px 0 6px">무엇이 문제일까요? 선택해 주세요</div>
     <div class="ops" style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">${opts.map(o => `<button class="b" onclick="diagAnswer('${k}','${o}')">${SICK[o].cause}</button>`).join("")}</div>
     <div id="diagRes" style="margin-top:10px"></div></div></div>
     ${list.length > 1 ? `<div class="hint" style="margin-top:6px">아픈 곳이 ${list.length - 1}가지 더 있어요 — 하나를 고친 뒤 다시 진찰해요</div>` : ""}
