@@ -1,0 +1,23 @@
+{
+ "pesto": {
+  "file": "BasilPesto.JPG",
+  "license": "CC BY-SA 3.0",
+  "artist": "Ɱ",
+  "page": "https://commons.wikimedia.org/wiki/File:BasilPesto.JPG",
+  "bytes": 112377
+ },
+ "caprese": {
+  "file": "Caprese salad (3124173264).jpg",
+  "license": "CC BY 2.0",
+  "artist": "Geoff Peters from Vancouver, BC, Canada",
+  "page": "https://commons.wikimedia.org/wiki/File:Caprese_salad_(3124173264).jpg",
+  "bytes": 123508
+ },
+ "pizza": {
+  "file": "Vegetarian pizza toast.jpg",
+  "license": "CC BY-SA 2.0",
+  "artist": "Heather Katsoulis from Western Mass",
+  "page": "https://commons.wikimedia.org/wiki/File:Vegetarian_pizza_toast.jpg",
+  "bytes": 107321
+ }
+}

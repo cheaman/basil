@@ -681,6 +681,13 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #wxCard .ww b{font:18px "Jua";color:#24332a}
 #wxCard .ww small{font:14px/1.3 "Jua";color:#6b7a70}
 #wxCard .wb{align-self:flex-start;margin-top:3px;border:0;border-radius:999px;background:#e0a43a;color:#fff;font:16px "Jua";padding:6px 14px;cursor:pointer;touch-action:manipulation}
+img.rphoto{display:block;width:100%;object-fit:cover;border-radius:12px}
+.recipes i.rpic{display:block}
+.recipes i.rpic img.rphoto{height:58px}
+.rbig img.rphoto{height:220px}
+.minirec img.rphoto{height:44px;border-radius:8px}
+.recipes div.off img.rphoto,.minirec div.off img.rphoto{filter:grayscale(1);opacity:.45}
+#rcpBox .rcredit{font:12px 'Noto Sans KR';color:#8c968f;text-align:right;margin:-2px 2px 4px}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -5608,6 +5615,29 @@ scoreWhy = function(p, k){
 const _alertsOfWx = alertsOf;
 alertsOf = function(p){ return _alertsOfWx.apply(this, arguments).filter(a => !(a.k === "cold" && /^밤에/.test(a.word || ""))); };
 SAY_WORD["안쪽으로 옮기기"] = "밤엔 바질을 교실 안쪽으로 옮기기";
+
+
+/* ═════════ 🍳 요리 실제 사진 (10-04 전무님 «그림 말고 실제 사진» · 고르기 «셋 받기 · 나머지는 그림») ═════════
+   위키미디어 공용 자유 라이선스 사진 800px → 3_앱\img\ (출처는 img\출처.json 과 같음)
+   CC BY · BY-SA 는 출처 표기가 조건 → 큰 요리 카드 아래에 «사진 : 찍은 사람 · 라이선스» 한 줄
+   레모네이드(후보가 술 레시피 사진뿐) · 모기 기피제(후보 없음)는 그림 그대로 */
+const RECIPE_PHOTO = {
+  caprese: {by: "Geoff Peters", lic: "CC BY 2.0"},
+  pizza:   {by: "Heather Katsoulis", lic: "CC BY-SA 2.0"},
+  pesto:   {by: "Ɱ", lic: "CC BY-SA 3.0"},
+};
+const _recipeSVGPhoto = recipeSVG;
+recipeSVG = function(id){
+  if (!RECIPE_PHOTO[id]) return _recipeSVGPhoto.apply(this, arguments);
+  const r = RECIPES.find(x => x.id === id);
+  return `<img class="rphoto" src="img/${id}.jpg" alt="${r ? r.name : id}" loading="lazy" onerror="this.outerHTML=_recipeSVGPhoto('${id}')">`;   // 사진이 안 열리면 그림으로
+};
+const _openRecipePhoto = openRecipe;
+openRecipe = function(id){
+  const r = _openRecipePhoto.apply(this, arguments), ph = RECIPE_PHOTO[id], big = document.querySelector("#rcpBox .rbig");
+  if (ph && big) big.insertAdjacentHTML("afterend", `<div class="rcredit">📷 사진 : ${ph.by} · ${ph.lic} · 위키미디어 공용</div>`);
+  return r;
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
