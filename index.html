@@ -670,6 +670,18 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .refl .rr>span:first-child{width:86px;flex:0 0 auto;color:#24332a}
 .refl button{border:2px solid #dfe8d8;background:#fff;border-radius:999px;padding:1px 9px;font:13px "Jua";cursor:pointer}
 .refl button.on{border-color:var(--leaf);background:#eaf6e3;color:#2f7a2a}
+#peekModal{z-index:40}
+#peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
+#peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
+#peekModal .sbody{flex:1;display:flex;gap:26px;min-height:0}
+#peekModal .stage{width:380px;flex:0 0 auto;background:#eef7e8;border-radius:22px;position:relative;overflow:hidden;cursor:pointer}
+#peekModal .side{flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center}
+#peekModal .say{font:32px/1.35 "Jua";color:#24332a}
+#peekModal .say small{display:block;font:20px/1.4 "Jua";color:#6b7a70;margin-top:6px}
+#peekModal .acts{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+#peekModal .acts .big{width:auto;padding:14px 30px;font-size:26px}
+#peekModal .meter{height:16px;border-radius:999px;background:#eef2ea;overflow:hidden}
+#peekModal .meter i{display:block;height:100%;width:0;background:#5aa0d8}
 </style>
 </head>
 <body>
@@ -3441,7 +3453,7 @@ document.querySelectorAll(".nav div").forEach(d => { const t = d.lastChild; if (
 function setWho(){ document.querySelectorAll(".whoName").forEach(e => e.textContent = `${CFG.className} ${stuName}`); document.querySelectorAll(".whoKid").forEach(e => e.textContent = stuName); }
 
 /* ⭐ 오늘 점수 100 — 흙 15 · 물 25 · 자리 20 · 돌봄 15 · 일지 15 · 날씨 10 (손질안 5번 탭) */
-const SC_PARTS = [["soil", "👆", "흙", 15], ["water", "💧", "물", 25], ["spot", "☀", "자리", 20], ["care", "🌿", "돌봄", 15], ["jr", "📏", "일지", 15], ["wx", "🌦", "날씨", 10]];
+const SC_PARTS = [["soil", "👆", "흙", 15], ["water", "💧", "물", 25], ["spot", "☀", "자리", 20], ["care", "🌿", "가꾸기", 15], ["jr", "📏", "일지", 15], ["wx", "🌦", "날씨", 10]];
 function bestOf(p, f){ return Math.max(...spotEntries().map(([k]) => f(k))); }
 function todayScore(p){
   const td = p.today, g = gapToNext(p), w = wxOf(p.day), k = kindOf(w), s = {};
@@ -3574,7 +3586,7 @@ function renderMe(){
     <div class="row tight">${B("🗺", "낮 자리", "openMap()", dead ? "dead" : "")}${B("🌙", p.nightSpot && p.nightSpot !== p.spot ? SPOTS[p.nightSpot].icon + " 밤" : "밤 자리", "openNightMap()", dead ? "dead" : "", nightsAhead(p, nSpot(p), gapToNext(p)) < 10 ? "main" : p.nightSpot && p.nightSpot !== p.spot ? "sel" : "")}${L !== "easy" && (p.spot === "window" || p.spot === "side") ? B("🪟", p.blind ? "올리기" : "내리기", `doBlind(${!p.blind})`, dead ? "dead" : "", p.blind ? "sel" : "") : ""}${L === "hard" ? B("🧥", p.cover ? "벗기기" : "덮개", "toggleCover()", dead ? "dead" : "", p.cover ? "sel" : "") : ""}</div>`;
   // ④ 가꾸기
   const prog = [lk.pinch === "grow" ? (p.h < 10 ? `✂ 📏${p.h.toFixed(1)}/10` : `✂ 🍃${leaves(p)}/8`) : "", lk.pick === "pick" && !p.done ? (leaves(p) < 10 ? `🧺 🍃${leaves(p)}/10` : `🧺 ⏳${3 - (p.day - p.lastPick)}일`) : p.harvested ? `🧺 ${p.harvested}장` : ""].filter(Boolean).join("　");   // 가장 가까운 조건 하나씩만
-  const garden = `<div class="row tight">${B("🌬", "환기", "ventNow()", dead ? "dead" : p.today.vent ? "done" : "", (p.air ?? 80) < 50 ? "main" : "")}${L === "easy" ? "" : B("🥚", "비료", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}</div><div class="tiny">${prog}</div>`;
+  const garden = `<div class="row tight">${B("🌬", "환기", "ventNow()", dead ? "dead" : p.today.vent ? "done" : "", (p.air ?? 80) < 50 ? "main" : "")}${L === "easy" ? "" : B("🥚", "비료", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}${B("🔍", "잎 뒤", "peekLeaf()", dead ? "dead" : "")}</div><div class="tiny">${prog}</div>`;
   // ⑤ 일지
   const lp = lastPred(p), n = p.notes[p.notes.length - 1];
   const jrNote = p.today.journal && n ? `📏 ${n.hIn}${n.lIn != null && L !== "easy" ? ` · 🍃 ${n.lIn}` : ""}` : (lp && !lp.checked && L !== "easy") ? `🔮 지난 예상 ${lp.pred}?` : "";
@@ -4642,7 +4654,7 @@ autoCare = function(p, e, r){
   evCheck(p);
 };
 BADGES.push(["fixer", "🛠", "사건 해결사", p => (p.care.evSolved || 0) >= 5, "생긴 일을 5번 해결했어요"]);
-BADGE_INFO.fixer = ["생긴 일(달팽이 · 찬 바람 · 꽃대 …)을 5번 해결하면", "식물을 키우면 날마다 다른 일이 생겨요. 보고 알맞게 돕는 게 돌봄이에요"];
+BADGE_INFO.fixer = ["생긴 일(달팽이 · 찬 바람 · 꽃대 …)을 5번 해결하면", "식물을 키우면 날마다 다른 일이 생겨요. 보고 알맞게 돕는 게 가꾸기예요"];
 
 /* 📢 들어오면 «생긴 일» 카드 — 하루 한 번 */
 function evCard(){
@@ -5166,6 +5178,16 @@ function sdSprouts(s, d){   // 빨리 감기 — 깊이가 맞은 씨앗 자리�
   return good.map(x => `<g transform="translate(${x} 284) scale(${k}) translate(-150 -284)">${g}</g>`).join("");
 }
 function sdBadN(s){ return sdDep(s).filter(d => !sdDepOk(d)).length; }
+/* 🛍 배양토 봉지 — 🟫 네모 글자는 봉지로 안 보였음 (10-04 전무님) · 우유갑 쪽으로 기울임 */
+const SD_BAG = `<g transform="rotate(-28 220 240)"><path d="M201 214 L239 214 L244 266 L196 266 Z" fill="#d4ab72" stroke="#8a6a3a" stroke-width="1.4"/>
+  <path d="M201 214 L205 205 L235 205 L239 214 Z" fill="#b8894f" stroke="#8a6a3a" stroke-width="1.2"/><rect x="203" y="230" width="34" height="22" rx="3" fill="#fff6e0"/>
+  <text x="220" y="240" font-size="8.5" text-anchor="middle" fill="#5a3e1e" font-family="Jua">배양토</text><text x="220" y="250" font-size="8" text-anchor="middle">🌱</text></g>`;
+function sdPourSVG(s){   // 막 누른 뒤 0.5초 — 봉지 입에서 우유갑으로 흙 알갱이
+  if (Date.now() - (s._pour || 0) > 500) return "";
+  const top = [393, 356, 320, 284][s.fill || 0]; let g = "";
+  for (let i = 0; i < 9; i++){ const t = i / 8; g += `<circle cx="${197 - t * 42 + (i % 3) * 3}" cy="${206 + t * (top - 210) + (i % 2) * 4}" r="${2.6 - t}" fill="#6b4a2f"/>`; }
+  return g;
+}
 function sdWetMeter(w){   // 초록 칸 = 알맞음 (1.0 ~ 1.25) · 넘으면 빨강
   const pc = x => x / SD_WET_MAX * 100;
   return `<div class="meter" style="flex:1;position:relative;height:22px"><span style="position:absolute;top:0;bottom:0;left:${pc(1)}%;width:${pc(SD_WET_OK) - pc(1)}%;background:#bfe8b0"></span><i id="sdWetBar" style="position:relative;width:${pc(Math.min(w, SD_WET_MAX))}%;background:${w > SD_WET_OK ? "#c9573f" : "#5aa0d8"};opacity:.85"></i></div>`;
@@ -5178,8 +5200,8 @@ sdRender = function(){
   let say = "", acts = "", stage = "", done = false;
   if (s.step === 0){ stage = sdStateSVG(s, `<text x="200" y="392" font-size="26">📍</text>`); say = `우유갑 밑면에 구멍을 뚫어요<small>📍 톡톡 여섯 번 — 남은 물이 빠지는 길이에요 · 송곳은 선생님과 함께!</small>`; acts = `<button class="big" onclick="sdAct('hole')">📍 톡</button><span style="font:24px Jua">${s.holes || 0} / 6</span>`; done = (s.holes || 0) >= 6; }
   if (s.step === 1){ stage = sdStateSVG(s); say = `바닥에 키친타월을 깔아요<small>👆 우유갑을 톡 — 흙이 구멍으로 새지 않게 막아 줘요</small>`; acts = s.towel ? "" : `<button class="big" onclick="sdAct('towel')">🧻 깔기</button>`; done = !!s.towel; }
-  if (s.step === 2){ stage = sdStateSVG(s, s.fill < 3 ? `<text x="196" y="262" font-size="34">🟫</text>` : `<text x="196" y="236" font-size="32">🧴</text>`);
-    say = s.fill < 3 ? `배양토를 채워요<small>🟫 흙 봉지를 톡톡 세 번</small>` : `분무기로 흙을 충분히 적셔요<small>💦 우유갑이나 단추를 꾹 누르고 있어요 — 흙 색이 진해지면 그만</small>`;
+  if (s.step === 2){ stage = sdStateSVG(s, s.fill < 3 ? SD_BAG + sdPourSVG(s) : `<text x="196" y="236" font-size="32">🧴</text>`);
+    say = s.fill < 3 ? `배양토를 채워요<small>👆 흙 봉지(그림 아무 곳)를 톡톡 세 번 — 흙이 쏟아져요</small>` : `분무기로 흙을 충분히 적셔요<small>💦 우유갑이나 단추를 꾹 누르고 있어요 — 흙 색이 진해지면 그만</small>`;
     const over = s.wet > SD_WET_OK;
     if (s.fill >= 3 && over) say = `💦 너무 많아요! 바닥 구멍으로 물이 줄줄<small>↺ 다시 눌러 처음부터 살살 뿌려 봐요 — 초록 칸에서 멈춰요</small>`;
     else if (s.fill >= 3 && s.wet >= 1) say = `알맞게 젖었어요!<small>흙 색이 진해졌어요 — 다음으로</small>`;
@@ -5261,14 +5283,14 @@ sdBind = function(){
   st.onpointerdown = e => {
     const q = pt(e, "sdSvg");
     if (s.step === 0 && q && q.x > 100 && q.x < 200) sdAct("hole");
-    if (s.step === 2 && s.fill < 3 && q && (q.x > 200 || (q.x > 100 && q.y > 240))) sdAct("fill");
+    if (s.step === 2 && s.fill < 3) sdAct("fill");   // 그림 어디를 눌러도 흙 (봉지 자리만 받던 것 · 10-04 전무님 «세 번 눌렀는데 반응 없음»)
     if (s.step === 3 && s.seeds.length < 3 && q && q.x > 108 && q.x < 192 && q.y > top() - 24 && q.y < 398){   // 흙 어디를 눌러도 (10-04 전무님)
       s._dig = {x: sdFreeX(s, Math.max(122, Math.min(178, q.x))), y0: q.y, d: 0, moved: false};   // 누른 채 아래로 끌면 깊어짐 → 손을 떼면 씨앗
       try { st.setPointerCapture(e.pointerId); } catch (x) {}
       st.innerHTML = sdSeedStage(s); }
     if (s.step === 1 && !s.towel && q && q.x > 100 && q.x < 200) sdAct("towel");
     if (s.step === 2 && s.fill >= 3 && q && q.x > 100 && q.x < 240){ s._spr = true; sdSpray(true); }   // 그림을 꾹 = 분무기
-    if (s.step === 4 && q && q.x > 100 && q.x < 200 && q.y > top() - 30){ s._drag = q; s._tap = true; }
+    if (s.step === 4 && q){ s._drag = q; s._tap = true; s._mvd = 0; }   // 그림 어디를 눌러도 (씨앗 자리에서 톡이 안 먹던 것 · 10-04 전무님)
     if (s.step === 5 && s.thirst) sdAct("drink");
     if (s.step === 6 && !s.moved){ s._mv = pt(e, "sdMove"); if (s._mv && s._mv.x < 170) s._tapMv = true; }
   };
@@ -5277,7 +5299,8 @@ sdBind = function(){
       if (q){ if (Math.abs(q.y - dg.y0) > 3) dg.moved = true;
         dg.d = Math.round(Math.max(0, Math.min(5, (q.y - dg.y0) / SD_CM)) * 10) / 10;   // 끈 거리 = 구멍 깊이 (0.1cm)
         st.innerHTML = sdSeedStage(s); } }
-    if (s.step === 4 && s._drag){ const q = pt(e, "sdSvg"); if (q && Math.hypot(q.x - s._drag.x, q.y - s._drag.y) > 3) s._tap = false; if (q && q.y > top() - 30 && q.y < 398){ s.cover = Math.min(1, s.cover + Math.hypot(q.x - s._drag.x, q.y - s._drag.y) / 300); s._drag = q; const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = s.cover * 100 + "%"; if (s.cover >= 1){ s._drag = null; sfx("chime"); sdRender(); } } }
+    if (s.step === 4 && s._drag){ const q = pt(e, "sdSvg"); if (q){ const dd = Math.hypot(q.x - s._drag.x, q.y - s._drag.y); s._mvd = (s._mvd || 0) + dd; if (s._mvd > 12) s._tap = false;   // 손가락이 조금 미끄러져도(12칸 ≈ 2~3mm) 톡으로
+      s.cover = Math.min(1, s.cover + dd / 300); s._drag = q; const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = s.cover * 100 + "%"; if (s.cover >= 1){ s._drag = null; sfx("chime"); sdRender(); } } }
     if (s.step === 6 && s._mv){ const q = pt(e, "sdMove"); if (q && Math.hypot(q.x - s._mv.x, q.y - s._mv.y) > 6) s._tapMv = false; if (q && q.x > 210){ s._mv = null; sdAct("move"); } }
   };
   const end = () => {
@@ -5293,7 +5316,7 @@ sdAct = function(a, x, d){
   const s = SD; if (!s) return;
   if (a === "hole" && (s.holes || 0) < 6){ s.holes = (s.holes || 0) + 1; sfx("tap"); }
   if (a === "towel"){ s.towel = true; sfx("pop"); }
-  if (a === "fill" && s.fill < 3){ s.fill++; sfx("tap"); }
+  if (a === "fill" && s.fill < 3){ s.fill++; sfx("tap"); s._pour = Date.now(); setTimeout(() => { if (SD === s && s.step === 2) sdRender(); }, 520); }   // 흙이 쏟아지는 모습 잠깐
   if (a === "seed" && s.seeds.length < 3){
     x = x != null ? Math.max(122, Math.min(178, x)) : 126 + s.seeds.length * 24; d = d != null ? d : SD_DEP_TAP;   // 🌰 단추 = 2cm
     x = sdFreeX(s, x);
@@ -5396,6 +5419,50 @@ renderCard = function(){
     <div class="rr"><span>👍 잘된 점</span>${RF.good.map((t, i) => `<button class="${r.good.includes(i) ? "on" : ""}" onclick="rfToggle('good',${i})">${t}</button>`).join("")}</div>
     <div class="rr"><span>🔧 보완할 점</span>${RF.fix.map((t, i) => `<button class="${r.fix.includes(i) ? "on" : ""}" onclick="rfToggle('fix',${i})">${t}</button>`).join("")}</div></div>`);
 };
+
+/* ⑤ 🔍 잎 뒤 살펴보기 (10-04 전무님 «벌레 조치 창이 안 보인다») — ④ 가꾸기 칸에 늘 있음
+   교과서 «잎 뒤를 자주 살펴봐요» : 톡 → 잎을 뒤집어 봄 → 진딧물이 있으면 🧴 분무기 꾹 → 씻김(doBug · 🌱 +3) · 없으면 «깨끗해요»
+   말풍선 «잎 뒤가 간질간질» → 🩺 진찰 길도 그대로 둠 (진찰을 맞히면 🌱 +3 이 더) */
+let _pk = null, _pkT = null;
+function peekLeaf(){
+  if (busy || !me || me.dead) return;
+  _pk = {flip: false, wash: 0};
+  let m = $("peekModal"); if (!m){ m = document.createElement("div"); m.id = "peekModal"; m.className = "modal"; m.onclick = e => { if (e.target === m) peekClose(); }; $("jrModal").parentNode.appendChild(m); }
+  m.classList.add("on"); peekRender(); sfx("tap"); if (sayOn()) speak("잎을 톡 눌러 뒤집어 봐요");
+}
+function peekLeafSVG(flip, bug, wash){
+  const vein = `<path d="M150 236 L150 64" stroke="${flip ? "#a9cf8a" : "#2f7a2a"}" stroke-width="3"/>` + [90, 120, 150, 180].map(y => `<path d="M150 ${y + 30} Q118 ${y + 12} 98 ${y - 6} M150 ${y + 30} Q182 ${y + 12} 202 ${y - 6}" stroke="${flip ? "#a9cf8a" : "#2f7a2a"}" stroke-width="2" fill="none"/>`).join("");
+  let g = `<path d="M150 50 C220 70 236 170 150 250 C64 170 80 70 150 50 Z" fill="${flip ? "#bfe3a0" : "#4c9a3e"}" stroke="#2f6a2a" stroke-width="2"/>${vein}<path d="M150 250 L150 286" stroke="#3e7a32" stroke-width="5" stroke-linecap="round"/>`;
+  if (flip && bug){ const n = Math.round(14 * (1 - wash)); for (let i = 0; i < n; i++){ const a = i * 2.4, r = 8 + (i % 5) * 9; g += `<ellipse cx="${150 + Math.cos(a) * r}" cy="${150 + Math.sin(a) * r * 1.3}" rx="4.2" ry="3" fill="#7fae2f" stroke="#4f7a1a" stroke-width=".8"/>`; } }
+  if (wash > 0) for (let i = 0; i < 8; i++) g += `<circle cx="${110 + ((i * 37 + Date.now() / 20) % 80)}" cy="${80 + ((i * 53 + Date.now() / 9) % 150)}" r="4" fill="#9fd3ff" opacity=".85"/>`;
+  return `<svg viewBox="40 40 220 260" style="width:100%;height:100%">${g}</svg>`;
+}
+function peekRender(){
+  const m = $("peekModal"), k = _pk; if (!m || !k) return;
+  const bug = !!me.bug;
+  const say = !k.flip ? `잎 뒤를 살펴봐요<small>👆 잎을 톡 — 뒤집어 봐요</small>`
+    : bug ? (k.wash >= 1 ? `깨끗해졌어요!<small>진딧물을 물로 씻어 냈어요 🌱 +3</small>` : `진딧물이 있어요!<small>작은 초록 벌레가 잎의 즙을 빨아 먹어요 · 🧴 분무기를 꾹 눌러 씻어 내요</small>`)
+    : `깨끗해요! 벌레가 없어요 👍<small>진딧물은 잎 뒤에 잘 생겨요 — 수업마다 살펴봐요</small>`;
+  const acts = !k.flip ? `<button class="big" onclick="peekFlip()">🔄 뒤집기</button>`
+    : bug && k.wash < 1 ? `<button class="big hold" style="background:#5aa0d8;touch-action:none" onpointerdown="peekWash(true)" onpointerup="peekWash(false)" onpointerleave="peekWash(false)" onpointercancel="peekWash(false)">🧴 칙칙 (꾹)</button><div class="meter" style="flex:1"><i id="pkBar" style="width:${k.wash * 100}%"></i></div>`
+    : `<button class="big" onclick="peekClose()">✔ 닫기</button>`;
+  m.innerHTML = `<div class="box pkbox"><div class="shd">🔍 잎 뒤 살펴보기<button class="b" style="margin-left:auto" onclick="peekClose()">닫기</button></div>
+    <div class="sbody"><div class="stage" id="pkStage" onclick="if(!_pk.flip)peekFlip()">${peekLeafSVG(k.flip, bug, k.wash)}</div><div class="side"><div class="say">${say}</div><div class="acts">${acts}</div></div></div></div>`;
+}
+function peekFlip(){ if (!_pk) return; _pk.flip = true; sfx("pop"); peekRender(); if (sayOn()) speak(me.bug ? "진딧물이 있어요! 분무기를 꾹 눌러 씻어 내요" : "깨끗해요! 벌레가 없어요"); }
+function peekWash(on){
+  const k = _pk; clearInterval(_pkT); if (!k || !me.bug || k.wash >= 1) return;
+  if (!on){ peekRender(); return; }
+  sfx("spray");
+  _pkT = setInterval(() => {
+    k.wash = Math.min(1, k.wash + .06);
+    const st = $("pkStage"); if (st) st.innerHTML = peekLeafSVG(true, true, k.wash);
+    const b = $("pkBar"); if (b) b.style.width = k.wash * 100 + "%";
+    if (k.wash >= 1){ clearInterval(_pkT); cleanBug(me); saveMe(); happy(); peekRender(); popOk("진딧물 씻기 완성!", $("peekModal").querySelector(".pkbox")); renderMe(); }
+  }, 70);
+}
+function peekClose(){ clearInterval(_pkT); const m = $("peekModal"); if (m) m.classList.remove("on"); _pk = null; }
+SAY_WORD["잎 뒤"] = "잎 뒤 살펴보기";
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
