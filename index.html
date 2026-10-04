@@ -672,6 +672,15 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 .refl .rr>span:first-child{width:86px;flex:0 0 auto;color:#24332a}
 .refl button{border:2px solid #dfe8d8;background:#fff;border-radius:999px;padding:1px 9px;font:13px "Jua";cursor:pointer}
 .refl button.on{border-color:var(--leaf);background:#eaf6e3;color:#2f7a2a}
+#wxCard{position:absolute;left:12px;top:12px;z-index:6;width:250px;background:#fffdf3;border:3px solid #f0c64a;border-radius:18px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+#wxCard .wh{font:15px "Jua";color:#a07a10;margin-bottom:4px}
+#wxCard .wt{display:flex;gap:8px;align-items:flex-start}
+#wxCard .wt + .wt{border-top:1px dashed #ecd9a0;margin-top:6px;padding-top:6px}
+#wxCard .wt i{font-style:normal;font-size:32px;line-height:1}
+#wxCard .ww{flex:1;display:flex;flex-direction:column;gap:2px}
+#wxCard .ww b{font:18px "Jua";color:#24332a}
+#wxCard .ww small{font:14px/1.3 "Jua";color:#6b7a70}
+#wxCard .wb{align-self:flex-start;margin-top:3px;border:0;border-radius:999px;background:#e0a43a;color:#fff;font:16px "Jua";padding:6px 14px;cursor:pointer;touch-action:manipulation}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -5487,9 +5496,15 @@ const _alertsOfCold = alertsOf;
 alertsOf = function(p){
   const out = _alertsOfCold.apply(this, arguments);
   if (p && p.chill && !p.dead && nightsAhead(p, nSpot(p), gapToNext(p)) >= 10)
-    out.forEach(a => { if (a.k === "cold"){ a.pic = "🖤🌙"; a.word = `따뜻한 밤 ${p.chill}번 더 지나면 나아요`; a.ok = []; a.bad = null; } });
+    return out.filter(a => a.k !== "cold");   // 따뜻한 밤 자리로 옮겼으면 말풍선은 사라짐 (10-04 전무님 «해결됐는데 계속 남아 있다»)
   return out;
 };
+/* 밤 자리를 따뜻한 곳으로 옮긴 순간 한 번 — «잘 옮겼어요 · 잎 색은 따뜻한 밤 N번 지나면» */
+function coldFixedToast(){
+  if (me && me.chill && nightsAhead(me, nSpot(me), gapToNext(me)) >= 10) setTimeout(() => toast(`👍 잘 옮겼어요! 🖤 잎 색은 따뜻한 밤 ${me.chill}번 지나면 돌아와요`), 1500);
+}
+const _mapOkCold = mapOk;
+mapOk = function(){ const night = _mapNight; const r = _mapOkCold.apply(this, arguments); if (night) coldFixedToast(); return r; };
 
 /* ② 🥛 씨앗부터 키우면 우유갑에서 떡잎 · 본잎 (교과서 73쪽) → 모종(본잎 · 단계 2)이 되면 «큰 화분으로 옮겨 심기» 한 번 */
 function inCarton(p){ return !!(p && p.sowCarton && !p.moved); }
@@ -5518,6 +5533,74 @@ function doTransplant(){
   sfx("grow"); renderMe(); happy(); popOk("옮겨 심기 완성!");
   toast("🪴 큰 화분으로 옮겨 심었어요! 🌱 +2 — 이제 뿌리가 넓게 뻗어요");
 }
+
+
+/* ═════════ 🌦 날씨 알림 카드 (10-04 전무님 «날씨가 너무 어렵다» → 고르기 «카드 + 바로 하기») ═════════
+   날씨 때문에 할 일이 생긴 날만 ② 장면 왼쪽 위에 카드 — 그림 + 한 줄 + 단추 하나
+   · 🥶 추운 밤 → «🌙 안쪽으로 옮기기» 한 번에 (가장 따뜻한 밤 자리로)
+   · 🌧 비 · ☁ 흐림 → «👍 알았어요» (물은 조금만 · 흙물 90 넘으면 점수 ✘)
+   · 🔆 센 햇볕(어려움) → «🪟 블라인드 내리기»
+   · 📅 다음 수업이 4일 넘게 뒤 → «💧 물 칸으로» (흙물 62 넘게)
+   점수 «🌦 날씨» = 오늘 카드를 몇 개 풀었나 (카드가 없는 날은 만점) · 말풍선 «밤에 N°, 추워!» 는 카드와 겹쳐 뺌 */
+function wxTasks(p){
+  if (!p || p.dead || p.done || !stuName) return [];
+  const td = p.today, g = gapToNext(p), w = wxOf(p.day), kd = kindOf(w), L = LV(), out = [];
+  const coldN = nightsAhead(p, "window", g);
+  if (L !== "easy" && coldN < 10) out.push({k: "cold", pic: "🥶", word: `밤에 ${Math.round(coldN)}°까지 추워져요`, sub: "밤엔 바질을 교실 안쪽으로", btn: "🌙 안쪽으로 옮기기",
+    ok: nightsAhead(p, nSpot(p), g) >= 10, act: "wxNightIn()"});
+  if (kd === "rain" || kd === "cloud") out.push({k: "rain", pic: kd === "rain" ? "🌧" : "☁", word: kd === "rain" ? "비가 와요" : "흐린 날이에요", sub: "흙이 잘 안 말라요 — 물은 조금만", btn: "👍 알았어요",
+    ok: !(td.ml > 0 && p.moist > 90), seen: !!td.wxRain, act: "wxRainOk()"});
+  if (L === "hard" && w.sunH >= 9 && w.tmax >= 26 && p.spot === "window") out.push({k: "sun", pic: "🔆", word: "햇볕이 아주 세요", sub: "창가 잎이 탈 수 있어요", btn: "🪟 블라인드 내리기",
+    ok: !!p.blind, act: "doBlind(true)"});
+  if (g >= 4) out.push({k: "long", pic: "📅", word: `다음 수업이 ${g}일 뒤예요`, sub: "그동안 물을 못 줘요 — 오늘 넉넉히 (흙물 62 넘게)", btn: "💧 물 칸으로",
+    ok: p.moist >= 62, act: "wxGoWater()"});
+  // 비 + 긴 휴일이 겹치면 «조금만» 과 «넉넉히» 가 같이 떠 헷갈림 → 카드 하나 «알맞게 (62~90)»
+  const r = out.find(x => x.k === "rain"), lg = out.find(x => x.k === "long");
+  if (r && lg) return out.filter(x => x !== r && x !== lg).concat([{k: "both", pic: r.pic + "📅", word: `${r.pic === "🌧" ? "비 오고" : "흐리고"} 다음 수업이 ${g}일 뒤`, sub: "물은 알맞게 — 흙물 62~90", btn: "💧 물 칸으로",
+    ok: r.ok && lg.ok, act: "wxGoWater()"}]);
+  return out;
+}
+function wxShow(t){ return t.k === "rain" ? !t.seen || !t.ok : !t.ok; }   // 비는 «알았어요» 를 누를 때까지 · 나머지는 풀릴 때까지
+function wxNightIn(){
+  if (busy || me.dead) return;
+  const g = gapToNext(me), best = spotEntries().map(([k]) => k).sort((a, b) => nightsAhead(me, b, g) - nightsAhead(me, a, g))[0];
+  visit(me); me.nightSpot = best === me.spot ? null : best; sfx("whoosh");
+  const nt = nightsAhead(me, nSpot(me), g);
+  renderMe(); if (nt >= 10) happy(); coldFixedToast();
+  toast(`🌙 밤엔 ${SPOTS[nSpot(me)].icon} ${SPOTS[nSpot(me)].name} · 밤 ${Math.round(nt)}°${nt >= 10 ? " 👍 — 낮에는 지금 자리 그대로" : " — 더 따뜻한 곳이 없어요"}`);
+}
+function wxRainOk(){ me.today.wxRain = true; saveMe(); sfx("tap"); renderMe(); toast("👍 오늘은 물을 조금만 — 흙을 만져 보고 줘요"); }
+function wxGoWater(){
+  const st = document.querySelectorAll("#care .tile")[1];
+  if (st){ st.classList.remove("flash"); void st.offsetWidth; st.classList.add("flash"); }
+  sfx("tap"); toast(wxTasks(me).some(x => x.k === "both") ? "💧 물 칸에서 알맞게 — 흙물 62~90" : "💧 물 칸에서 넉넉히 — 흙물 62 넘게");
+}
+function renderWxCard(){
+  const sc = $("scene"); if (!sc) return;
+  let c = $("wxCard"); if (!c){ c = document.createElement("div"); c.id = "wxCard"; sc.appendChild(c); }
+  const list = wxTasks(me).filter(wxShow);
+  if (!list.length){ c.innerHTML = ""; c.style.display = "none"; return; }
+  c.style.display = "";
+  c.innerHTML = `<div class="wh">📢 날씨 알림</div>` + list.map(t => `<div class="wt"><i>${t.pic}</i><div class="ww"><b>${t.word}</b><small>${t.sub}</small><button class="wb" onclick="${t.act}">${t.btn}</button></div></div>`).join("");
+}
+const _renderMeWx = renderMe;
+renderMe = function(){ const r = _renderMeWx.apply(this, arguments); try { renderWxCard(); } catch (x) {} return r; };
+const _todayScoreWx = todayScore;
+todayScore = function(p){
+  const s = _todayScoreWx.apply(this, arguments); if (!p || p.dead) return s;
+  const t = wxTasks(p), wx = t.length ? Math.round(10 * t.filter(x => x.ok).length / t.length) : 10;
+  s.total += wx - s.wx; s.wx = wx; return s;
+};
+const _scoreWhyWx = scoreWhy;
+scoreWhy = function(p, k){
+  if (k !== "wx") return _scoreWhyWx.apply(this, arguments);
+  const t = wxTasks(p), sc = todayScore(p), top = `<b>🌦 날씨 ${sc.wx}/10</b> — `;
+  return top + (t.length ? "📢 날씨 알림 카드 : " + t.map(x => `${x.pic} ${({cold: "밤 자리 안쪽", rain: "물 조금만", sun: "블라인드", long: "물 넉넉히", both: "물 알맞게"})[x.k]} ${x.ok ? "✔" : "✘"}`).join(" · ")
+    : "오늘은 날씨 알림이 없어요 → 만점");
+};
+const _alertsOfWx = alertsOf;
+alertsOf = function(p){ return _alertsOfWx.apply(this, arguments).filter(a => !(a.k === "cold" && /^밤에/.test(a.word || ""))); };
+SAY_WORD["안쪽으로 옮기기"] = "밤엔 바질을 교실 안쪽으로 옮기기";
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
