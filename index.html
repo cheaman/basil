@@ -653,6 +653,20 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #gsModal .res{font:18px "Jua"}
 #gsModal .res.ok{color:#2f7a2a}#gsModal .res.no{color:#b0473a}
 #gsModal .link{font:13px monospace;background:#f3f5f1;border-radius:8px;padding:6px 10px;word-break:break-all;color:#4a5a50}
+/* 📗 교과서 맞춤 */
+#eggModal .ebox{width:900px;padding:22px 28px;display:flex;flex-direction:column;gap:12px}
+#eggModal .eh{font:30px "Jua"}
+#eggModal .es{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+#eggModal .e{border:3px solid #e9e3d2;border-radius:18px;padding:12px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;background:#fffdf6}
+#eggModal .e.on{border-color:#f2c14e;background:#fffbea}#eggModal .e.ok{border-color:#8fcf7a;background:#f1faec}
+#eggModal .e i{font-style:normal;font-size:58px;line-height:1.1}
+#eggModal .e b{font:21px "Jua";font-weight:400}
+#eggModal .why{font:17px/1.5 "Noto Sans KR";color:#4a5a50;background:#f6f9f3;border-radius:12px;padding:8px 12px}
+.refl{margin-top:8px;background:#f6f9f3;border-radius:12px;padding:8px 10px;font:14px "Jua"}
+.refl .rr{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:3px 0}
+.refl .rr>span:first-child{width:86px;flex:0 0 auto;color:#24332a}
+.refl button{border:2px solid #dfe8d8;background:#fff;border-radius:999px;padding:1px 9px;font:13px "Jua";cursor:pointer}
+.refl button.on{border-color:var(--leaf);background:#eaf6e3;color:#2f7a2a}
 </style>
 </head>
 <body>
@@ -3557,7 +3571,7 @@ function renderMe(){
     <div class="row tight">${B("🗺", "낮 자리", "openMap()", dead ? "dead" : "")}${B("🌙", p.nightSpot && p.nightSpot !== p.spot ? SPOTS[p.nightSpot].icon + " 밤" : "밤 자리", "openNightMap()", dead ? "dead" : "", nightsAhead(p, nSpot(p), gapToNext(p)) < 10 ? "main" : p.nightSpot && p.nightSpot !== p.spot ? "sel" : "")}${L !== "easy" && (p.spot === "window" || p.spot === "side") ? B("🪟", p.blind ? "올리기" : "내리기", `doBlind(${!p.blind})`, dead ? "dead" : "", p.blind ? "sel" : "") : ""}${L === "hard" ? B("🧥", p.cover ? "벗기기" : "덮개", "toggleCover()", dead ? "dead" : "", p.cover ? "sel" : "") : ""}</div>`;
   // ④ 가꾸기
   const prog = [lk.pinch === "grow" ? (p.h < 10 ? `✂ 📏${p.h.toFixed(1)}/10` : `✂ 🍃${leaves(p)}/8`) : "", lk.pick === "pick" && !p.done ? (leaves(p) < 10 ? `🧺 🍃${leaves(p)}/10` : `🧺 ⏳${3 - (p.day - p.lastPick)}일`) : p.harvested ? `🧺 ${p.harvested}장` : ""].filter(Boolean).join("　");   // 가장 가까운 조건 하나씩만
-  const garden = `<div class="row tight">${B("🌬", "환기", "ventNow()", dead ? "dead" : p.today.vent ? "done" : "", (p.air ?? 80) < 50 ? "main" : "")}${L === "easy" ? "" : B("🧪", "거름", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}</div><div class="tiny">${prog}</div>`;
+  const garden = `<div class="row tight">${B("🌬", "환기", "ventNow()", dead ? "dead" : p.today.vent ? "done" : "", (p.air ?? 80) < 50 ? "main" : "")}${L === "easy" ? "" : B("🥚", "비료", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}</div><div class="tiny">${prog}</div>`;
   // ⑤ 일지
   const lp = lastPred(p), n = p.notes[p.notes.length - 1];
   const jrNote = p.today.journal && n ? `📏 ${n.hIn}${n.lIn != null && L !== "easy" ? ` · 🍃 ${n.lIn}` : ""}` : (lp && !lp.checked && L !== "easy") ? `🔮 지난 예상 ${lp.pred}?` : "";
@@ -3619,7 +3633,7 @@ const SICK_PIC = {dry: ["😩", "잎이 축 처졌어"], wet: ["💛", "아래 �
 const ACT2 = {
   drain: ["🍽", "버리기", () => doDrain()], tilt: ["🪴", "물 빼기", () => tiltDrain()], noWater: ["🚱", "오늘 그만", () => skipWater()], water: ["💧", "물 주기", () => LV() === "easy" ? easyWater() : goWater()],
   inside: ["🗺", "안쪽으로", () => openMap()], nightIn: ["🌙", "밤엔 안쪽", () => openNightMap()], vent: ["🌬", "환기", () => ventNow()], bright: ["🗺", "밝은 곳", () => openMap()], diag: ["🩺", "진찰", () => openDiag()],
-  fert: ["🧪", "거름", () => doFert()], pinch: ["✂", "자르기", () => doPinch()], pick: ["🧺", "따기", () => doPick()], replant: ["🌈", "다시 심기", () => openDead()],
+  fert: ["🥚", "비료", () => doFert()], pinch: ["✂", "자르기", () => doPinch()], pick: ["🧺", "따기", () => doPick()], replant: ["🌈", "다시 심기", () => openDead()],
 };
 const WRONG2 = {more: ["💧", "더 주기"], shade: ["🗺", "옮기기"], lots: ["💧", "듬뿍"], blindC: ["🪟", "블라인드"]};
 function alertsOf(p){
@@ -4446,7 +4460,7 @@ answer = function(){};   // 예전 퀴즈(3문제 · 다시 풀면 코인) 막�
    · 새 손동작 : 🐌 그림의 달팽이 톡 · 🪴 기운 화분 톡(세우기) → 🟫 흙 채우기 · 🍂 누런 떡잎 톡 · 🌸 꽃대 톡 */
 function evHash(s){ let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
 const EV = {
-  snail:  {pic: "🐌", word: "달팽이가 잎을 갉아 먹었어!", cls: true, hint: "👆 바질 그림의 달팽이를 톡!", how: "👆 달팽이 톡"},
+  snail:  {pic: "🐌", word: "달팽이가 잎을 먹고 있어!", cls: true, hint: "👆 달팽이를 살살 톡 — 달팽이 집으로 옮겨 줘요", how: "👆 살살 옮기기"},
   tip:    {pic: "⚽🪴", word: "공에 맞아 화분이 기울었어!", cls: true, hint: "👆 화분을 톡 눌러 세워요", how: "🪴 세우기 · 🟫 흙"},
   heater: {pic: "🔥🏜", word: "난방기 때문에 흙이 바싹!", cls: true, how: "💧 물"},
   draft:  {pic: "🪟🥶", word: "창문이 열려 찬 바람이 들어와!", cls: true, how: "🪟 창 닫기"},
@@ -4479,7 +4493,7 @@ function classEvents(day){
 }
 function evPending(p){ return ((p && p.ev) || []).filter(e => !e.done && !e.gone); }
 function evHas(p, k){ return evPending(p).find(e => e.k === k); }
-function evWord(p, e){ if (e.k === "snail" && (p.snail || 0) > 1) return `달팽이 ${p.snail}마리가 잎을 갉아 먹어!`; if (e.k === "tip" && p.tipped === 1) return "쏟아진 흙을 다시 담아 줘"; return EV[e.k].word; }
+function evWord(p, e){ if (e.k === "snail" && (p.snail || 0) > 1) return `달팽이 ${p.snail}마리가 잎을 먹고 있어!`; if (e.k === "tip" && p.tipped === 1) return "쏟아진 흙을 다시 담아 줘"; return EV[e.k].word; }
 function evStart(p, k){
   if (p.dead || p.done) return;
   const ex = evHas(p, k);
@@ -4570,7 +4584,7 @@ document.addEventListener("click", ev => {
   const t = ev.target.closest && ev.target.closest("#plantBig .evtap, #plantBig .lf.cot"); if (!t || !me || busy || !stuName) return;
   const k = t.classList.contains("cot") ? (evHas(me, "cot") ? "cot" : "") : t.dataset.k; if (!k) return;
   ev.stopPropagation();
-  if (k === "snail"){ visit(me); me.snail = Math.max(0, (me.snail || 0) - 1); const e = evHas(me, "snail"); if (e) e.n = me.snail; sfx("pop"); if (me.snail) toast(`🐌 잡았어요! 남은 달팽이 ${me.snail}마리`); renderMe(); }
+  if (k === "snail"){ visit(me); me.snail = Math.max(0, (me.snail || 0) - 1); const e = evHas(me, "snail"); if (e) e.n = me.snail; sfx("pop"); if (me.snail) toast(`🐌 살살 옮겨 줬어요! 남은 달팽이 ${me.snail}마리`); renderMe(); }
   else evAct(k === "tip" ? "stand" : k);
 }, true);
 /* 그림 — 달팽이 · 꽃대 · 기운 화분과 쏟아진 흙 */
@@ -5077,6 +5091,182 @@ async function gsSaveConn(){
 function gsCut(){ if (!confirm("구글 시트 연결을 끊을까요? (시트에 이미 올린 바질은 그대로 남아요)")) return; localStorage.removeItem("basil.gs"); localStorage.removeItem("basil.gsq"); _gsKeyDraft = ""; openGs(); gsChip(); toast("연결을 끊었어요"); }
 /* 선생님 머리줄에 「☁ 구글 시트」 단추 */
 (() => { const s = document.querySelector("#p6 .tbar .sort"); if (s) s.insertAdjacentHTML("beforeend", `<button class="b" onclick="openGs()">☁ 구글 시트</button>`); })();
+
+
+/* ═════════ 📗 교과서 맞춤 (10-04 · 사모님 수업 PPT = 실과 6 교과서 73~75쪽) ═════════ */
+
+/* ① 🌱 씨앗 체험을 교과서 73쪽 차례로 — 우유갑 화분 (앞판이 비쳐 층이 보임)
+   0 밑면에 구멍 6개 (송곳은 선생님과) → 1 키친타월 → 2 배양토 + 분무기로 충분히 → 3 1~3cm 구멍 파고 씨앗 → 4 가볍게 덮고 다지기
+   → 5 물 주고 햇빛 · 통풍 좋은 곳 · 빨리 감기 (우유갑에서 싹) → 6 큰 화분으로 옮겨 심기 → 7 🎉 · 「씨앗(정석)」 반은 0~4 뒤 🎉 */
+function sdCarton(o){
+  const wetC = o.wet >= 1 ? "#4a3220" : o.wet > .4 ? "#5a3e28" : "#6b4a2f", top = [393, 356, 320, 284][o.fill || 0];
+  let g = `<path d="M112 250 L188 250 L188 394 L112 394 Z" fill="#e9f2fa" stroke="#9cc8ee" stroke-width="2"/>`;
+  if (o.towel) g += `<rect x="114" y="385" width="72" height="8" fill="#ffffff" stroke="#d6dbe1"/><path d="M118 389 L182 389" stroke="#e3e7ec" stroke-dasharray="3 3"/>`;
+  if (o.fill){ const b = o.towel ? 385 : 393; g += `<rect x="114" y="${top}" width="72" height="${b - top}" fill="${wetC}"/><ellipse cx="150" cy="${top}" rx="36" ry="4" fill="${wetC}"/>`; }
+  (o.seeds || []).forEach(x => { g += `<path d="M${x - 4} ${top - 1} L${x + 4} ${top - 1}" stroke="#3a2a1a" stroke-width="1.2"/><ellipse cx="${x}" cy="${top + 6}" rx="3.4" ry="2.4" fill="#2a1c12" opacity="${1 - (o.cover || 0) * .85}"/>`; });
+  if (o.cover) g += `<rect x="114" y="${top - 3}" width="72" height="${3 + 9 * o.cover}" fill="${wetC}" opacity="${.5 + .45 * o.cover}"/>`;
+  if (o.plant) g += o.plant;
+  g += `<path d="M112 250 L188 250 L188 394 L112 394 Z" fill="#f7fbff" opacity=".22" stroke="#7fb2e0" stroke-width="2.4"/><rect x="112" y="296" width="76" height="20" fill="#5aa0d8" opacity=".3"/><text x="150" y="311" font-size="13" text-anchor="middle" fill="#2f6a9a" font-family="Jua">우유</text>`;
+  g += `<path d="M112 250 L122 232 L178 232 L188 250" fill="none" stroke="#7fb2e0" stroke-width="2.4"/>`;
+  for (let i = 0; i < (o.holes || 0); i++) g += `<circle cx="${119 + i * 12.4}" cy="399" r="2.8" fill="#2a1c12"/>`;
+  if (o.spray) for (let i = 0; i < 7; i++) g += `<circle cx="${122 + ((i * 41 + Date.now() / 30) % 56)}" cy="${200 + ((i * 29 + Date.now() / 12) % 70)}" r="3.2" fill="#7fbfea"/>`;
+  return g;
+}
+function sdPlantG(d){   // 바질 그림에서 식물(.plantg)만 떼어 우유갑에 심음
+  const doc = new DOMParser().parseFromString(basilSVG(sdGrowPlant(d)).replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" '), "image/svg+xml"), g = doc.querySelector(".plantg");
+  return g ? new XMLSerializer().serializeToString(g) : "";
+}
+function sdStateSVG(s, extra){ return `<svg viewBox="70 190 180 225" id="sdSvg">${sdCarton(s)}${extra || ""}</svg>`; }
+sdRender = function(){
+  const s = SD, m = $("seedModal"); if (!m || !s) return;
+  const last = 7, steps = s.full ? [1, 2, 3, 4, 5, 6, 7, 8] : [1, 2, 3, 4, 5, 8], cur = s.full ? s.step : (s.step >= 7 ? 5 : s.step);
+  const dots = steps.map((t, i) => `<span class="${i === cur ? "on" : i < cur ? "ok" : ""}">${i < cur ? "✔" : i === steps.length - 1 ? "🎉" : i + 1}</span>`).join("");
+  let say = "", acts = "", stage = "", done = false;
+  if (s.step === 0){ stage = sdStateSVG(s, `<text x="200" y="392" font-size="26">📍</text>`); say = `우유갑 밑면에 구멍을 뚫어요<small>📍 톡톡 여섯 번 — 남은 물이 빠지는 길이에요 · 송곳은 선생님과 함께!</small>`; acts = `<button class="big" onclick="sdAct('hole')">📍 톡</button><span style="font:24px Jua">${s.holes || 0} / 6</span>`; done = (s.holes || 0) >= 6; }
+  if (s.step === 1){ stage = sdStateSVG(s); say = `바닥에 키친타월을 깔아요<small>흙이 구멍으로 새지 않게 막아 줘요</small>`; acts = s.towel ? "" : `<button class="big" onclick="sdAct('towel')">🧻 깔기</button>`; done = !!s.towel; }
+  if (s.step === 2){ stage = sdStateSVG(s, s.fill < 3 ? `<text x="196" y="262" font-size="34">🟫</text>` : `<text x="196" y="236" font-size="32">🧴</text>`);
+    say = s.fill < 3 ? `배양토를 채워요<small>🟫 흙 봉지를 톡톡 세 번</small>` : `분무기로 흙을 충분히 적셔요<small>💦 꾹 누르고 있어요 — 흙 색이 진해지면 그만</small>`;
+    acts = s.fill < 3 ? `<button class="big" onclick="sdAct('fill')">🟫 흙 붓기</button><div class="meter" style="flex:1"><i style="width:${s.fill / 3 * 100}%"></i></div>`
+                      : `<button class="big hold" onpointerdown="sdSpray(true)" onpointerup="sdSpray(false)" onpointerleave="sdSpray(false)">💦 칙칙 (꾹)</button><div class="meter" style="flex:1"><i style="width:${Math.min(1, s.wet) * 100}%"></i></div>`;
+    done = s.fill >= 3 && s.wet >= 1; }
+  if (s.step === 3){ stage = sdStateSVG(s); say = `손가락으로 1~3cm 구멍을 파고 씨앗을 넣어요<small>👆 흙 위를 톡톡 세 번</small>`; acts = `<button class="big" onclick="sdAct('seed')">🌰 씨앗 톡</button><span style="font:24px Jua">${s.seeds.length} / 3</span>`; done = s.seeds.length >= 3; }
+  if (s.step === 4){ stage = sdStateSVG(s); say = `흙을 가볍게 덮고 다져요<small>👉 손가락으로 쓱쓱 — 살살 눌러 다져요</small>`; acts = `<button class="big" onclick="sdAct('cover')">👉 쓱</button><div class="meter" style="flex:1"><i style="width:${s.cover * 100}%"></i></div>`; done = s.cover >= 1; }
+  if (s.step === 5){
+    stage = `<svg viewBox="70 170 180 245">${sdCarton({holes: 6, towel: 1, fill: 3, wet: 1, plant: sdPlantG(s.day)})}<text x="214" y="200" font-size="22">☀</text><text x="80" y="220" font-size="18">🌬</text></svg><div class="dayc">${s.day}일째</div>
+      <div class="cap">${s.day < 5 ? "씨앗이 물을 먹고 불어요" : s.day < 8 ? "뿌리가 내려가고 싹이 고개를 들어요" : s.day < 15 ? "🌱 떡잎이 났어요!" : s.day < 22 ? "🌿 첫 본잎이 나와요" : "🪴 본잎 2쌍 — 모종이 됐어요!"}</div>`;
+    say = s.thirst ? `목말라!<small>💧 톡 눌러 물을 줘요</small>` : s.day >= 28 ? `4주 만에 모종이 됐어요!<small>씨앗 → 떡잎(1~2주) → 본잎(3주) → 본잎 2쌍(4주)</small>` : `물을 주고 햇빛 · 바람이 잘 드는 곳에 둬요<small>⏩ 빨리 감기 — 4주를 20초에</small>`;
+    acts = s.thirst ? `<button class="big thirst" onclick="sdAct('drink')">💧 물 주기</button>` : `<div class="meter" style="flex:1"><i style="width:${s.day / 28 * 100}%"></i></div>`; done = s.day >= 28; }
+  if (s.step === 6){
+    stage = `<svg viewBox="0 150 470 380" id="sdMove">${s.moved ? `<g transform="translate(120 40) scale(1.15)">${basilSVG(sdGrowPlant(28)).replace(/^<svg[^>]*>|<\/svg>$/g, "")}</g>`
+      : `<g transform="translate(-20 180) scale(.8)">${sdCarton({holes: 6, towel: 1, fill: 3, wet: 1, plant: sdPlantG(28)})}</g><g transform="translate(150 60) scale(1.15)" opacity=".75">${SD_POT}<ellipse cx="150" cy="286" rx="72" ry="10" fill="#6b4a2f"/></g><text x="170" y="470" font-size="40" text-anchor="middle">➡</text>`}</svg>`;
+    say = s.moved ? `쏙! 큰 화분으로 옮겼어요<small>이제부터는 진짜 날짜로 키워요</small>` : `우유갑에서 큰 화분으로 옮겨 심어요<small>✋ 모종을 큰 화분으로 끌어요</small>`;
+    acts = s.moved ? "" : `<button class="big" onclick="sdAct('move')">✋ 옮겨 심기</button>`; done = !!s.moved; }
+  if (s.step >= 7){
+    stage = s.full ? basilSVG(me).replace('viewBox="0 0 300 400"', 'viewBox="20 120 260 290"') : sdStateSVG(s);
+    say = s.full ? `🎉 이제 내 바질이에요!<small>${s.replay ? "다시 해 봤어요" : "🌱 +3 · 배지 «첫 씨앗»"} — 이름을 지어 줘요</small>` : `🎉 씨앗을 심었어요!<small>물을 주고 햇빛 · 바람이 잘 드는 곳에 — 진짜 날짜로 싹을 기다려요 (1~2주) ${s.replay ? "" : "· 🌱 +3"}</small>`;
+    acts = `<button class="big" onclick="sdEnd()">${s.next ? "🏷️ 이름 짓기 →" : "✔ 끝"}</button>`; }
+  if (done) acts += `<button class="big" style="background:#e0a43a" onclick="sdGo()">다음 →</button>`;
+  m.innerHTML = `<div class="box sbox"><div class="shd">🌱 씨앗에서 모종까지 <span style="font:16px Jua;color:#8a6a2a">교과서 73쪽</span><div class="dots">${dots}</div>${TEST || s.replay ? `<button class="b skip" onclick="sdEnd()">건너뛰기</button>` : ""}</div>
+    <div class="sbody"><div class="stage" id="sdStage">${stage}</div><div class="side"><div class="say">${say}</div><div class="acts">${acts}</div></div></div></div>`;
+  sdBind();
+};
+sdBind = function(){
+  const st = $("sdStage"), s = SD; if (!st) return;
+  const pt = (e, id) => { const svg = $(id); if (!svg) return null; const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(svg.getScreenCTM().inverse()); };
+  const top = () => [393, 356, 320, 284][s.fill || 0];
+  st.onpointerdown = e => {
+    const q = pt(e, "sdSvg");
+    if (s.step === 0 && q && q.x > 100 && q.x < 200) sdAct("hole");
+    if (s.step === 2 && s.fill < 3 && q && (q.x > 200 || (q.x > 100 && q.y > 240))) sdAct("fill");
+    if (s.step === 3 && q && q.x > 116 && q.x < 184 && Math.abs(q.y - top()) < 16) sdAct("seed", q.x);
+    if (s.step === 4) s._drag = q;
+    if (s.step === 6 && !s.moved) s._mv = pt(e, "sdMove");
+  };
+  st.onpointermove = e => {
+    if (s.step === 4 && s._drag){ const q = pt(e, "sdSvg"); if (q && Math.abs(q.y - top()) < 30){ s.cover = Math.min(1, s.cover + Math.hypot(q.x - s._drag.x, q.y - s._drag.y) / 300); s._drag = q; const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = s.cover * 100 + "%"; if (s.cover >= 1){ s._drag = null; sfx("chime"); sdRender(); } } }
+    if (s.step === 6 && s._mv){ const q = pt(e, "sdMove"); if (q && q.x > 210){ s._mv = null; sdAct("move"); } }
+  };
+  st.onpointerup = () => { if (s.step === 4 && s._drag){ s._drag = null; sdRender(); } s._mv = null; };
+};
+sdAct = function(a, x){
+  const s = SD; if (!s) return;
+  if (a === "hole" && (s.holes || 0) < 6){ s.holes = (s.holes || 0) + 1; sfx("tap"); }
+  if (a === "towel"){ s.towel = true; sfx("pop"); }
+  if (a === "fill" && s.fill < 3){ s.fill++; sfx("tap"); }
+  if (a === "seed" && s.seeds.length < 3){ s.seeds.push(x != null ? Math.max(122, Math.min(178, x)) : 126 + s.seeds.length * 24); sfx("pop"); }
+  if (a === "cover"){ s.cover = Math.min(1, s.cover + .34); sfx("tap"); }
+  if (a === "drink"){ s.thirst = 0; sfx("water", .6); sdPlay(); }
+  if (a === "move"){ s.moved = true; sfx("grow"); }
+  sdRender();
+};
+sdSpray = function(on){
+  const s = SD; if (!s || s.step !== 2 || s.fill < 3) return;
+  clearInterval(_sdSprayT); s.spray = on;
+  if (on){ sfx("water", .5); _sdSprayT = setInterval(() => { s.wet += .04; if (s.wet >= 1.5){ s.wet = 1.5; clearInterval(_sdSprayT); s.spray = false; toast("💦 이제 그만! 충분히 젖었어요"); }
+    const st = $("sdStage"); if (st) st.innerHTML = sdStateSVG(s, `<text x="196" y="236" font-size="32">🧴</text>`); const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = Math.min(1, s.wet) * 100 + "%";
+    if (s.wet >= 1 && !s._wetSaid){ s._wetSaid = true; sdSay("흙 색이 진해졌어요. 그만!"); } }, 60); }
+  else sdRender();
+};
+sdPlay = function(){
+  const s = SD; clearInterval(_sdPlayT);
+  _sdPlayT = setInterval(() => {
+    if (!SD || s.step !== 5 || s.thirst){ clearInterval(_sdPlayT); return; }
+    s.day++;
+    if ((s.day === 10 || s.day === 19) && !s["t" + s.day]){ s["t" + s.day] = 1; s.thirst = 1; sfx("pop"); sdSay("목말라!"); }
+    if (s.day === 7) sdSay("떡잎이 났어요!"); if (s.day === 16) sdSay("첫 본잎이 나와요"); if (s.day >= 28){ s.day = 28; clearInterval(_sdPlayT); sfx("grow"); sdSay("4주 만에 모종이 됐어요!"); }
+    sdRender();
+  }, 700);
+};
+sdGo = function(){
+  const s = SD; s.step = (!s.full && s.step >= 4) ? 7 : s.step + 1;
+  const t = ["", "키친타월을 깔아요", "배양토를 채워요", "구멍을 파고 씨앗을 넣어요", "흙을 덮고 다져요", "물을 주고 햇빛과 바람이 잘 드는 곳에 둬요", "큰 화분으로 옮겨 심어요", s.full ? "이제 내 바질이에요!" : "씨앗을 심었어요!"][s.step] || "";
+  if (t) sdSay(t);
+  sdRender(); if (s.step === 5 && s.full) sdPlay();
+};
+
+/* ② 🥚 달걀 껍데기 친환경 비료 (73쪽) — 처음 한 번 만들고 그다음부터 비료 단추가 바로 뿌림 */
+const _doFertEgg = doFert;
+let _egg = null;
+doFert = function(){
+  if (me.eggMade) return _doFertEgg.apply(this, arguments);
+  _egg = {a: 0, b: 0, c: 0};
+  let m = $("eggModal"); if (!m){ m = document.createElement("div"); m.id = "eggModal"; m.className = "modal"; m.onclick = e => { if (e.target === m) m.classList.remove("on"); }; $("jrModal").parentNode.appendChild(m); }
+  m.classList.add("on"); eggRender(); if (sayOn()) speak("달걀 껍데기로 친환경 비료를 만들어요");
+};
+function eggRender(){
+  const e = _egg, m = $("eggModal"); if (!m || !e) return;
+  const S = [["🥚", "하얀 막 벗기기", "마르기 전에 껍데기 안쪽 하얀 막을 벗겨요", e.a >= 1, `<button class="b" onclick="eggDo('a')">👆 벗기기</button>`],
+             ["💧☀", "씻어서 말리기", "깨끗이 씻은 뒤 바짝 말려요", e.b >= 1, e.a >= 1 ? `<button class="b" onclick="eggDo('b')">☀ 말리기</button>` : ""],
+             ["🔨", "잘게 부수기", `톡톡 세 번 (${e.c}/3)`, e.c >= 3, e.b >= 1 ? `<button class="b" onclick="eggDo('c')">🔨 톡</button>` : ""]];
+  const all = e.c >= 3;
+  m.innerHTML = `<div class="box ebox"><div class="eh">🥚 달걀 껍데기로 친환경 비료 만들기 <span style="font:16px Jua;color:#8a6a2a">교과서 73쪽</span></div>
+    <div class="es">${S.map(([i, h, t, ok, btn], k) => `<div class="e ${ok ? "ok" : k === (e.a < 1 ? 0 : e.b < 1 ? 1 : 2) ? "on" : ""}"><i>${ok ? "✔" : i}</i><b>${k + 1}. ${h}</b><span style="font-size:15px">${t}</span>${ok ? "" : btn}</div>`).join("")}</div>
+    <div class="why">🌱 흙에 <b>칼슘 · 미네랄</b> 같은 양분을 주고, 해충을 쫓는 데도 좋아요. 화학 비료처럼 <b>환경을 더럽히지 않아</b> 지속가능한 농업에 도움이 돼요.</div>
+    <div class="rbtns" style="justify-content:flex-end">${all ? `<button class="big" style="width:auto;padding:10px 26px" onclick="eggEnd()">🌱 바질에 뿌리기</button>` : ""}<button class="b" onclick="$('eggModal').classList.remove('on')">닫기</button></div></div>`;
+}
+function eggDo(k){
+  const e = _egg; if (!e) return;
+  if (k === "a") e.a = 1; if (k === "b"){ e.b = 1; sfx("whoosh"); } if (k === "c"){ e.c = Math.min(3, e.c + 1); sfx("tap"); }
+  if (k !== "c") sfx("pop"); eggRender();
+  if (e.c >= 3 && sayOn()) speak("다 됐어요! 바질에 뿌려 줘요");
+}
+function eggEnd(){
+  $("eggModal").classList.remove("on"); _egg = null;
+  if (!me.eggMade){ me.eggMade = true; addCoin(me, 2, "친환경 비료 만들기"); }
+  _doFertEgg();
+}
+SAY_WORD["비료"] = "달걀 껍데기 비료 주기";
+BADGES.push(["egg", "🥚", "친환경 농부", p => !!p.eggMade, "달걀 껍데기로 친환경 비료를 만들었어요"]);
+BADGE_INFO.egg = ["달걀 껍데기 비료를 처음 만들어 주면", "화학 비료 대신 생활 속 재료로 — 땅을 지키는 지속가능한 농업이에요"];
+
+/* ③ 🦟 허브 모기 기피제 (74쪽 · 바질 잎) — 수확 활용 카드에 더함 */
+RECIPES.splice(1, 0, {id: "mosquito", icon: "🦟", name: "허브 모기 기피제", need: 6,
+  items: ["바질 잎 10장", "물 1컵", "절구 · 주둥이 있는 컵", "거름망 · 분무기"],
+  steps: ["바질 잎을 따서 절구에 넣고 빻아요", "컵에 물을 담고 빻은 잎을 넣어요", "하루 넘게 물에 담가 우려요", "거름망으로 건더기를 걸러요", "분무기에 담아 바깥으로 드러난 팔다리에 뿌려요"],
+  safe: "얼굴 · 눈에는 뿌리지 않아요. 피부가 빨개지거나 가려우면 물로 씻어요.", tip: "교과서 74쪽 — 화학 약품 대신 식물로 만든 친환경 기피제예요."});
+const _recipeSVGEgg = recipeSVG;
+recipeSVG = function(id){
+  if (id !== "mosquito") return _recipeSVGEgg.apply(this, arguments);
+  return `<svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid meet"><ellipse cx="100" cy="130" rx="64" ry="6" fill="#e8e2d6"/>
+    <rect x="76" y="46" width="48" height="82" rx="11" fill="#eef7ff" stroke="#9cc8ee" stroke-width="2"/><rect x="79" y="78" width="42" height="47" rx="9" fill="#8cc63f" opacity=".85"/>
+    <rect x="88" y="30" width="24" height="18" rx="4" fill="#5aa0d8"/><path d="M110 33 L140 33 L140 41 L110 41 Z" fill="#5aa0d8"/>
+    <circle cx="150" cy="35" r="3" fill="#bfe3ff"/><circle cx="160" cy="30" r="2.4" fill="#bfe3ff"/><circle cx="158" cy="42" r="2" fill="#bfe3ff"/>
+    <ellipse cx="54" cy="104" rx="16" ry="8" fill="#3e8e3a" transform="rotate(-30 54 104)"/><ellipse cx="146" cy="110" rx="15" ry="7" fill="#4c9a3e" transform="rotate(25 146 110)"/>
+    <text x="38" y="58" font-size="22">🦟</text><path d="M34 46 L62 72 M62 46 L34 72" stroke="#c9573f" stroke-width="3"/></svg>`;
+};
+
+/* ④ 📝 성장 카드에 «잘된 점 / 보완할 점» (교과서 성찰하기와 같은 말) — 골라 누르기 */
+const RF = {good: ["💧 물을 알맞게 줬어요", "☀ 햇빛 자리를 잘 골랐어요", "📏 꾸준히 관찰했어요", "🥚 친환경 비료를 만들었어요", "📢 생긴 일을 잘 해결했어요"],
+            fix: ["💧 물을 제때 못 줬어요", "📏 관찰일지를 빼먹었어요", "☀ 자리를 늦게 옮겼어요", "📢 생긴 일을 늦게 풀었어요", "🐛 벌레를 늦게 찾았어요"]};
+function rfToggle(k, i){ const p = me; p.reflect = p.reflect || {good: [], fix: []}; const a = p.reflect[k], j = a.indexOf(i); if (j < 0) a.push(i); else a.splice(j, 1); saveMe(); renderCard(); }
+const _renderCardRf = renderCard;
+renderCard = function(){
+  _renderCardRf.apply(this, arguments);
+  const p = me, r = p.reflect || {good: [], fix: []}, el = $("gcard"); if (!el || !stuName) return;
+  el.insertAdjacentHTML("beforeend", `<div class="refl"><div style="font:15px Jua;margin-bottom:2px">📝 키워 보며 (교과서 성찰하기)</div>
+    <div class="rr"><span>👍 잘된 점</span>${RF.good.map((t, i) => `<button class="${r.good.includes(i) ? "on" : ""}" onclick="rfToggle('good',${i})">${t}</button>`).join("")}</div>
+    <div class="rr"><span>🔧 보완할 점</span>${RF.fix.map((t, i) => `<button class="${r.fix.includes(i) ? "on" : ""}" onclick="rfToggle('fix',${i})">${t}</button>`).join("")}</div></div>`);
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
