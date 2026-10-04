@@ -5174,6 +5174,13 @@ function popOk(text, parent){
   parent.appendChild(d); setTimeout(() => d.remove(), 1700); sfx("chime");
   if (sayOn()) speakQ(text + " 잘했어요!");
 }
+/* ⭐ 점수 칸 · 🩺 상태판 설명 — 떠 있을 때 다른 곳을 누르면 저절로 닫힘 (10-04 전무님)
+   누른 단추가 먼저 돌고(click 뒤) 그다음에 닫음 — 누르기를 가로채지 않게 */
+document.addEventListener("click", ev => {
+  const t = ev.target;
+  if (_scKey && !t.closest("#score")){ _scKey = ""; setTimeout(() => { if (document.querySelector("#score .schelp")) renderMe(); }, 0); }
+  if (_statKey && !t.closest("#stat")){ _statKey = ""; setTimeout(() => { if (me) renderStat(me); }, 0); }
+}, true);
 /* 따라 하기 설명은 다른 창(배지 축하 등)이 다 닫힌 뒤에 — 축하 창이 설명을 가리던 것 (10-04 전무님) */
 const _startTutorialWait = startTutorial;
 startTutorial = function(){ if (document.querySelector(".modal.on")){ setTimeout(startTutorial, 600); return; } return _startTutorialWait.apply(this, arguments); };
