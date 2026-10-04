@@ -539,6 +539,8 @@ button,.b,.big,.zone,.pick span,.pics span{touch-action:manipulation}
 #jrBox .stk.on{border-color:var(--leaf);background:#eaf6e3;box-shadow:0 0 0 2px var(--leaf) inset}
 #jrBox .sws{display:flex;gap:10px;align-items:flex-end}
 #jrBox .cl{font:18px "Jua";width:108px;flex:0 0 auto}
+#jrBox input.pin{width:84px;border:2px solid #cfe3c4;border-radius:12px;text-align:center;font:26px "Jua";padding:2px 4px;background:#fff}
+#jrBox input.pin:placeholder-shown{color:#b9c2bc}
 #jrBox .sw{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;cursor:pointer;font:13px "Noto Sans KR";color:var(--sub);padding:0}
 #jrBox .sw i{width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);display:block}
 #jrBox .sw.on i{box-shadow:0 0 0 4px var(--leaf)}
@@ -3496,13 +3498,14 @@ function scoreWhy(p, k){
     return top + (need.length ? `남은 일 : ${need.join(" · ")} (하나에 −5)` : "오늘 해 줄 일이 없어요 → 만점");
   }
   if (k === "jr") return top + `키 적기 10 ${Y(td.jrH)} · 처음 적은 키가 정확 +5 ${td.jrH ? Y(td.jrAcc) : "—"}`;
-  if (k === "wx"){
+  if (k === "wx"){   // 날씨 = 오늘 · 다음 수업까지 날씨를 보고 미리 챙기기 (10-04 «무엇을 하라는 건지» → 할 일을 낱말로)
     const ch = [];
-    if (LV() !== "easy" && nightsAhead(p, "window", g) < 10) ch.push(`🥶 추운 밤 → 밤 자리 10°+ ${Y(nightsAhead(p, nSpot(p), g) >= 10)}`);
-    if (kd === "rain" || kd === "cloud") ch.push(`🌧 흐린 날 → 흙물 90 안 넘게 ${Y(!(td.ml > 0 && p.moist > 90))}`);
-    if (LV() === "hard" && w.sunH >= 9 && w.tmax >= 26 && p.spot === "window") ch.push(`☀ 센 햇볕 → 블라인드 ${Y(!!p.blind)}`);
-    if (g >= 4) ch.push(`📅 ${g}일 뒤 수업 → 흙물 62+ 넉넉히 ${Y(p.moist >= 62)}`);
-    return top + (ch.length ? ch.join(" · ") : "오늘은 챙길 날씨가 없어요 → 만점");
+    if (LV() !== "easy" && nightsAhead(p, "window", g) < 10) ch.push(`🥶 추운 밤이 와요 → «🌙 밤 자리» 를 교실 안쪽으로 ${Y(nightsAhead(p, nSpot(p), g) >= 10)}`);
+    if (kd === "rain" || kd === "cloud") ch.push(`🌧 흐리거나 비 오는 날 → 물을 조금만 (흙물 90 안 넘게) ${Y(!(td.ml > 0 && p.moist > 90))}`);
+    if (LV() === "hard" && w.sunH >= 9 && w.tmax >= 26 && p.spot === "window") ch.push(`☀ 햇볕이 아주 세요 → 🪟 블라인드 내리기 ${Y(!!p.blind)}`);
+    if (g >= 4) ch.push(`📅 다음 수업이 ${g}일 뒤 → 물을 넉넉히 (흙물 62 넘게) ${Y(p.moist >= 62)}`);
+    return top + (ch.length ? "날씨에 맞춰 할 일 : " + ch.join(" · ")
+      : "오늘 날씨는 걱정 없어요 → 그냥 만점 · 추운 밤 · 비 · 센 햇볕 · 긴 휴일이 오면 여기에 할 일이 떠요");
   }
   return top;
 }
@@ -4149,7 +4152,12 @@ function jrNudgeL(d){
   jrLock();
 }
 /* 🔮 어려움 예상 — 처음 누르면 오늘 잰 키(없으면 0)에서 시작 */
-function jrSetP(v){ v = clamp(Math.round(v * 10) / 10, 0, 30); jrDraft.pred = String(v); const e = $("jrP"); if (e){ e.textContent = v.toFixed(1); e.classList.remove("empty"); } jrLock(); }
+function jrSetP(v){ v = clamp(Math.round(v * 10) / 10, 0, 30); jrDraft.pred = String(v); const e = $("jrPin"); if (e && document.activeElement !== e) e.value = v.toFixed(1); jrLock(); }
+/* 예상 키 직접 입력 — 치는 동안은 칸을 건드리지 않고, 다 치면(엔터 · 다른 곳) 0.1cm 로 맞춤 */
+function jrTypeP(v, done){
+  if (v === "" || isNaN(+v)){ if (done){ jrDraft.pred = ""; jrLock(); } return; }
+  jrSetP(+v); if (done){ const e = $("jrPin"); if (e) e.value = (+jrDraft.pred).toFixed(1); }
+}
 function jrNudgeP(d){ jrSetP(jrDraft.pred === "" ? (jrDraft.h === "" ? 0 : +jrDraft.h) + d : +jrDraft.pred + d); }
 function jrHoldEnd(){ clearTimeout(_jrHoldT); _jrHoldT = null; }
 window.addEventListener("pointerup", jrHoldEnd); window.addEventListener("pointercancel", jrHoldEnd);
@@ -4208,6 +4216,7 @@ jrLock = function(){
 };
 openJournal = function(){
   const p = me, lp = lastPred(p), L = LV(), seed = stage(p) === 0, v = jrView = jrViewOf(p);
+  const nextLab = (dateLab(p.day + gapToNext(p)).split(" · ")[1] || "").replace(/^\d+월 /, "");   // 다음 수업 날 (보기 : 9일 (금))
   jrDraft = {h: "", l: seed ? "0" : "", color: seed ? "없음" : "", txt: "", pred: "", why: "", tags: [], other: []}; jrSeq = 0;
   if (jrDragInit.off) jrDragInit.off();
   const bare = Object.assign({}, p, {deco: null, leafWet: 0, snail: 0, flower: false});   // 물방울 · 꾸미기 · 달팽이 · 꽃대가 잎을 가리지 않게
@@ -4215,16 +4224,16 @@ openJournal = function(){
   const none = `<span class="sub">🌱 아직 잎이 없어요</span>`;
   const leafRow = L === "easy" ? "" : `<div class="jrow"><span class="k">🍃</span>${seed ? none
       : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onpointerdown="jrHold(-1,'l')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(1,'l')" onpointerleave="jrHoldEnd()">▲</button><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 그림의 잎을 톡톡</span>`}</div>`;
-  const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🎨</span><span class="cl">가장 많은 색</span>
+  const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🍃</span><span class="cl" style="line-height:1.15">잎에서<br>가장 많은 색</span>
       <div class="sws">${JR_COLORS.map(([c, hx]) => `<button class="sw" data-c="${c}" onclick="jrColor('${c}')"><i style="background:${hx}"></i>${c}</button>`).join("")}</div></div>
-    <div class="jrow" style="margin-top:-6px"><span class="k" style="background:none">➕</span><span class="cl">또 보이는 색</span>
-      <div class="sws">${JR_OTHER.map(([c, hx]) => `<button class="sw" data-o2="${c}" onclick="jrOther('${c}')"><i style="background:${hx};width:30px;height:30px"></i>${c}</button>`).join("")}</div><span class="sub">있으면 모두</span></div>`;
+    <div class="jrow" style="margin-top:-6px"><span class="k" style="background:none">➕</span><span class="cl" style="line-height:1.15">잎에<br>또 보이는 색</span>
+      <div class="sws">${JR_OTHER.map(([c, hx]) => `<button class="sw" data-o2="${c}" onclick="jrOther('${c}')"><i style="background:${hx};width:30px;height:30px"></i>${c}</button>`).join("")}</div><span class="sub">있으면 모두 · 흙 말고 잎만</span></div>`;
   const soilRow = L !== "hard" ? "" : `<div class="jrow"><span class="k">👆</span><span class="sub" style="font-size:17px">${p.today.checked ? `겉흙 ${p.today.surfWord || "—"} · 속흙 ${p.today.deepWord || "—"}` : "오늘은 아직 안 만져 봤어요"}</span></div>`;
   const predRow = L === "easy" ? "" : L === "normal"
-    ? `<div class="jrow"><span class="k">🔮</span><div class="preds">${JR_PREDS.map(([x, ic, sz, w]) => `<button data-x="${x}" onclick="jrPick(${x})"><i style="font-size:${sz}px">${ic}</i>${w}</button>`).join("")}</div><span class="sub" id="jrPv">다음 수업 땐?</span></div>`
-    : `<div class="jrow"><span class="k">🔮</span><span class="val empty" id="jrP">?</span><span style="font-size:18px">cm</span><button class="nb" onpointerdown="jrHold(-.5,'p')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(.5,'p')" onpointerleave="jrHoldEnd()">▲</button>
-         <span class="sub">${(() => { const g = gapToNext(p), a = []; for (let i = 1; i <= g; i++) a.push(KIND_ICON[kindOf(wxOf(p.day + i))]); return "다음 수업까지 " + a.join(" "); })()}</span></div>
-       <div class="jrow" style="margin-top:-4px"><span class="k" style="background:none;font-size:20px">❓</span>${["햇빛", "물", "날씨", "온도", "잘 모르겠어요"].map(w => `<button class="stk" data-w="${w}" onclick="jrDraft.why='${w}';document.querySelectorAll('#jrBox [data-w]').forEach(b=>b.classList.toggle('on',b.dataset.w==='${w}'))">${w}</button>`).join("")}</div>`;
+    ? `<div class="jrow"><span class="k">🔮</span><div class="preds">${JR_PREDS.map(([x, ic, sz, w]) => `<button data-x="${x}" onclick="jrPick(${x})"><i style="font-size:${sz}px">${ic}</i>${w}</button>`).join("")}</div><span class="sub" id="jrPv">다음 수업 ${nextLab} 땐?</span></div>`
+    : `<div class="jrow"><span class="k">🔮</span><span class="cl" style="width:auto;line-height:1.15">다음 수업<br><small style="font-size:14px;color:var(--sub)">${nextLab}</small></span><input class="val pin" id="jrPin" type="number" inputmode="decimal" step="0.1" min="0" max="30" placeholder="?" oninput="jrTypeP(this.value,false)" onchange="jrTypeP(this.value,true)" onkeydown="if(event.key==='Enter')this.blur()"><span style="font-size:18px">cm</span><button class="nb" onpointerdown="jrHold(-.1,'p')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(.1,'p')" onpointerleave="jrHoldEnd()">▲</button>
+         <span class="sub">그때까지 ${(() => { const g = gapToNext(p), a = []; for (let i = 1; i <= g; i++) a.push(KIND_ICON[kindOf(wxOf(p.day + i))]); return a.join(" "); })()}</span></div>
+       <div class="jrow" style="margin-top:-4px"><span class="k" style="background:none;font-size:20px">❓</span><span class="cl" style="width:auto;font-size:16px">왜 그렇게<br>생각해요?</span>${[["햇빛", "☀"], ["물", "💧"], ["날씨", "🌦"], ["온도", "🌡"], ["모르겠어요", "🤔"]].map(([w, ic]) => `<button class="stk" data-w="${w}" onclick="jrDraft.why='${w}';document.querySelectorAll('#jrBox [data-w]').forEach(b=>b.classList.toggle('on',b.dataset.w==='${w}'))">${ic} ${w}</button>`).join("")}</div>`;
   $("jrBox").innerHTML = `<h2 style="font:28px Jua;margin:0 0 8px">📏 관찰일지 — D+${p.day} ${dateLab(p.day).split(" · ")[1]}</h2>
     ${L !== "easy" && lp && !lp.checked ? `<div class="prev">🔮 지난번 예상 <b>${lp.pred}cm</b> — 오늘 재면 견줘 봐요</div>` : ""}
     <div class="jr" style="margin-top:8px">
@@ -4252,7 +4261,7 @@ openJournal = function(){
     if (L === "hard" && n.color && n.color !== "없음" && !seed) jrColor(n.color);
     (n.other || []).forEach(c => jrOther(c));
     if (n.pred != null){ if (L === "normal"){ const x = Math.round((n.pred - (n.hIn || 0)) * 2) / 2; if ([0, 1, 2].includes(x)) jrPick(x); else { jrDraft.pred = String(n.pred); $("jrPv").textContent = `→ ${n.pred}cm`; } }
-                         else if ($("jrP")) jrSetP(n.pred); }
+                         else if ($("jrPin")) jrSetP(n.pred); }
     if (n.why){ jrDraft.why = n.why; document.querySelectorAll("#jrBox [data-w]").forEach(b => b.classList.toggle("on", b.dataset.w === n.why)); }
     $("jrSave").textContent = "✅ 고쳐서 저장";
   }
