@@ -5109,12 +5109,18 @@ function sdCarton(o){
   g += `<path d="M112 250 L188 250 L188 394 L112 394 Z" fill="#f7fbff" opacity=".22" stroke="#7fb2e0" stroke-width="2.4"/><rect x="112" y="296" width="76" height="20" fill="#5aa0d8" opacity=".3"/><text x="150" y="311" font-size="13" text-anchor="middle" fill="#2f6a9a" font-family="Jua">우유</text>`;
   g += `<path d="M112 250 L122 232 L178 232 L188 250" fill="none" stroke="#7fb2e0" stroke-width="2.4"/>`;
   for (let i = 0; i < (o.holes || 0); i++) g += `<circle cx="${119 + i * 12.4}" cy="399" r="2.8" fill="#2a1c12"/>`;
+  if (o.wet > SD_WET_OK) for (let i = 0; i < 6; i++) g += `<ellipse cx="${119 + i * 12.4}" cy="${404 + (i % 2) * 5}" rx="2.4" ry="3.6" fill="#7fbfea"/>`;
   if (o.spray) for (let i = 0; i < 7; i++) g += `<circle cx="${122 + ((i * 41 + Date.now() / 30) % 56)}" cy="${200 + ((i * 29 + Date.now() / 12) % 70)}" r="3.2" fill="#7fbfea"/>`;
   return g;
 }
 function sdPlantG(d){   // 바질 그림에서 식물(.plantg)만 떼어 우유갑에 심음
   const doc = new DOMParser().parseFromString(basilSVG(sdGrowPlant(d)).replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" '), "image/svg+xml"), g = doc.querySelector(".plantg");
   return g ? new XMLSerializer().serializeToString(g) : "";
+}
+const SD_WET_OK = 1.25, SD_WET_MAX = 1.6;
+function sdWetMeter(w){   // 초록 칸 = 알맞음 (1.0 ~ 1.25) · 넘으면 빨강
+  const pc = x => x / SD_WET_MAX * 100;
+  return `<div class="meter" style="flex:1;position:relative;height:22px"><span style="position:absolute;top:0;bottom:0;left:${pc(1)}%;width:${pc(SD_WET_OK) - pc(1)}%;background:#bfe8b0"></span><i id="sdWetBar" style="position:relative;width:${pc(Math.min(w, SD_WET_MAX))}%;background:${w > SD_WET_OK ? "#c9573f" : "#5aa0d8"};opacity:.85"></i></div>`;
 }
 function sdStateSVG(s, extra){ return `<svg viewBox="70 190 180 225" id="sdSvg">${sdCarton(s)}${extra || ""}</svg>`; }
 sdRender = function(){
@@ -5123,14 +5129,17 @@ sdRender = function(){
   const dots = steps.map((t, i) => `<span class="${i === cur ? "on" : i < cur ? "ok" : ""}">${i < cur ? "✔" : i === steps.length - 1 ? "🎉" : i + 1}</span>`).join("");
   let say = "", acts = "", stage = "", done = false;
   if (s.step === 0){ stage = sdStateSVG(s, `<text x="200" y="392" font-size="26">📍</text>`); say = `우유갑 밑면에 구멍을 뚫어요<small>📍 톡톡 여섯 번 — 남은 물이 빠지는 길이에요 · 송곳은 선생님과 함께!</small>`; acts = `<button class="big" onclick="sdAct('hole')">📍 톡</button><span style="font:24px Jua">${s.holes || 0} / 6</span>`; done = (s.holes || 0) >= 6; }
-  if (s.step === 1){ stage = sdStateSVG(s); say = `바닥에 키친타월을 깔아요<small>흙이 구멍으로 새지 않게 막아 줘요</small>`; acts = s.towel ? "" : `<button class="big" onclick="sdAct('towel')">🧻 깔기</button>`; done = !!s.towel; }
+  if (s.step === 1){ stage = sdStateSVG(s); say = `바닥에 키친타월을 깔아요<small>👆 우유갑을 톡 — 흙이 구멍으로 새지 않게 막아 줘요</small>`; acts = s.towel ? "" : `<button class="big" onclick="sdAct('towel')">🧻 깔기</button>`; done = !!s.towel; }
   if (s.step === 2){ stage = sdStateSVG(s, s.fill < 3 ? `<text x="196" y="262" font-size="34">🟫</text>` : `<text x="196" y="236" font-size="32">🧴</text>`);
-    say = s.fill < 3 ? `배양토를 채워요<small>🟫 흙 봉지를 톡톡 세 번</small>` : `분무기로 흙을 충분히 적셔요<small>💦 꾹 누르고 있어요 — 흙 색이 진해지면 그만</small>`;
+    say = s.fill < 3 ? `배양토를 채워요<small>🟫 흙 봉지를 톡톡 세 번</small>` : `분무기로 흙을 충분히 적셔요<small>💦 우유갑이나 단추를 꾹 누르고 있어요 — 흙 색이 진해지면 그만</small>`;
+    const over = s.wet > SD_WET_OK;
+    if (s.fill >= 3 && over) say = `💦 너무 많아요! 바닥 구멍으로 물이 줄줄<small>↺ 다시 눌러 처음부터 살살 뿌려 봐요 — 초록 칸에서 멈춰요</small>`;
+    else if (s.fill >= 3 && s.wet >= 1) say = `알맞게 젖었어요!<small>흙 색이 진해졌어요 — 다음으로</small>`;
     acts = s.fill < 3 ? `<button class="big" onclick="sdAct('fill')">🟫 흙 붓기</button><div class="meter" style="flex:1"><i style="width:${s.fill / 3 * 100}%"></i></div>`
-                      : `<button class="big hold" onpointerdown="sdSpray(true)" onpointerup="sdSpray(false)" onpointerleave="sdSpray(false)">💦 칙칙 (꾹)</button><div class="meter" style="flex:1"><i style="width:${Math.min(1, s.wet) * 100}%"></i></div>`;
-    done = s.fill >= 3 && s.wet >= 1; }
+                      : `<button class="big hold" onpointerdown="sdSpray(true)" onpointerup="sdSpray(false)" onpointerleave="sdSpray(false)">💦 칙칙 (꾹)</button>${sdWetMeter(s.wet)}`;
+    done = s.fill >= 3 && s.wet >= 1 && !over; }
   if (s.step === 3){ stage = sdStateSVG(s); say = `손가락으로 1~3cm 구멍을 파고 씨앗을 넣어요<small>👆 흙 위를 톡톡 세 번</small>`; acts = `<button class="big" onclick="sdAct('seed')">🌰 씨앗 톡</button><span style="font:24px Jua">${s.seeds.length} / 3</span>`; done = s.seeds.length >= 3; }
-  if (s.step === 4){ stage = sdStateSVG(s); say = `흙을 가볍게 덮고 다져요<small>👉 손가락으로 쓱쓱 — 살살 눌러 다져요</small>`; acts = `<button class="big" onclick="sdAct('cover')">👉 쓱</button><div class="meter" style="flex:1"><i style="width:${s.cover * 100}%"></i></div>`; done = s.cover >= 1; }
+  if (s.step === 4){ stage = sdStateSVG(s); say = `흙을 가볍게 덮고 다져요<small>👉 흙을 톡톡 세 번 또는 쓱쓱 — 살살 눌러 다져요</small>`; acts = `<button class="big" onclick="sdAct('cover')">👉 쓱</button><div class="meter" style="flex:1"><i style="width:${s.cover * 100}%"></i></div>`; done = s.cover >= 1; }
   if (s.step === 5){
     stage = `<svg viewBox="70 170 180 245">${sdCarton({holes: 6, towel: 1, fill: 3, wet: 1, plant: sdPlantG(s.day)})}<text x="214" y="200" font-size="22">☀</text><text x="80" y="220" font-size="18">🌬</text></svg><div class="dayc">${s.day}일째</div>
       <div class="cap">${s.day < 5 ? "씨앗이 물을 먹고 불어요" : s.day < 8 ? "뿌리가 내려가고 싹이 고개를 들어요" : s.day < 15 ? "🌱 떡잎이 났어요!" : s.day < 22 ? "🌿 첫 본잎이 나와요" : "🪴 본잎 2쌍 — 모종이 됐어요!"}</div>`;
@@ -5146,10 +5155,19 @@ sdRender = function(){
     say = s.full ? `🎉 이제 내 바질이에요!<small>${s.replay ? "다시 해 봤어요" : "🌱 +3 · 배지 «첫 씨앗»"} — 이름을 지어 줘요</small>` : `🎉 씨앗을 심었어요!<small>물을 주고 햇빛 · 바람이 잘 드는 곳에 — 진짜 날짜로 싹을 기다려요 (1~2주) ${s.replay ? "" : "· 🌱 +3"}</small>`;
     acts = `<button class="big" onclick="sdEnd()">${s.next ? "🏷️ 이름 짓기 →" : "✔ 끝"}</button>`; }
   if (done) acts += `<button class="big" style="background:#e0a43a" onclick="sdGo()">다음 →</button>`;
+  if (s.step <= 4 && sdTouched(s)) acts += `<button class="b" style="font-size:18px" onclick="sdReset()">↺ 다시</button>`;
   m.innerHTML = `<div class="box sbox"><div class="shd">🌱 씨앗에서 모종까지 <span style="font:16px Jua;color:#8a6a2a">교과서 73쪽</span><div class="dots">${dots}</div>${TEST || s.replay ? `<button class="b skip" onclick="sdEnd()">건너뛰기</button>` : ""}</div>
     <div class="sbody"><div class="stage" id="sdStage">${stage}</div><div class="side"><div class="say">${say}</div><div class="acts">${acts}</div></div></div></div>`;
   sdBind();
 };
+function sdTouched(s){ return [s.holes, s.towel, s.fill || s.wet, s.seeds.length, s.cover][s.step]; }
+function sdReset(){
+  const s = SD; if (!s) return; clearInterval(_sdSprayT); s.spray = false;
+  if (s.step === 0) s.holes = 0; if (s.step === 1) s.towel = false;
+  if (s.step === 2){ if (s.wet > 0) s.wet = 0; else s.fill = 0; s._wetSaid = s._overSaid = false; }   // 물부터 다시 · 물이 없으면 흙부터
+  if (s.step === 3) s.seeds = []; if (s.step === 4) s.cover = 0;
+  sfx("tap"); sdRender();
+}
 sdBind = function(){
   const st = $("sdStage"), s = SD; if (!st) return;
   const pt = (e, id) => { const svg = $(id); if (!svg) return null; const q = svg.createSVGPoint(); q.x = e.clientX; q.y = e.clientY; return q.matrixTransform(svg.getScreenCTM().inverse()); };
@@ -5158,15 +5176,24 @@ sdBind = function(){
     const q = pt(e, "sdSvg");
     if (s.step === 0 && q && q.x > 100 && q.x < 200) sdAct("hole");
     if (s.step === 2 && s.fill < 3 && q && (q.x > 200 || (q.x > 100 && q.y > 240))) sdAct("fill");
-    if (s.step === 3 && q && q.x > 116 && q.x < 184 && Math.abs(q.y - top()) < 16) sdAct("seed", q.x);
-    if (s.step === 4) s._drag = q;
-    if (s.step === 6 && !s.moved) s._mv = pt(e, "sdMove");
+    if (s.step === 3 && q && q.x > 108 && q.x < 192 && q.y > top() - 24 && q.y < 398) sdAct("seed", q.x);   // 흙 어디를 눌러도 (윗선만 받던 것 · 10-04 전무님)
+    if (s.step === 1 && !s.towel && q && q.x > 100 && q.x < 200) sdAct("towel");
+    if (s.step === 2 && s.fill >= 3 && q && q.x > 100 && q.x < 240){ s._spr = true; sdSpray(true); }   // 그림을 꾹 = 분무기
+    if (s.step === 4 && q && q.x > 100 && q.x < 200 && q.y > top() - 30){ s._drag = q; s._tap = true; }
+    if (s.step === 5 && s.thirst) sdAct("drink");
+    if (s.step === 6 && !s.moved){ s._mv = pt(e, "sdMove"); if (s._mv && s._mv.x < 170) s._tapMv = true; }
   };
   st.onpointermove = e => {
-    if (s.step === 4 && s._drag){ const q = pt(e, "sdSvg"); if (q && Math.abs(q.y - top()) < 30){ s.cover = Math.min(1, s.cover + Math.hypot(q.x - s._drag.x, q.y - s._drag.y) / 300); s._drag = q; const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = s.cover * 100 + "%"; if (s.cover >= 1){ s._drag = null; sfx("chime"); sdRender(); } } }
-    if (s.step === 6 && s._mv){ const q = pt(e, "sdMove"); if (q && q.x > 210){ s._mv = null; sdAct("move"); } }
+    if (s.step === 4 && s._drag){ const q = pt(e, "sdSvg"); if (q && Math.hypot(q.x - s._drag.x, q.y - s._drag.y) > 3) s._tap = false; if (q && q.y > top() - 30 && q.y < 398){ s.cover = Math.min(1, s.cover + Math.hypot(q.x - s._drag.x, q.y - s._drag.y) / 300); s._drag = q; const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = s.cover * 100 + "%"; if (s.cover >= 1){ s._drag = null; sfx("chime"); sdRender(); } } }
+    if (s.step === 6 && s._mv){ const q = pt(e, "sdMove"); if (q && Math.hypot(q.x - s._mv.x, q.y - s._mv.y) > 6) s._tapMv = false; if (q && q.x > 210){ s._mv = null; sdAct("move"); } }
   };
-  st.onpointerup = () => { if (s.step === 4 && s._drag){ s._drag = null; sdRender(); } s._mv = null; };
+  const end = () => {
+    if (s._spr){ s._spr = false; sdSpray(false); return; }
+    if (s.step === 4 && s._drag){ s._drag = null; if (s._tap){ s._tap = false; sdAct("cover"); return; } sdRender(); }   // 톡 = 한 번에 ⅓ 덮기
+    if (s.step === 6 && s._tapMv && !s.moved){ s._tapMv = false; s._mv = null; sdAct("move"); return; }
+    s._mv = null;
+  };
+  st.onpointerup = end; st.onpointercancel = end; st.onpointerleave = () => { if (s._spr){ s._spr = false; sdSpray(false); } };
 };
 sdAct = function(a, x){
   const s = SD; if (!s) return;
@@ -5182,9 +5209,11 @@ sdAct = function(a, x){
 sdSpray = function(on){
   const s = SD; if (!s || s.step !== 2 || s.fill < 3) return;
   clearInterval(_sdSprayT); s.spray = on;
-  if (on){ sfx("water", .5); _sdSprayT = setInterval(() => { s.wet += .04; if (s.wet >= 1.5){ s.wet = 1.5; clearInterval(_sdSprayT); s.spray = false; toast("💦 이제 그만! 충분히 젖었어요"); }
-    const st = $("sdStage"); if (st) st.innerHTML = sdStateSVG(s, `<text x="196" y="236" font-size="32">🧴</text>`); const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = Math.min(1, s.wet) * 100 + "%";
-    if (s.wet >= 1 && !s._wetSaid){ s._wetSaid = true; sdSay("흙 색이 진해졌어요. 그만!"); } }, 60); }
+  if (on){ sfx("water", .5); _sdSprayT = setInterval(() => { s.wet += .03; if (s.wet >= SD_WET_MAX){ s.wet = SD_WET_MAX; clearInterval(_sdSprayT); s.spray = false; }
+    const st = $("sdStage"); if (st) st.innerHTML = sdStateSVG(s, `<text x="196" y="236" font-size="32">🧴</text>`);
+    const b = $("sdWetBar"); if (b){ b.style.width = Math.min(s.wet, SD_WET_MAX) / SD_WET_MAX * 100 + "%"; b.style.background = s.wet > SD_WET_OK ? "#c9573f" : "#5aa0d8"; }
+    if (s.wet >= 1 && !s._wetSaid){ s._wetSaid = true; sdSay("흙 색이 진해졌어요. 그만!"); }
+    if (s.wet > SD_WET_OK && !s._overSaid){ s._overSaid = true; sfx("bad"); toast("💦 너무 많아요! 손을 떼요"); } }, 60); }
   else sdRender();
 };
 sdPlay = function(){
