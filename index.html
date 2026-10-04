@@ -2168,7 +2168,7 @@ function pourEnd(){
   act(450, () => {
     if (r.leaf){ sad("🍃💧"); toast(`잎에 ${ml}mL 뿌렸어요 — 흙엔 조금만 들어갔어요`); }
     else if (r.good){ happy(); toast(`알맞게 줬어요! ${ml}mL · 🌱 +2`); }
-    else if (r.overflow > 0){ sad("💦"); toast(`물이 넘쳐 받침에 ${r.overflow}mL 고였어요 — ③에서 버려요`); }
+    else if (r.overflow > 0){ sad("💦"); toast(`물이 넘쳐 받침에 ${r.overflow}mL 고였어요 — 🪴 물 빼기로 버려요`); }
     else if (me.moist > 88){ sad("💦"); toast("속흙이 이미 젖어 있었어요 — 물이 너무 많아요"); }
     else toast(`${ml}mL 줬어요 · 속흙은 아직 ${soilWord(me.moist)}`);
   });
@@ -3530,24 +3530,31 @@ function skipWater(){
   renderMe(); happy(); toast("🚱 오늘은 물 그만 — 잘 판단했어요! 🌱 +1");
 }
 
-/* 🪴 기울여 물 빼기 — 화분을 살짝 기울여 밑구멍으로 남은 물을 뺌 · 한 번에 흙 물기 −10 · 85(좋은 칸 위끝)까지 되풀이 */
+/* 🪴 기울여 물 빼기 — 화분을 살짝 기울여 밑구멍으로 남은 물을 뺌 · 한 번에 흙물 −10 · 60(좋은 칸 아래끝)까지 되풀이
+   10-04 전무님 «물 빼기가 90 에서 잠긴 것 같다 · 준 물 120mL 숫자가 안 바뀐다»
+   → 바닥 90 → 60 · 뺀 물만큼 오늘 준 물(mL)도 줄임 (흙물 1 = 물 2.5mL · 받침 물도 함께) */
+const DRAIN_MIN = 60;
 function tiltDrain(){
   if (busy || me.dead) return;
   const sau = me.saucer;
-  if (me.moist <= 90){
-    if (sau > 0){ drainSaucer(me); fxAdd(`<circle class="drop" cx="80" cy="390" r="3" fill="#7fbfea" style="--dx:-30px;--dy:18px"/>`, 900); sfx("water", .4); renderMe(); happy(); toast(`🍽 받침 물 ${sau}mL 를 버렸어요`); return; }
-    toast(`💧 더 빠질 물이 없어요 (흙물 ${Math.round(me.moist)})`); return;
+  if (me.moist <= DRAIN_MIN){
+    if (sau > 0){ drainSaucer(me); me.today.ml = Math.max(0, me.today.ml - sau); fxAdd(`<circle class="drop" cx="80" cy="390" r="3" fill="#7fbfea" style="--dx:-30px;--dy:18px"/>`, 900); sfx("water", .4); renderMe(); happy(); toast(`🍽 받침 물 ${sau}mL 를 버렸어요`); return; }
+    toast(`💧 더 빠질 물이 없어요 (흙물 ${Math.round(me.moist)}) — 흙이 머금은 물은 기울여도 안 빠져요`); return;
   }
   visit(me);
-  const before = Math.round(me.moist);
-  me.moist = Math.max(90, me.moist - 10); me.surf = Math.min(me.surf, me.moist + 5);
+  const before = Math.round(me.moist), ml0 = me.today.ml;
+  me.moist = Math.max(DRAIN_MIN, me.moist - 10); me.surf = Math.min(me.surf, me.moist + 5);
+  const out = Math.round((before - me.moist) * 2.5) + (me.saucer > 0 ? me.saucer : 0);   // 뺀 물 mL
+  me.today.ml = Math.max(0, me.today.ml - out);
   if (me.saucer > 0) me.saucer = 0;
   if (me.moist <= 90) me.soggy = 0;
   if (!me.today.tilt){ me.today.tilt = true; me.care.solved++; addCoin(me, 1, "기울여 물 빼기"); }
   const wr = $("pwrap"); wr.style.transition = "transform .35s"; wr.style.transform = "rotate(-14deg)";
   let d = ""; for (let i = 0; i < 7; i++) d += `<circle class="drop" cx="${96 + i * 2}" cy="388" r="3" fill="#7fbfea" style="--dx:${-20 - rnd(0, 30)}px;--dy:${rnd(10, 30)}px;animation-delay:${.2 + i * .05}s"/>`;
   fxAdd(d, 1300); sfx("water", .4);
-  act(700, () => { wr.style.transform = ""; if (me.moist <= 90){ happy(); toast("👍 이제 알맞아요! 💧 " + before + " → " + Math.round(me.moist)); } else toast("🪴 물을 뺐어요 · 💧 " + before + " → " + Math.round(me.moist) + " (한 번 더!)"); });
+  act(700, () => { wr.style.transform = ""; const m = Math.round(me.moist), mlT = ` · 준 물 ${ml0} → ${me.today.ml}mL`;
+    if (m > 90) toast(`🪴 물을 뺐어요 · 💧 흙물 ${before} → ${m}${mlT} (한 번 더!)`);
+    else { happy(); toast(m <= DRAIN_MIN ? `👍 딱 알맞아요! 💧 흙물 ${before} → ${m}${mlT} — 더는 안 빠져요` : `👍 알맞아요! 💧 흙물 ${before} → ${m}${mlT}`); } });
 }
 /* 잠긴 단추를 누르면 — 글 대신 «먼저 할 칸» 이 반짝 + 짧은 말 */
 function lockTap(k){
@@ -5552,11 +5559,11 @@ function wxTasks(p){
     ok: !(td.ml > 0 && p.moist > 90), seen: !!td.wxRain, act: "wxRainOk()"});
   if (L === "hard" && w.sunH >= 9 && w.tmax >= 26 && p.spot === "window") out.push({k: "sun", pic: "🔆", word: "햇볕이 아주 세요", sub: "창가 잎이 탈 수 있어요", btn: "🪟 블라인드 내리기",
     ok: !!p.blind, act: "doBlind(true)"});
-  if (g >= 4) out.push({k: "long", pic: "📅", word: `다음 수업이 ${g}일 뒤예요`, sub: "그동안 물을 못 줘요 — 오늘 넉넉히 (흙물 62 넘게)", btn: "💧 물 칸으로",
-    ok: p.moist >= 62, act: "wxGoWater()"});
+  if (g >= 4) out.push({k: "long", pic: "📅", word: `다음 수업이 ${g}일 뒤예요`, sub: "그동안 물을 못 줘요 — 오늘 넉넉히 (흙물 60 넘게)", btn: "💧 물 칸으로",
+    ok: p.moist >= 60, act: "wxGoWater()"});
   // 비 + 긴 휴일이 겹치면 «조금만» 과 «넉넉히» 가 같이 떠 헷갈림 → 카드 하나 «알맞게 (62~90)»
   const r = out.find(x => x.k === "rain"), lg = out.find(x => x.k === "long");
-  if (r && lg) return out.filter(x => x !== r && x !== lg).concat([{k: "both", pic: r.pic + "📅", word: `${r.pic === "🌧" ? "비 오고" : "흐리고"} 다음 수업이 ${g}일 뒤`, sub: "물은 알맞게 — 흙물 62~90", btn: "💧 물 칸으로",
+  if (r && lg) return out.filter(x => x !== r && x !== lg).concat([{k: "both", pic: r.pic + "📅", word: `${r.pic === "🌧" ? "비 오고" : "흐리고"} 다음 수업이 ${g}일 뒤`, sub: "물은 알맞게 — 흙물 60~90", btn: "💧 물 칸으로",
     ok: r.ok && lg.ok, act: "wxGoWater()"}]);
   return out;
 }
@@ -5573,7 +5580,7 @@ function wxRainOk(){ me.today.wxRain = true; saveMe(); sfx("tap"); renderMe(); t
 function wxGoWater(){
   const st = document.querySelectorAll("#care .tile")[1];
   if (st){ st.classList.remove("flash"); void st.offsetWidth; st.classList.add("flash"); }
-  sfx("tap"); toast(wxTasks(me).some(x => x.k === "both") ? "💧 물 칸에서 알맞게 — 흙물 62~90" : "💧 물 칸에서 넉넉히 — 흙물 62 넘게");
+  sfx("tap"); toast(wxTasks(me).some(x => x.k === "both") ? "💧 물 칸에서 알맞게 — 흙물 60~90" : "💧 물 칸에서 넉넉히 — 흙물 60 넘게");
 }
 function renderWxCard(){
   const sc = $("scene"); if (!sc) return;
