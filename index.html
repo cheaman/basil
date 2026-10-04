@@ -688,6 +688,20 @@ img.rphoto{display:block;width:100%;object-fit:cover;border-radius:12px}
 .minirec img.rphoto{height:44px;border-radius:8px}
 .recipes div.off img.rphoto,.minirec div.off img.rphoto{filter:grayscale(1);opacity:.45}
 #rcpBox .rcredit{font:12px 'Noto Sans KR';color:#8c968f;text-align:right;margin:-2px 2px 4px}
+#p1 .lchips{display:flex;gap:8px;justify-content:center;margin-top:6px}
+#p1 .lchip{background:#fff;border:2px solid #cfe8c2;border-radius:14px;padding:4px 12px;font:20px Jua;color:#24332a;text-align:center}
+#p1 .lchip small{display:block;font:12px Jua;color:var(--sub)}
+#pw span:empty::before{color:#c4cfbf;font:22px Jua}
+#pw span:nth-child(1):empty::before{content:"①"}#pw span:nth-child(2):empty::before{content:"②"}#pw span:nth-child(3):empty::before{content:"③"}
+#harv .hbar{height:12px;flex:0 0 12px;min-height:12px;border-radius:999px;background:#eef2ea;overflow:hidden}#harv .hbar i{display:block;height:100%;background:#e0a43a}
+.gcard .gchips{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-end;max-width:290px}
+.gcard .gchips span{background:#eef6e8;border-radius:14px;padding:6px 10px;font:24px Jua;text-align:center;min-width:84px;color:#24332a}
+.gcard .gchips small{display:block;font:13px Jua;color:var(--sub)}
+.gcard .gbadge{width:100%;font-size:22px}
+.cardbtns .cstep{display:flex;align-items:center;gap:10px}
+.cardbtns .cstep b{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:#e0a43a;color:#fff;display:flex;align-items:center;justify-content:center;font:20px Jua}
+.cardbtns .cstep .big{flex:1;font-size:21px;padding:12px 8px;white-space:nowrap}
+.cardbtns .arrow{text-align:center;font:26px Jua;color:#c4cfbf;margin:-6px 0}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -725,20 +739,20 @@ img.rphoto{display:block;width:100%;object-fit:cover;border-radius:12px}
       <div class="login">
         <div style="text-align:center">
           <div id="loginPlant" style="width:260px;height:300px;margin:0 auto"></div>
-          <div style="font:26px Jua;color:var(--leaf)">오늘도 바질을 돌봐 줄까요?</div>
+          <div style="font:32px Jua;color:var(--leaf)">또 만나요!</div><div class="lchips" id="loginChips"></div>
           <div style="width:440px;margin-top:14px;background:#fff;border:2px solid #cfe8c2;border-radius:20px;padding:14px 18px;text-align:left">
             <div style="font:20px Jua;color:#8a6400">💡 알고 있나요? <span id="factNo" style="font-size:15px;color:var(--sub)"></span></div>
             <div id="factTx" style="font-size:17px;margin:6px 0 10px;min-height:52px"></div>
-            <button class="b" onclick="nextFact()">다음 상식 ▶</button> <button class="b" onclick="go('p8')">📖 바질 알아보기</button>
+            <button class="b" onclick="nextFact()">다음 ▶</button> <button class="b" onclick="go('p8')">📖 더 알아보기</button>
           </div>
         </div>
         <div class="card">
-          <h2>내 이름을 눌러요 <small style="font:14px 'Noto Sans KR';color:var(--sub)">가나다순</small></h2>
+          <h2>① 👆 내 이름</h2>
           <div class="pick" id="pickNo"></div>
-          <h2 style="font-size:24px;margin-bottom:2px" id="pwTitle">🔑 내 바질 열쇠</h2><div class="hint" style="font-size:14px">처음 고른 그림 3개를 같은 차례로 누르면 내 바질에 들어가요. 친구가 내 바질에 못 들어오게 하는 열쇠예요</div>
+          <h2 style="font-size:24px;margin-bottom:2px" id="pwTitle">🔑 내 바질 열쇠</h2>
           <div class="pics" id="pics"></div>
           <div class="pw" id="pw"><span></span><span></span><span></span></div>
-          <button class="big" id="goBtn" disabled>내 바질 보러 가기</button>
+          <button class="big" id="goBtn" disabled>🌿 들어가기 →</button>
           <div class="why" id="goWhy" style="text-align:center;margin-top:8px">이름을 먼저 눌러요</div>
         </div>
       </div>
@@ -854,9 +868,9 @@ img.rphoto{display:block;width:100%;object-fit:cover;border-radius:12px}
         <div class="harv" id="harv"></div>
         <div class="gcard" id="gcard"></div>
         <div class="cardbtns" style="width:250px">
-          <button class="big">🖼 카드 그림으로 저장</button>
-          <button class="big" style="background:#4a7fd1">🏫 클래스룸에 제출하러 가기</button>
-          <div style="font-size:14px;color:var(--sub)">저장한 그림을 클래스룸 과제 「바질 성장 카드」에 붙여 제출합니다.</div>
+          <div class="cstep"><b>1</b><button class="big" id="cardSave">🖼 카드 저장</button></div>
+          <div class="arrow">↓</div>
+          <div class="cstep"><b>2</b><button class="big" id="cardSend" style="background:#4a7fd1">🏫 클래스룸에 내기</button></div>
         </div>
       </div>
       <div class="nav"><div><i>🪴</i>내 바질</div><div><i>📈</i>내 노력</div><div><i>📖</i>바질 알기</div><div><i>🎁</i>보상</div><div class="on"><i>🌾</i>수확 · 카드</div></div>
@@ -2770,8 +2784,8 @@ function renderLogin(){
   const upd = () => {
     const slots = $("pw").children; for (let i = 0; i < 3; i++) slots[i].textContent = pw[i] || "";
     const rec = no ? LS.get("basil.stu." + no, null) : null;
-    $("pwTitle").textContent = !no ? "🔑 내 바질 열쇠" : rec && rec.pw ? `🔑 ${no}의 열쇠 그림 3개를 차례로 눌러요` : "처음이에요! 🔑 열쇠로 쓸 그림 3개를 골라요";
-    const why = !no ? "이름을 먼저 눌러요" : pw.length < 3 ? `그림을 ${3 - pw.length}개 더 눌러요` : "";
+    $("pwTitle").textContent = !no ? "② 🔑 내 그림 3개" : rec && rec.pw ? "② 🔑 내 그림 3개 — 차례대로" : "② 🔑 처음이에요! 내 그림 3개 고르기";
+    const why = !no ? "👆 ① 이름부터" : pw.length < 3 ? `🔑 그림 ${3 - pw.length}개 더` : "";
     $("goBtn").disabled = !!why; $("goWhy").textContent = why;
   };
   $("pickNo").onclick = ev => { const n = ev.target.dataset.n; if (!n) return; no = n; pw = []; [...$("pickNo").children].forEach(s => s.classList.toggle("on", s.dataset.n === n)); upd(); };
@@ -5636,6 +5650,67 @@ const _openRecipePhoto = openRecipe;
 openRecipe = function(id){
   const r = _openRecipePhoto.apply(this, arguments), ph = RECIPE_PHOTO[id], big = document.querySelector("#rcpBox .rbig");
   if (ph && big) big.insertAdjacentHTML("afterend", `<div class="rcredit">📷 사진 : ${ph.by} · ${ph.lic} · 위키미디어 공용</div>`);
+  return r;
+};
+
+
+/* ═════════ 그림 먼저 ① 들어가기 · ⑦ 수확 (10-04 · 손질안 2_목업\6_다음판_손질안_들어가기수확.html · 전무님 «다 반영») ═════════
+   들어가기 177 → 약 40자 : «또 만나요!» + 📅 · 🌦 칩 · 상식은 그림 + 제목만 · ① 👆 내 이름 → ② 🔑 내 그림 3개(빈칸 ①②③) → 🌿 들어가기
+   수확 338 → 약 120자 : 🧺 숫자 + ✂ · 🍃 칩 · 🔒 날짜 막대 · 성장 카드 숫자 → 그림 칩 · 관찰일지 줄 → 내가 잰 키 꺾은선 · 성찰 단추 짧게 · ① 저장 → ② 내기 */
+
+/* ① 들어가기 */
+const _showFactP1 = showFact;
+showFact = function(){
+  _showFactP1.apply(this, arguments);
+  const [i, h] = FACT_CARDS[factI % FACT_CARDS.length], t = $("factTx");
+  if (t) t.innerHTML = `<span style="font-size:40px;vertical-align:middle">${i}</span> <b style="font:22px Jua;vertical-align:middle">${h}</b>`;
+};
+const _renderLoginP1 = renderLogin;
+renderLogin = function(){
+  const r = _renderLoginP1.apply(this, arguments);
+  const c = $("loginChips"); if (c && CFG){ const d = beforeStart() ? 0 : todayIdx(), w = wxOf(d);
+    c.innerHTML = `<span class="lchip">📅 ${d}일째<small>21일 중</small></span><span class="lchip">${KIND_ICON[kindOf(w)]} ${Math.round(w.tmax)}°<small>오늘</small></span>`; }
+  return r;
+};
+
+/* ⑦ 수확 */
+renderHarvest = function(){
+  const p = me, wait = !p.done && p.day < 21;
+  $("harv").innerHTML = `<h3>🌾 내 수확</h3>
+    <div style="display:flex;gap:10px;align-items:center"><span style="font-size:44px">🧺</span><div><span class="num">${p.harvested}</span> <span style="font:20px Jua;color:var(--sub)">장</span>
+      <div style="font:16px Jua;color:var(--sub)">✂ ${p.picks}번 · 🍃 ${leaves(p)}장 남음</div></div></div>
+    <button class="big" ${p.done || wait ? "disabled" : ""} onclick="doFinal()">🌾 다 거두기</button>
+    ${wait ? `<div class="hbar"><i style="width:${Math.round(p.day / 21 * 100)}%"></i></div><div class="why" style="text-align:center">🔒 ${p.day} / 21일</div>` : p.done ? `<div class="why" style="text-align:center">✔ 다 거뒀어요</div>` : ""}
+    <div style="font:19px Jua;margin-top:6px">🍳 요리 카드</div>
+    <div class="minirec">${RECIPES.map(r => { const open = p.harvested >= r.need; return `<div class="${open ? "" : "off"}" onclick="openRecipe('${r.id}')">${recipeSVG(r.id)}${r.name}<br><small style="font:13px Jua;color:#a06a2c">${open ? "👆 보기" : "🔒 🍃 " + r.need}</small></div>`; }).join("")}</div>`;
+};
+const RF_SHORT = {good: ["💧 물", "☀ 자리", "📏 관찰", "🥚 비료", "📢 해결"], fix: ["💧 물", "📏 일지", "☀ 자리", "📢 늦게", "🐛 벌레"]};
+function cardKeySVG(p){   // 📏 내가 잰 키 — 관찰일지에 적은 키를 날짜대로 잇기
+  const pts = (p.notes || []).filter(n => n.hIn != null).map(n => [n.d, +n.hIn]);
+  if (!pts.length) return `<div class="jr">📏 관찰일지에 키를 적으면 여기에 내 그래프가 생겨요</div>`;
+  const W = 500, H = 96, X0 = 34, mx = Math.max(7, p.day, ...pts.map(a => a[0])), my = Math.max(4, Math.ceil(Math.max(...pts.map(a => a[1])) + 1));
+  const x = d => X0 + (W - X0 - 12) * d / mx, y = h => H - 16 - (H - 30) * h / my;
+  const line = pts.map(([d, h]) => `${x(d).toFixed(1)},${y(h).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;background:#f6f9f3;border-radius:12px;margin-top:6px">
+    <text x="10" y="16" font-size="14" font-family="Jua" fill="#6b7a70">📏 내가 잰 키</text>
+    <line x1="${X0}" y1="${H - 16}" x2="${W - 10}" y2="${H - 16}" stroke="#cfd8c8"/><text x="${X0 - 6}" y="${H - 12}" font-size="11" text-anchor="end" fill="#8c968f">0</text><text x="${X0 - 6}" y="${y(my) + 4}" font-size="11" text-anchor="end" fill="#8c968f">${my}cm</text>
+    <polyline points="${line}" fill="none" stroke="#4c9a3e" stroke-width="3" stroke-linejoin="round"/>
+    ${pts.map(([d, h]) => `<circle cx="${x(d).toFixed(1)}" cy="${y(h).toFixed(1)}" r="4.5" fill="#4c9a3e"/>`).join("")}
+    <text x="${x(pts[pts.length - 1][0]).toFixed(1)}" y="${(y(pts[pts.length - 1][1]) - 8).toFixed(1)}" font-size="13" font-family="Jua" text-anchor="middle" fill="#2f7a2a">${pts[pts.length - 1][1]}cm</text></svg>`;
+}
+const _renderCardP7 = renderCard;
+renderCard = function(){
+  const r = _renderCardP7.apply(this, arguments);
+  const p = me, el = $("gcard"); if (!el || !p) return r;
+  const earned = BADGES.filter(b => b[3](p)).map(b => b[1]);
+  const f = el.querySelector(".facts");
+  if (f) f.outerHTML = `<div class="gchips"><span>${p.h.toFixed(1)}<small>📏 cm</small></span><span>${leaves(p)}<small>🍃 잎</small></span><span>${effortScore(p)}<small>⭐ 노력</small></span><span>${p.harvested}<small>🧺 거둠</small></span><span>${p.care.visits}<small>📅 돌본 날</small></span>
+    <div class="gbadge">${earned.join(" ") || "🏅 아직 없음"}</div></div>`;
+  const old = el.querySelector(":scope > svg"); if (old) old.remove();   // 실제 키 그래프 → 내가 잰 키 그래프 하나로
+  const jr = el.querySelector(".jr"); if (jr) jr.outerHTML = cardKeySVG(p);
+  el.querySelectorAll(".refl .rr").forEach((row, k) => { const key = k ? "fix" : "good";
+    row.querySelectorAll("button").forEach((b, i) => { b.title = RF[key][i]; b.textContent = RF_SHORT[key][i]; }); });
+  const h = el.querySelector(".refl > div"); if (h) h.textContent = "📝 키워 보며";
   return r;
 };
 
