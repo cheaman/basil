@@ -5714,6 +5714,73 @@ renderCard = function(){
   return r;
 };
 
+
+/* ═════════ 🖼 성장 카드 ① 그림 저장 · ② 클래스룸 (10-04 · 고르기 «그림 파일 저장 + 클래스룸 열기») ═════════
+   전에는 두 단추가 목업 그대로라 눌러도 아무 일이 없었음
+   ① 카드를 그림(SVG)으로 새로 그려 → 캔버스 → PNG 내려받기 (바깥 도구 없이 · 패드 «다운로드» 폴더) · 저장하면 ① 이 ✔
+   ② 구글 클래스룸을 새 탭으로 → 학생이 과제 «바질 성장 카드» 에 그림을 붙여 제출 */
+function cardSVG(p){
+  const W = 560, X = 28, esc2 = t => esc(String(t));
+  const r = p.reflect || {good: [], fix: []}, good = (r.good || []).map(i => RF.good[i]).filter(Boolean), fix = (r.fix || []).map(i => RF.fix[i]).filter(Boolean);
+  const earned = BADGES.filter(b => b[3](p)).map(b => b[1]).join(" ");
+  const from = dateLab(0).split(" · ")[1], to = `${dateOf(p.day).getMonth() + 1}월 ${dateOf(p.day).getDate()}일`;
+  const plant = basilSVG(Object.assign({}, p, {deco: p.deco})).replace(/^<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
+  const chips = [[p.h.toFixed(1), "📏 cm"], [leaves(p), "🍃 잎"], [effortScore(p), "⭐ 노력"], [p.harvested, "🧺 거둠"], [p.care.visits, "📅 돌본 날"]];
+  let y = 0, g = "";
+  g += `<text x="${X}" y="58" font-size="30" font-weight="700" fill="#3e8e3a">🌿 ${esc2(plantName)}의 성장 카드</text>`;
+  g += `<text x="${X}" y="86" font-size="16" fill="#6b7a70">${esc2(CFG.className || "")} ${esc2(stuName || "")} · ${from} ~ ${to} (${p.day}일)</text>`;
+  g += `<svg x="${X - 10}" y="96" width="230" height="290" viewBox="0 0 300 400">${plant}</svg>`;
+  chips.forEach(([v, k], i) => { const cx = 262 + (i % 3) * 94, cy = 150 + Math.floor(i / 3) * 78;
+    g += `<rect x="${cx}" y="${cy}" width="86" height="68" rx="14" fill="#eef6e8"/><text x="${cx + 43}" y="${cy + 34}" font-size="24" font-weight="700" text-anchor="middle" fill="#24332a">${esc2(v)}</text><text x="${cx + 43}" y="${cy + 56}" font-size="13" text-anchor="middle" fill="#6b7a70">${k}</text>`; });
+  g += `<text x="262" y="330" font-size="22">${earned || ""}</text>`;
+  y = 400;
+  const key = cardKeySVG(p);
+  if (key.startsWith("<svg")) g += `<rect x="${X}" y="${y}" width="${W - 2 * X}" height="96" rx="12" fill="#f6f9f3"/>` + key.replace(/^<svg[^>]*>/, `<svg x="${X}" y="${y}" width="${W - 2 * X}" height="96" viewBox="0 0 500 96">`);
+  else g += `<text x="${X}" y="${y + 30}" font-size="15" fill="#6b7a70">📏 관찰일지에 키를 적으면 그래프가 생겨요</text>`;
+  y += 120;
+  g += `<text x="${X}" y="${y}" font-size="18" font-weight="700" fill="#24332a">📝 키워 보며</text>`; y += 28;
+  const line = (lab, arr) => { g += `<text x="${X}" y="${y}" font-size="15" fill="#24332a"><tspan font-weight="700">${lab}</tspan> ${esc2(arr.length ? arr.join(" · ") : "—")}</text>`; y += 26; };
+  // 한 줄이 길면 둘로 (대략 26자)
+  const wrap = (lab, arr) => { const out = [[]]; arr.forEach(t => { const cur = out[out.length - 1]; if ((cur.join(" · ") + t).length > 26 && cur.length) out.push([t]); else cur.push(t); }); out.forEach((a, i) => line(i ? "　　" : lab, a)); };
+  wrap("👍 잘된 점", good); wrap("🔧 보완할 점", fix);
+  const H = y + 30;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="'Jua','Noto Sans KR','Malgun Gothic',sans-serif">
+    <rect x="3" y="3" width="${W - 6}" height="${H - 6}" rx="26" fill="#ffffff" stroke="#cfe8c2" stroke-width="6"/>${g}
+    <text x="${W - X}" y="${H - 14}" font-size="12" text-anchor="end" fill="#a3ad9f">🌿 바질 키우기 · 실과 6</text></svg>`;
+}
+function cardSave(){
+  if (!me || !stuName) return;
+  const svg = cardSVG(me), m = svg.match(/width="(\d+)" height="(\d+)"/), W = +m[1], H = +m[2];
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement("canvas"); c.width = W * 2; c.height = H * 2;
+    const g = c.getContext("2d"); g.scale(2, 2); g.drawImage(img, 0, 0);
+    c.toBlob(b => {
+      if (!b){ toast("저장이 안 됐어요 — 화면을 캡처해서 내도 돼요"); return; }
+      const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `바질성장카드_${stuName}.png`;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      me.cardSaved = true; saveMe(); renderCard(); sfx("chime");
+      toast("🖼 카드 그림을 저장했어요 (다운로드 폴더) — 이제 ② 클래스룸");
+    }, "image/png");
+  };
+  img.onerror = () => toast("저장이 안 됐어요 — 화면을 캡처해서 내도 돼요");
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+}
+function cardSend(){
+  if (me && !me.cardSaved) toast("🖼 ① 카드 저장을 먼저 하면 바로 붙일 수 있어요");
+  window.open("https://classroom.google.com/", "_blank");
+  setTimeout(() => toast("🏫 과제 «바질 성장 카드» 에 저장한 그림을 붙여 내요"), 600);
+}
+const _renderCardSave = renderCard;
+renderCard = function(){
+  const r = _renderCardSave.apply(this, arguments);
+  const s1 = $("cardSave"), s2 = $("cardSend");
+  if (s1){ s1.onclick = cardSave; const b = s1.closest(".cstep").querySelector("b"); b.textContent = me && me.cardSaved ? "✔" : "1"; b.style.background = me && me.cardSaved ? "#4c9a3e" : ""; }
+  if (s2) s2.onclick = cardSend;
+  return r;
+};
+SAY_WORD["카드 저장"] = "성장 카드 그림으로 저장하기"; SAY_WORD["클래스룸에 내기"] = "구글 클래스룸 열기";
+
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
   document.querySelectorAll(".mk-page").forEach(s => s.classList.toggle("on", s.id === id));
