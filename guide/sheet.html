@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>구글 시트 연결 안내</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7f1;--card:#fff;--ink:#24332a;--sub:#5f6e64;--line:#dfe8d8;--leaf:#2f7a2a;--hi:#fff3dc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b211d;--card:#252d27;--ink:#e6efe6;--sub:#a3b3a6;--line:#38443b;--leaf:#7fcf6a;--hi:#4a3d1e}}
+:root[data-theme="dark"]{--bg:#1b211d;--card:#252d27;--ink:#e6efe6;--sub:#a3b3a6;--line:#38443b;--leaf:#7fcf6a;--hi:#4a3d1e}
+*{box-sizing:border-box}
+a{color:var(--leaf)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Noto Sans KR",sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 48px}
+h1{font:30px "Jua";margin:0}
+h2{font:21px "Jua";margin:22px 0 8px}
+.sub{color:var(--sub);font-size:14px}
+.step{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0}
+.step .n{flex:0 0 34px;height:34px;border-radius:50%;background:var(--leaf);color:#fff;display:flex;align-items:center;justify-content:center;font:18px "Jua"}
+.step b{font-weight:700}
+em{font-style:normal;background:var(--hi);border-radius:5px;padding:0 5px;font-weight:700}
+table{border-collapse:collapse;width:100%;background:var(--card);border-radius:12px;overflow:hidden}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;font-size:15px}
+th{font:15px "Jua";background:rgba(47,122,42,.08)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+@media print{body{background:#fff}main{padding:0}.step,.box,table{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<h1>🌿 바질 키우기 — 구글 시트 연결 안내</h1>
+<div class="sub">처음 한 번만 하면 됩니다 · 10분쯤 · 교실 컴퓨터(크롬)에서 · 선생님 개인 구글 계정으로 로그인된 상태</div>
+
+<h2>연결하면 무엇이 좋아지나요</h2>
+<div class="box">
+· 아이가 <b>어느 패드에서든</b> 자기 바질을 이어서 키웁니다 (지금은 패드마다 따로 저장)<br>
+· 교실 컴퓨터 선생님 화면에서 <b>반 전체 바질</b>을 한눈에 봅니다<br>
+· 패드마다 반 설정을 넣지 않고, <b>링크 하나</b>를 클래스룸에 올리면 됩니다<br>
+· 자료는 <b>선생님 구글 드라이브의 시트</b>에만 저장됩니다 (다른 곳으로 가지 않습니다)
+</div>
+
+<h2>하는 차례</h2>
+<div class="step"><span class="n">1</span><div>바질 앱을 열고 첫 화면 오른쪽 위 <b>👩‍🏫 선생님</b> → 비밀번호 → 위쪽 단추 <b>☁ 구글 시트</b></div></div>
+<div class="step"><span class="n">2</span><div>창 안의 <b>📋 스크립트 복사</b> → <b>구글 스크립트 새로 열기 ↗</b><br>열린 곳에 있던 글을 <em>모두 지우고</em> 붙여 넣기 → 저장(Ctrl+S) · 프로젝트 이름은 「바질 키우기」</div></div>
+<div class="step"><span class="n">3</span><div>오른쪽 위 <b>[배포] → [새 배포]</b> → 톱니바퀴 → <b>[웹 앱]</b><br>
+· 다음 사용자 인증 정보로 실행 : <em>나</em><br>
+· 액세스 권한이 있는 사용자 : <em>모든 사용자</em> ← 이것이 아니면 연결이 안 됩니다<br>
+→ [배포] → [액세스 승인] → 계정 고르기<br>
+→ 「Google에서 확인하지 않은 앱」 이 나오면 <b>[고급] → [바질 키우기(으)로 이동] → [허용]</b><br>
+<span class="sub">선생님이 직접 붙여 넣은 스크립트라 괜찮습니다. 이 스크립트는 선생님 드라이브에 시트 하나를 만들고 그 시트만 씁니다.</span></div></div>
+<div class="step"><span class="n">4</span><div>나온 <b>「웹 앱 URL」</b> 을 복사 → 바질 앱 창의 칸에 붙여 넣기 → <b>🔌 연결 시험</b><br>
+「✔ 연결됐어요」 가 나오면 <b>💾 저장하고 올리기</b> (통과하기 전에는 잠겨 있습니다)</div></div>
+<div class="step"><span class="n">5</span><div>창 아래 <b>🔗 링크 복사</b> → 구글 클래스룸 <b>«수업 자료»</b> 에 붙여 올리기<br>
+아이들은 패드에서 그 링크를 누르고 → 자기 이름 → 그림 열쇠 3개로 들어갑니다<br>
+<span class="sub">링크 안에 시트 열쇠가 들어 있습니다 — 클래스룸 안에만 올려 주세요</span></div></div>
+
+<h2>잘 안 될 때</h2>
+<table>
+  <tr><th>앱에 나온 글</th><th>이렇게 해 주세요</th></tr>
+  <tr><td>구글이 막았어요 — «액세스 : 모든 사용자»…</td><td>3번에서 액세스를 <b>모든 사용자</b>로 바꿔 다시 배포</td></tr>
+  <tr><td>열쇠가 달라요</td><td>바질 앱 창에서 스크립트를 <b>다시 복사</b>해 붙여 넣고 저장 → [배포 관리] → 연필 → 버전 「새 버전」 → [배포]</td></tr>
+  <tr><td>주소가 틀렸어요</td><td>「웹 앱 URL」 을 다시 복사 (…/exec 로 끝나는 주소)</td></tr>
+  <tr><td>인터넷이 안 되거나 구글이 답하지 않아요</td><td>잠시 뒤 다시 · 학교 와이파이가 구글 스크립트 주소를 막는지 정보 담당 선생님께 확인</td></tr>
+</table>
+<div class="sub" style="margin-top:6px">스크립트를 고쳐 다시 올릴 때는 꼭 <b>[배포 관리] → 「새 버전」</b> 으로 — 「새 배포」 를 하면 주소가 바뀌어 링크가 끊깁니다.</div>
+
+<h2>수업 중에는</h2>
+<div class="box">
+· 아이 화면 위쪽 작은 표시 : <b>☁✔</b> 저장됨 · <b>☁…</b> 보내는 중 · <b>☁✘</b> 못 보냄 (패드에 모아 두었다가 와이파이가 이어지면 올림)<br>
+· 와이파이가 끊겨도 수업은 그대로 됩니다 — 이어지면 저절로 올라갑니다<br>
+· 시트(내 드라이브 「바질 키우기 · 반 이름」)의 「학생」 장에서 키 · 잎 · 건강 · 코인을 바로 볼 수 있습니다 — <b>시트 칸은 고치지 말아 주세요</b> (앱이 씁니다)
+</div>
+</main>
+</body>
+</html>
