@@ -1866,7 +1866,7 @@ function diagAnswer(k, o){
   p.today.diag = true;
   if (!p.diagMarks.includes(mark)){ p.diagMarks.push(mark); p.care.diag++; addCoin(p, 3, "진찰 성공"); }
   sfx("chime");
-  const btn = {water:"💧 물 주러 가기", drain:"🍽 받침 물 버리기", map:"🗺 교실 지도에서 옮기기", blind:"🪟 블라인드 반쯤 내리기", leaves:"✂ 아픈 잎 떼어 내기", bug:"🧴 잎 씻어 주기"}[S.act];
+  const btn = {water:"💧 물 주러 가기", drain:"🍽 받침 물 버리기", map:"🗺 교실 지도에서 옮기기", blind:"🪟 블라인드 반쯤 내리기", leaves:"✂ 아픈 잎 떼어 내기", bug:"🧴 잎 씻어 주기", night:"🌙 밤 자리 안쪽으로"}[S.act];
   $("diagRes").innerHTML = `<div class="tip" style="background:#eaf6e3">⭕ 맞았어요! <b>${S.cause}</b><br>💊 치료 : ${S.cure}</div><div class="rbtns"><button class="big" style="width:auto;padding:8px 20px;font-size:20px" onclick="cureGo('${S.act}')">${btn}</button></div>`;
 }
 function cureGo(a){
@@ -2694,7 +2694,7 @@ function buildWXApp(){ buildWX(); if (WXCFG.mode === "today") WX_SRC = `오늘 �
 /* ── 반 설정 화면 ── */
 let setupDraft = null;
 function openSetup(){
-  const c = CFG || {className:"", start: new Date(Date.now() + 2 * DAYMS).toISOString().slice(0, 10), days:[1, 4], roster:[], pin:"", level:"normal", speed:1, startAs:"seedling", demo:false, dayOffset:0, sound:true, teacher:"", wx:{mode:"today", region:"대전", dir:"남향"}};
+  const c = CFG || {className:"", start: new Date(Date.now() + 2 * DAYMS).toISOString().slice(0, 10), days:[1, 4], roster:[], pin:"", level:"normal", speed:2, startAs:"seed", demo:false, dayOffset:0, sound:true, teacher:"", wx:{mode:"today", region:"대전", dir:"남향"}};
   setupDraft = JSON.parse(JSON.stringify(c));
   const d = setupDraft, D = ["일","월","화","수","목","금","토"];
   $("setupBody").innerHTML = `<div class="panel">
@@ -3122,7 +3122,7 @@ function loginAs(name, pw, fail, sure){
     if (!rec.pw){ rec.pw = pw; LS.set("basil.stu." + name, rec); }
   } else {
     const d = beforeStart() ? 0 : todayIdx(), seed = CFG.startAs === "seed";
-    me = seed ? newPlantBase() : newPlant(); me.day = d; me.sowDay = seed ? d : d - 28; me.bugDay = d + 9; me.lastPick = -99;
+    me = seed ? newPlantBase() : newPlant(); me.sowCarton = seed; me.day = d; me.sowDay = seed ? d : d - 28; me.bugDay = d + 9; me.lastPick = -99;
     me.hist = Array.from({length: d + 1}, (_, i) => ({d: i, h: me.h}));
     plantName = "초록이"; first = true;
     LS.set("basil.stu." + name, Object.assign(rec || {}, {pw, plantName, plant: me, createdAt: Date.now()}));
@@ -3360,7 +3360,7 @@ if (TEST){ try { sessionStorage.setItem("basil.test", "1"); } catch (e) {} }
 /* 시험 모드에서 반 설정이 없으면 시험 반을 저절로 만듦 (오늘 시작 · 매일 수업 · 비밀번호 0000) */
 if (TEST && !LS.get("basil.cfg", null)){
   const d0 = new Date(); d0.setHours(0, 0, 0, 0); const f = x => new Date(x - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라"], pin: "0000", level: "normal", speed: 1, startAs: "seedling", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "record", region: "대전", dir: "남향"}});
+  LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라"], pin: "0000", level: "normal", speed: 2, startAs: "seed", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "record", region: "대전", dir: "남향"}});
 }
 function nowDate(){ const now = new Date(); now.setHours(0, 0, 0, 0); if (CFG && (CFG.demo || TEST) && CFG.dayOffset) now.setDate(now.getDate() + CFG.dayOffset); return now; }
 let testOpen = true, testCare = "care";
@@ -3389,7 +3389,7 @@ function testFirstDay(){
   const real = new Date(); real.setHours(0, 0, 0, 0);
   CFG.dayOffset = Math.round((START - real) / DAYMS); LS.set("basil.cfg", CFG); TEACHER_DAY = 0; repDay = 0;
   const seed = CFG.startAs === "seed", keep = me.name;
-  me = seed ? newPlantBase() : newPlant(); me.day = 0; me.sowDay = seed ? 0 : -28; me.bugDay = 9; me.lastPick = -99; me.hist = [{d: 0, h: me.h}]; me.name = keep;
+  me = seed ? newPlantBase() : newPlant(); me.sowCarton = seed; me.day = 0; me.sowDay = seed ? 0 : -28; me.bugDay = 9; me.lastPick = -99; me.hist = [{d: 0, h: me.h}]; me.name = keep;
   _earned = null; renderMe(); toast("⏪ 첫날로 — 바질을 새로 심었어요");
 }
 /* 아프게 해 보기 (목업 v6 의 것과 같은 상황 · 날짜도 함께 맞춤) */
@@ -4741,7 +4741,7 @@ function sdRender(){
     acts = s.moved ? "" : `<button class="big" onclick="sdAct('move')">✋ 옮겨 심기</button>`; }
   if (s.step === 6 || (!s.full && s.step === 4)){
     stage = s.full ? basilSVG(me).replace('viewBox="0 0 300 400"', 'viewBox="20 120 260 290"') : sdStageSVG();
-    say = s.full ? `🎉 이제 내 바질이에요!<small>${s.replay ? "다시 해 봤어요" : "🌱 +3 · 배지 «첫 씨앗»"} — 이름을 지어 줘요</small>` : `🎉 씨앗을 심었어요!<small>이제 진짜 날짜로 싹이 트기를 기다려요 (1~2주) ${s.replay ? "" : "· 🌱 +3"}</small>`;
+    say = s.full ? `🎉 이제 내 바질이에요!<small>${s.replay ? "다시 해 봤어요" : "🌱 +3 · 배지 «첫 씨앗»"} — 이름을 지어 줘요</small>` : `🎉 씨앗을 심었어요!<small>우유갑에서 진짜 날짜로 떡잎 · 본잎을 키워요 (싹은 ${SPEED() >= 2 ? "2~3일" : SPEED() >= 1.5 ? "3~5일" : "1~2주"}) ${s.replay ? "" : "· 🌱 +3"}</small>`;
     acts = `<button class="big" onclick="sdEnd()">${s.next ? "🏷️ 이름 짓기 →" : "✔ 끝"}</button>`; }
   if (s.step === 4 && !s.full) s.step = 6;
   const doneStep = (s.step === 0 && s.fill >= 3) || (s.step === 1 && s.seeds.length >= 3) || (s.step === 2 && s.cover >= 1) || (s.step === 3 && s.wet >= 1) || (s.step === 4 && s.day >= 28) || (s.step === 5 && s.moved);
@@ -5463,6 +5463,52 @@ function peekWash(on){
 }
 function peekClose(){ clearInterval(_pkT); const m = $("peekModal"); if (m) m.classList.remove("on"); _pk = null; }
 SAY_WORD["잎 뒤"] = "잎 뒤 살펴보기";
+
+
+/* ═════════ 10-04 저녁 전무님 의견 ═════════ */
+
+/* ① 🖤 잎이 거무스름 = 밤 추위 — 고치는 곳은 «🌙 밤 자리»
+      전에는 진찰 뒤 단추가 낮 지도를 열어, 햇볕 좋은 창가로 옮기면 밤에도 창가(10℃ 아래) → 또 추움 · 말풍선은 계속 «진찰»
+      → 단추는 밤 지도를 열고 · 밤 자리가 따뜻해지면 말풍선은 «따뜻한 밤 ○번 더 지나면 나아요» */
+SICK.cold.cure = "🌙 밤 자리를 교실 안쪽(10℃ 넘는 곳)으로 옮겨요 — 낮 자리는 햇볕 좋은 곳 그대로 · 따뜻한 밤을 두 번 지나면 잎 색이 돌아와요";
+SICK.cold.act = "night";
+const _cureGoCold = cureGo;
+cureGo = function(a){ if (a === "night"){ $("diagModal").classList.remove("on"); me.recover = 2; openNightMap(); return; } return _cureGoCold.apply(this, arguments); };
+const _alertsOfCold = alertsOf;
+alertsOf = function(p){
+  const out = _alertsOfCold.apply(this, arguments);
+  if (p && p.chill && !p.dead && nightsAhead(p, nSpot(p), gapToNext(p)) >= 10)
+    out.forEach(a => { if (a.k === "cold"){ a.pic = "🖤🌙"; a.word = `따뜻한 밤 ${p.chill}번 더 지나면 나아요`; a.ok = []; a.bad = null; } });
+  return out;
+};
+
+/* ② 🥛 씨앗부터 키우면 우유갑에서 떡잎 · 본잎 (교과서 73쪽) → 모종(본잎 · 단계 2)이 되면 «큰 화분으로 옮겨 심기» 한 번 */
+function inCarton(p){ return !!(p && p.sowCarton && !p.moved); }
+const CARTON_BODY = `<path d="M112 250 L188 250 L188 394 L112 394 Z" fill="#e9f2fa" stroke="#7fb2e0" stroke-width="2.4"/><rect x="114" y="284" width="72" height="101" fill="#5a3e28"/>
+  <rect x="114" y="385" width="72" height="8" fill="#ffffff" stroke="#d6dbe1"/><path d="M112 250 L122 232 L178 232 L188 250" fill="#f3f8fc" stroke="#7fb2e0" stroke-width="2.4"/>
+  <rect x="112" y="353" width="76" height="20" fill="#5aa0d8" opacity=".3"/><text x="150" y="368" font-size="13" text-anchor="middle" fill="#2f6a9a" font-family="Jua">우유</text>`;
+const _basilSVGCarton = basilSVG;
+basilSVG = function(p){
+  const s = _basilSVGCarton.apply(this, arguments); if (!inCarton(p)) return s;
+  return s.replace(/<path d="M78 300 L222 300[^>]*\/><rect x="70" y="284" width="160" height="22" rx="8"[^>]*\/>/, CARTON_BODY)
+    .replace(/<circle cx="1(32|68)" cy="336"[^>]*\/>|<circle cx="1(18|82)" cy="350"[^>]*\/>|<path d="M13[56] 3\d\d [^"]*" stroke="#5a2f1e"[^>]*\/>/g, "")   // 화분 얼굴은 빼고
+    .replace('<ellipse cx="150" cy="286" rx="72" ry="10"', '<ellipse cx="150" cy="286" rx="36" ry="4"')
+    .replace('<ellipse cx="150" cy="393" rx="84" ry="7"', '<ellipse cx="150" cy="397" rx="46" ry="5"');
+};
+ACT2.transplant = ["✋", "옮겨 심기", () => doTransplant()];
+SAY_WORD["옮겨 심기"] = "큰 화분으로 옮겨 심기";
+const _alertsOfMove = alertsOf;
+alertsOf = function(p){
+  const out = _alertsOfMove.apply(this, arguments);
+  if (stuName && inCarton(p) && !p.dead && !p.done && stage(p) >= 2) out.unshift({k: "transplant", pic: "🥛➡🪴", word: "모종이 됐어! 큰 화분으로", ok: ["transplant"]});
+  return out;
+};
+function doTransplant(){
+  if (busy || !inCarton(me) || stage(me) < 2) return;
+  visit(me); me.moved = true; me.movedDay = me.day; addCoin(me, 2, "큰 화분으로 옮겨 심기"); saveMe();
+  sfx("grow"); renderMe(); happy(); popOk("옮겨 심기 완성!");
+  toast("🪴 큰 화분으로 옮겨 심었어요! 🌱 +2 — 이제 뿌리가 넓게 뻗어요");
+}
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
