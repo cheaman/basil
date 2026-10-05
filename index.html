@@ -704,6 +704,23 @@ img.rphoto{display:block;width:100%;object-fit:cover;border-radius:12px}
 .cardbtns .arrow{text-align:center;font:26px Jua;color:#c4cfbf;margin:-6px 0}
 #tsum .tmiss{margin-top:8px;padding:8px 10px;border-radius:10px;background:#fff6e0;font:15px Jua;color:#6a4a1a;line-height:1.4}
 #tsum .tmiss small{display:block;font:12px 'Noto Sans KR';color:#8a7a5a}
+#p6 .tbar h2{white-space:nowrap}
+#p6 .tbar .meta{white-space:nowrap;font-size:18px}
+#p6 .tbar .tmain{gap:10px}
+#p6 .tbar .tmain .b,#p6 .tbar .fbbtn{font:21px "Jua";padding:10px 18px;white-space:nowrap;border-radius:14px}
+#p6 .tcol{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;min-height:0}
+#p6 .tcol #tgrid{flex:1;min-height:0}
+#p6 .tsort{display:flex;align-items:center;gap:6px;font:16px "Jua";color:var(--sub)}
+#p6 .tsort .b{font:16px "Jua";padding:4px 14px;white-space:nowrap}
+.tmenu{position:absolute;z-index:30;display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 26px rgba(40,60,40,.18);padding:8px;min-width:190px}
+.tmenu button{border:0;background:#f4f8ef;border-radius:10px;padding:10px 14px;font:19px "Jua";text-align:left;cursor:pointer;white-space:nowrap}
+.tmenu button:hover{background:#e3f2dc}
+select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid #cfe3c4}
+.schips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.schip{display:inline-flex;align-items:center;gap:4px;background:#fff;border:2px solid #cfe3c4;border-radius:12px;padding:3px 4px 3px 12px;font:18px "Jua";color:#24332a}
+.schip button{border:0;background:#f3e3e0;color:#b0473a;border-radius:8px;width:24px;height:24px;font:13px "Noto Sans KR";cursor:pointer;padding:0}
+#sBack{margin-right:8px;font:18px "Jua"}
+#sBack small{font:13px "Noto Sans KR";color:var(--sub)}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -2733,7 +2750,10 @@ function openSetup(){
   setupDraft = JSON.parse(JSON.stringify(c));
   const d = setupDraft, D = ["일","월","화","수","목","금","토"];
   $("setupBody").innerHTML = `<div class="panel">
-      <label>반 이름 <input type="text" id="sName" value="${esc(d.className)}" placeholder="예: 6학년 2반" oninput="setupDraft.className=this.value;setupLock()"></label>
+      <label>학년 · 반 ${(() => { const m = (d.className || "").match(/(\d)\s*학년\s*(\d+)\s*반/), g = m ? +m[1] : 6, c = m ? +m[2] : 1;
+        if (!m && !d.className.trim()) d.className = `${g}학년 ${c}반`;
+        const opt = (a, b, v) => Array.from({length: b - a + 1}, (_, i) => a + i).map(x => `<option ${x === v ? "selected" : ""}>${x}</option>`).join("");
+        return `<select id="sGrade" class="selnum" onchange="setupClassName()">${opt(1, 6, g)}</select> 학년 <select id="sCls" class="selnum" onchange="setupClassName()">${opt(1, 15, c)}</select> 반`; })()}</label>
       <label>시작하는 날 <input type="date" id="sStart" value="${d.start}" oninput="setupDraft.start=this.value"> <span class="hint">21일 동안</span></label>
       <label>수업 요일 <span class="dows">${[1,2,3,4,5].map(i => `<button class="b ${d.days.includes(i) ? "sel" : ""}" onclick="toggleDow(${i},this)">${D[i]}</button>`).join("")}</span></label>
       <label>난이도 ${LEVELS.map(([k, n]) => `<button class="b ${d.level === k ? "sel" : ""}" onclick="setupDraft.level='${k}';openSetupKeep()">${n}</button>`).join("")}</label>
@@ -2746,7 +2766,7 @@ function openSetup(){
         지역 <select onchange="setupDraft.wx.region=this.value">${Object.keys(REGIONS).map(r => `<option ${d.wx.region === r ? "selected" : ""}>${r}</option>`).join("")}</select>
         창 방향 <select onchange="setupDraft.wx.dir=this.value">${Object.keys(DIR_F).map(r => `<option ${d.wx.dir === r ? "selected" : ""}>${r}</option>`).join("")}</select></label>
       <div class="hint" style="margin-top:-6px">🌡 온도는 따로 정하지 않아요 — 바깥 기온은 날씨(지역)에서 받고, 교실 안 낮 · 밤 온도는 바질을 둔 자리(창가 · 가운데 …)에 따라 앱이 계산해요</div>
-      <label>선생님 비밀번호 (숫자 4자리) <input type="password" id="sPin" inputmode="numeric" maxlength="4" value="${esc(d.pin)}" oninput="setupDraft.pin=this.value;setupLock()" style="width:110px"></label>
+      <label>선생님 비밀번호 <small style="font:13px 'Noto Sans KR';color:var(--sub)">나중에 · 지금은 묻지 않아요 · 비워 둬도 돼요</small> <input type="password" id="sPin" inputmode="numeric" maxlength="4" value="${esc(d.pin)}" oninput="setupDraft.pin=this.value;setupLock()" style="width:110px"></label>
       <label>상장 · 보고서 이름 <input type="text" value="${esc(d.teacher)}" placeholder="예: 담임 ○○○" oninput="setupDraft.teacher=this.value"></label>
     </div>
     <div class="panel">
@@ -2768,7 +2788,7 @@ function toggleDow(i, el){ const a = setupDraft.days; const k = a.indexOf(i); if
 function setupLock(){
   const d = setupDraft, n = new Set(d.roster).size;
   $("sCount").textContent = `명단 ${n}명` + (n !== d.roster.length ? " (겹친 이름은 하나로)" : "");
-  const why = !d.className.trim() ? "반 이름을 적어 주세요" : !d.days.length ? "수업 요일을 하나 이상 골라 주세요" : !n ? "학생 명단을 넣어 주세요" : !/^\d{4}$/.test(d.pin) ? "비밀번호는 숫자 4자리예요" : "";
+  const why = !d.className.trim() ? "반 이름을 적어 주세요" : !d.days.length ? "수업 요일을 하나 이상 골라 주세요" : !n ? "학생 명단을 넣어 주세요" : d.pin && !/^\d{4}$/.test(d.pin) ? "비밀번호는 숫자 4자리예요 (비워 둬도 돼요)" : "";
   $("sSave").disabled = !!why; $("sWhy").textContent = why ? "🔒 " + why : "";
 }
 function saveSetup(){
@@ -2825,10 +2845,13 @@ function logout(){ if (pour) pourEnd(); saveMe(); stuName = ""; me = newPlant();
 function go(id){ saveMe(); show(id); if (id === "p2") renderMe(); if (id === "p8") renderQuiz(); if (id === "p5" || id === "p7" || id === "p3") renderMe(); }
 
 /* ── 선생님 ── */
+const TEACHER_PIN_ASK = false;   // 10-05 전무님 «일단 없애 줘» — 나중에 선생님이 정해 쓰게 할 때 true
 function teacherLogin(){
-  const v = prompt("선생님 비밀번호 (숫자 4자리)");
-  if (v === null) return;
-  if (v !== CFG.pin){ toast("비밀번호가 달라요"); return; }
+  if (TEACHER_PIN_ASK && CFG.pin){
+    const v = prompt("선생님 비밀번호 (숫자 4자리)");
+    if (v === null) return;
+    if (v !== CFG.pin){ toast("비밀번호가 달라요"); return; }
+  }
   TEACHER_DAY = todayIdx(); repDay = TEACHER_DAY; rebuildSims(); show("p6"); renderTeacher();
 }
 function leaveTeacher(){ show("p1"); renderLogin(); }
@@ -5814,6 +5837,74 @@ renderTeacher = function(){
   const html = !roster.length ? `<div class="tmiss">📝 ⚙ 반 설정 → «학생 명단» 에 이름을 넣어 주세요</div>`
     : miss.length ? `<div class="tmiss">🙋 아직 안 들어온 학생 ${miss.length}명 : ${miss.map(esc).join(" · ")}<small>한 번 들어오면 반 정원에 바질이 보여요</small></div>` : "";
   box.insertAdjacentHTML("beforeend", html);
+  return r;
+};
+
+
+/* ═════════ 👩‍🏫 선생님 화면 위쪽 단순화 (10-05 전무님 «단추 글씨가 두 줄 · 칸이 좁다» → 고르기 «넓게 넷 + 묶기») ═════════
+   위쪽 : 🎤 수업 도입 · 📊 보고 · 상장 ▾ · ⚙ 설정 ▾ · ← 나가기 (+ 시험 중 💬 의견)
+   줄 세우기 셋(이름 · 노력 · 도움 필요)은 바둑판 바로 위 작은 줄로 */
+function setupClassName(){ setupDraft.className = `${$("sGrade").value}학년 ${$("sCls").value}반`; setupLock(); }
+function tMenu(btn, items){
+  document.querySelectorAll(".tmenu").forEach(m => m.remove());
+  if (btn.dataset.open === "1"){ btn.dataset.open = ""; return; }
+  document.querySelectorAll("[data-open]").forEach(b => b.dataset.open = "");
+  btn.dataset.open = "1";
+  const m = document.createElement("div"); m.className = "tmenu";
+  m.innerHTML = items.map(([t, js]) => `<button onclick="document.querySelectorAll('.tmenu').forEach(x=>x.remove());document.querySelectorAll('[data-open]').forEach(b=>b.dataset.open='');${js}">${t}</button>`).join("");
+  btn.parentNode.style.position = "relative"; btn.insertAdjacentElement("afterend", m);
+  const r = btn.getBoundingClientRect(), pr = btn.parentNode.getBoundingClientRect(), sc = r.width / btn.offsetWidth || 1;
+  m.style.left = ((r.left - pr.left) / sc) + "px"; m.style.top = ((r.bottom - pr.top) / sc + 6) + "px";
+}
+document.addEventListener("click", e => { if (!e.target.closest(".tmenu") && !e.target.closest("[data-open]")){ document.querySelectorAll(".tmenu").forEach(m => m.remove()); document.querySelectorAll("[data-open]").forEach(b => b.dataset.open = ""); } });
+(() => {
+  const sort = document.querySelector("#p6 .tbar .sort"), grid = $("tgrid"); if (!sort || !grid) return;
+  const NM = {no: "이름", effort: "노력", help: "도움 필요"};
+  const row = document.createElement("div"); row.className = "tsort";
+  row.innerHTML = `<span>줄 세우기</span>` + ["no", "effort", "help"].map(k => `<button class="b ${k === tSort ? "sel" : ""}" data-s="${k}">${NM[k]}</button>`).join("");
+  row.onclick = ev => { const k = ev.target.dataset.s; if (!k) return; tSort = k; row.querySelectorAll(".b").forEach(b => b.classList.toggle("sel", b.dataset.s === k)); renderTeacher(); };
+  const col = document.createElement("div"); col.className = "tcol";
+  grid.parentNode.insertBefore(col, grid); col.appendChild(row); col.appendChild(grid);
+  sort.className = "sort tmain";
+  sort.innerHTML = `<button class="b" onclick="openIntro()">🎤 수업 도입</button>
+    <button class="b" onclick="tMenu(this,[['📊 종합 보고','openReportGuard()'],['🏅 상장','openReportGuard(\\'award\\')']])">📊 보고 · 상장 ▾</button>
+    <button class="b" onclick="tMenu(this,[['⚙ 반 설정','openSetup()'],['🔑 학생 열쇠','openKeys()'],['☁ 구글 시트','openGs()']])">⚙ 설정 ▾</button>
+    <button class="b" onclick="leaveTeacher()">← 나가기</button>`;
+})();
+
+
+/* ═════════ ⚙ 반 설정 화면 손질 (10-05 전무님) ═════════
+   ④ 학생 명단 : 글로만 넣으면 이름끼리 구분이 안 됨 → 아래에 이름 단추(✕ 로 빼기) · 가나다순
+   ⑤ 반 설정에서 나가는 단추가 없음 → «← 돌아가기 (저장 안 함)» · 선생님 화면에서 왔으면 저장 뒤에도 선생님 화면으로 */
+let _setupFrom = "";
+const _openSetupBack = openSetup;
+openSetup = function(){
+  const on = document.querySelector(".mk-page.on"); _setupFrom = on && on.id !== "p0" ? on.id : _setupFrom;
+  const r = _openSetupBack.apply(this, arguments);
+  const sv = $("sSave");
+  if (sv && LS.get("basil.cfg", null) && !$("sBack")) sv.insertAdjacentHTML("beforebegin", `<button class="b" id="sBack" onclick="setupBack()">← 돌아가기 <small>(저장 안 함)</small></button>`);
+  const ta = $("sRoster"); if (ta && !$("sChips")) ta.insertAdjacentHTML("afterend", `<div id="sChips" class="schips"></div>`);
+  setupLock();
+  return r;
+};
+function setupGoBack(){
+  if (_setupFrom === "p6"){ rebuildSims(); show("p6"); renderTeacher(); }
+  else { show("p1"); renderLogin(); }
+}
+function setupBack(){ setupDraft = null; setupGoBack(); }
+const _saveSetupBack = saveSetup;
+saveSetup = function(){ const r = _saveSetupBack.apply(this, arguments); if (_setupFrom === "p6") setupGoBack(); return r; };
+function rosterDel(i){
+  const names = [...new Set(setupDraft.roster)].sort((a, b) => a.localeCompare(b, "ko")), n = names[i];
+  setupDraft.roster = setupDraft.roster.filter(x => x !== n);
+  const ta = $("sRoster"); if (ta) ta.value = setupDraft.roster.join("\n");
+  setupLock();
+}
+const _setupLockChips = setupLock;
+setupLock = function(){
+  const r = _setupLockChips.apply(this, arguments);
+  const c = $("sChips"); if (c && setupDraft){ const names = [...new Set(setupDraft.roster)].sort((a, b) => a.localeCompare(b, "ko"));
+    c.innerHTML = names.length ? names.map((n, i) => `<span class="schip">${esc(n)}<button title="빼기" onclick="rosterDel(${i})">✕</button></span>`).join("") : `<span class="sub" style="font-size:14px">👆 위 칸에 한 줄에 한 명씩 적으면 여기 이름 단추로 보여요</span>`; }
   return r;
 };
 
