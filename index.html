@@ -6152,7 +6152,8 @@ try { if ("serviceWorker" in navigator && location.protocol === "https:") naviga
    그날 처음 칸은 «👉 여기부터!» · 그다음은 «👉 다음» · 다 하면 점수 줄에 «🎉 오늘 할 일 끝!» */
 function todaySteps(p){
   const td = p.today || {}, sc = todayScore(p);
-  return [!!td.checked, !!(td.watered || td.noWater), !!td.spotSeen || sc.spot >= 20, sc.care >= 15, !!td.journal];
+  const soil = LV() === "easy" ? !!(td.easyWord || td.checked) : !!(td.surfWord && td.deepWord);   // 보통 · 어려움은 겉 · 속 둘 다 (10-05 전무님 «하나만 눌러도 물로 넘어간다»)
+  return [soil, !!(td.watered || td.noWater), !!td.spotSeen || sc.spot >= 20, sc.care >= 15, !!td.journal];
 }
 function markSpotSeen(){ if (me && me.today && !me.today.spotSeen){ me.today.spotSeen = true; try { saveMe(); } catch (e) {} } }
 const _openMapNx = openMap; openMap = function(){ markSpotSeen(); return _openMapNx.apply(this, arguments); };
