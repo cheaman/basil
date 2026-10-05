@@ -702,6 +702,8 @@ img.rphoto{display:block;width:100%;object-fit:cover;border-radius:12px}
 .cardbtns .cstep b{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:#e0a43a;color:#fff;display:flex;align-items:center;justify-content:center;font:20px Jua}
 .cardbtns .cstep .big{flex:1;font-size:21px;padding:12px 8px;white-space:nowrap}
 .cardbtns .arrow{text-align:center;font:26px Jua;color:#c4cfbf;margin:-6px 0}
+#tsum .tmiss{margin-top:8px;padding:8px 10px;border-radius:10px;background:#fff6e0;font:15px Jua;color:#6a4a1a;line-height:1.4}
+#tsum .tmiss small{display:block;font:12px 'Noto Sans KR';color:#8a7a5a}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -5800,6 +5802,20 @@ renderTest = function(){
   const bar = document.querySelector("#p6 .tbar"); if (!bar || bar.querySelector(".fbbtn")) return;
   bar.insertAdjacentHTML("beforeend", `<button class="b fbbtn" style="background:#e0a43a;color:#fff" onclick="fbOpen()">💬 의견 보내기</button>`);
 })();
+
+
+/* ═════════ 🙋 아직 안 들어온 학생 (10-05 전무님 «학생 이름은 어디서 넣나 · 선생님 화면에 안 보인다») ═════════
+   반 정원은 한 번이라도 들어온 학생만 그림 → 명단에 있는데 아직 안 들어온 학생을 «오늘 한눈에» 아래에 이름으로 */
+const _renderTeacherMiss = renderTeacher;
+renderTeacher = function(){
+  const r = _renderTeacherMiss.apply(this, arguments);
+  const box = $("tsum"); if (!box) return r;
+  const roster = (CFG && CFG.roster) || [], inside = new Set((CLASS || []).map(q => q.name)), miss = roster.filter(n => !inside.has(n));
+  const html = !roster.length ? `<div class="tmiss">📝 ⚙ 반 설정 → «학생 명단» 에 이름을 넣어 주세요</div>`
+    : miss.length ? `<div class="tmiss">🙋 아직 안 들어온 학생 ${miss.length}명 : ${miss.map(esc).join(" · ")}<small>한 번 들어오면 반 정원에 바질이 보여요</small></div>` : "";
+  box.insertAdjacentHTML("beforeend", html);
+  return r;
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
