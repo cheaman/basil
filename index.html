@@ -833,6 +833,19 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #care .ml{white-space:nowrap}
 #care .ml .mgo{font-style:normal;color:#2f7a2a;margin-left:4px}
 #care .ml .mover{font-style:normal;color:#c9573f;margin-left:4px}
+#jrBox .lfhint{top:auto!important;bottom:14px;white-space:normal!important;width:92%;box-sizing:border-box;line-height:1.35}
+#jrBox .lfhint.hstep{border-color:#e06a3a!important;background:#fff1ea!important}
+#jrBox .lfhint.hstep b{color:#c84a1e}
+#jrBox .pic:has(.lfhint.hstep) .lfdots circle{animation:none!important}
+#care .soil .stap{cursor:pointer}
+#care .soil .stap:active{filter:brightness(.92)}
+#care .soilnext{margin-top:8px;border-radius:12px;padding:6px 10px;background:#f4f7f1;border:2px solid #dfe8d8}
+#care .soilnext b{display:block;font:16px "Jua";color:#24502a}
+#care .soilnext small{display:block;font:13px "Noto Sans KR";color:#5f6e64}
+#care .soilnext.dry,#care .soilnext.low{background:#eaf4fd;border-color:#9cc8ee}
+#care .soilnext.ok{background:#eaf7e3;border-color:#9ccf86}
+#care .soilnext.wet{background:#fff1ea;border-color:#e9a07a}
+#care .soilnext.ask{background:#fffbea;border-color:#f0d58a}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -3755,8 +3768,8 @@ function renderMe(){
   const score = `<div class="score" id="score"><span class="sbig">⭐ ${sc.total}<small> / 100</small></span>${SC_PARTS.map(([k, ic, nm, mx]) => `<div class="seg ${sc[k] >= mx ? "full" : sc[k] === 0 ? "zero" : ""} ${_scKey === k ? "on" : ""}" onclick="scoreHelp('${k}')"><i>${ic}</i><b>${sc[k]}/${mx}</b>${nm}</div>`).join("")}${_scKey ? `<div class="schelp" onclick="scoreHelp('')">${scoreWhy(p, _scKey)}</div>` : ""}</div>`;
   // ① 흙
   const soilBtns = L === "easy" ? B("👆", "흙", "doCheck('easy')", dead ? "dead" : "") : B("👆", "겉", "doCheck('surf')", dead ? "dead" : "") + B("👇", "속", "doCheck('deep')", dead ? "dead" : "");
-  const soilPic = L === "easy" ? `<div class="soil"><div>${p.today.easyWord ? dropsOf(p.moist) : "?"}</div></div>`
-    : `<div class="soil"><div><em>👆</em>${p.today.surfWord ? dropsOf(p.surf) : "?"}</div><div><em>👇</em>${p.today.deepWord ? dropsOf(p.moist) : "?"}</div></div>`;
+  const soilPic = L === "easy" ? `<div class="soil"><div class="stap" onclick="doCheck('easy')">${p.today.easyWord ? dropsOf(p.moist) : "?"}</div></div>`
+    : `<div class="soil"><div class="stap" onclick="doCheck('surf')"><em>👆</em>${p.today.surfWord ? dropsOf(p.surf) : "?"}</div><div class="stap" onclick="doCheck('deep')"><em>👇</em>${p.today.deepWord ? dropsOf(p.moist) : "?"}</div></div>`;
   // ② 물
   let water;
   if (L === "easy") water = `<div class="row">${B('<span style="font-size:20px">🥛</span>', "조금", "waterCup(60)", lk.water)}${B('<span style="font-size:28px">🥛</span>', "알맞게", "waterCup(120)", lk.water)}${B('<span style="font-size:36px">🥛</span>', "듬뿍", "waterCup(200)", lk.water)}</div>`;
@@ -6870,6 +6883,60 @@ pourStart = function(ev){
       let d = ""; for (let i = 0; i < 3; i++) d += `<circle class="drop" cx="${sx}" cy="${sy}" r="${rnd(2.2, 3.4)}" fill="#6db7f0" style="--dx:${rnd(-55, -15)}px;--dy:${ty - sy}px;animation-delay:${i * .04}s"/>`;
       fxAdd(d, 800);
     }, 110);
+  } catch (e) {}
+  return r;
+};
+
+
+/* ═════════ 📏 일지 안내는 «키 먼저 → 잎» 차례로 (10-05 전무님 사진 «흰 점 안내가 나와 있어서 키 재기 먼저 해야 되는데 방해») ═════════
+   · 키를 재기 전 : 안내 = «먼저 빨간 줄로 키» · 흰 점은 깜빡이지 않음
+   · 키를 재면 : 안내 = «잎 위의 흰 점을 톡» · 흰 점 깜빡임
+   · 안내 띠는 그림 아래(화분 자리)로 — 바질 꼭대기 · 자를 가리지 않게 */
+const JR_HINT_H = "📏 먼저 <b>✋ 빨간 줄</b>을 바질 꼭대기까지 올려 키를 재요<small>키를 재면 잎 세기 안내가 나와요</small>";
+const JR_HINT_L = "👆 잎 위의 <b>흰 점</b>을 톡 눌러 세어요<small>마주 난 두 장이 함께 세져요</small>";
+function jrHintStep(){
+  const h = $("lfHint"); if (!h || h.classList.contains("help")) return;
+  const before = jrDraft.h === "" || jrDraft.h == null;
+  h.classList.toggle("hstep", before);
+  const want = before ? JR_HINT_H : JR_HINT_L;
+  if (h.innerHTML !== want){ h.innerHTML = want; if (!before) h.classList.remove("gone"); }
+}
+const _openJournalHintStep = openJournal;
+openJournal = function(){
+  const r = _openJournalHintStep.apply(this, arguments);
+  try { jrHintStep(); } catch (e) {}
+  return r;
+};
+const _jrSetHHintStep = jrSetH;
+jrSetH = function(){
+  const r = _jrSetHHintStep.apply(this, arguments);
+  try { jrHintStep(); } catch (e) {}
+  return r;
+};
+
+
+/* ═════════ 👆 흙 칸 빈자리 = «흙을 읽으면 → 오늘 물은» (10-05 전무님 «흙 상태 밑에 칸이 남으니 여기에 표현할 것») ═════════
+   만지기 전 : 어디를 어떻게 만지나 · 만진 뒤 : 속흙(흙물)로 오늘 할 일 한 줄 → ② 물 칸으로 이어 줌 (점수 규칙과 같은 잣대) */
+function soilNext(p){
+  const td = p.today || {}, L = LV(), known = L === "easy" ? !!td.easyWord : !!td.deepWord;
+  if (!known) return L === "easy"
+    ? ["ask", "👆 흙을 눌러 만져 봐요", "흙이 보송한지 · 촉촉한지 알아봐요"]
+    : ["ask", "👆 겉흙 · 👇 속흙 만져 보기", "손가락 끝 · 손가락 한 마디 깊이"];
+  const m = Math.round(p.moist);
+  if (td.watered || td.noWater) return ["done", "✔ 오늘 물 판단 끝", `지금 흙물 ${m}`];
+  if (m > 90) return ["wet", "💦 너무 젖었어요 → 🪴 물 빼기", "물을 주지 않아요"];
+  if (m >= 60) return ["ok", "🙂 촉촉해요 → 🚱 오늘 그만", "물을 안 줘도 괜찮아요 (흙물 60~90)"];
+  if (m >= 45) return ["low", "💧 조금 모자라요 → 조금만 물 주기", "② 막대가 초록(60~90)이 되면 손 떼기"];
+  return ["dry", "🏜 말랐어요 → 💧 물 주기", "② 막대가 초록(60~90)이 되면 손 떼기"];
+}
+const _renderMeSoilNext = renderMe;
+renderMe = function(){
+  const r = _renderMeSoilNext.apply(this, arguments);
+  try {
+    if (!me || me.dead || !stuName) return r;
+    const t = [...document.querySelectorAll("#care .tile")].find(x => /흙 만져 보기/.test((x.querySelector(".hd") || {}).textContent || "")); if (!t) return r;
+    const [k, a, b] = soilNext(me);
+    t.insertAdjacentHTML("beforeend", `<div class="soilnext ${k}"><b>${a}</b><small>${b}</small></div>`);
   } catch (e) {}
   return r;
 };
