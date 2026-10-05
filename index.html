@@ -6807,6 +6807,22 @@ function instOpen(){
   if (host) host.insertAdjacentHTML("beforeend", `<div class="kkbar">💬 카카오톡 안에서 열렸어요 → 오른쪽 위 <b>⋮</b> → <b>«다른 브라우저로 열기»</b> 를 누르면 앱으로 깔 수 있어요</div>`);
 })();
 
+
+/* ═════════ 📌 처음 여는 브라우저 · 앱이면 반 설정 위에 한 줄 (10-05 전무님 «사파리로 넘어가긴 하는데 첫 화면이 이거임») ═════════
+   카톡 → 사파리 · 홈 화면 앱은 저장 자리가 따로라 «이 패드에 반이 없다» 로 보고 반 설정부터 나옴 (정상)
+   → 왜 이 화면인지 · 선생님이 한 번 넣으면 다음부터는 이름 고르기 · 둘러만 보려면 «🧪 시험반» (시험 주소로 옮겨 감) */
+const _openSetupFirst = openSetup;
+openSetup = function(){
+  const r = _openSetupFirst.apply(this, arguments);
+  try {
+    const body = $("setupBody");
+    if (!TEST && body && !LS.get("basil.cfg", null) && !$("sFirstNote"))
+      body.insertAdjacentHTML("afterbegin", `<div id="sFirstNote" class="stest"><b>📌 이 브라우저(앱)에서 처음 열었어요</b> — 반 설정은 패드마다 처음 한 번 · 선생님이 넣고 «저장하고 시작» 하면 다음부터는 학생 이름 고르기 화면이 나와요
+        <button class="big" onclick="location.href='./?test'">🧪 그냥 둘러보기 (가상 학생 15명 시험반)</button></div>`);
+  } catch (e) {}
+  return r;
+};
+
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
   document.querySelectorAll(".mk-page").forEach(s => s.classList.toggle("on", s.id === id));
