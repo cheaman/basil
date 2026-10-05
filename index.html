@@ -776,6 +776,29 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #soilHelpModal .shtxt p{margin:4px 0 8px;font:16px/1.5 "Noto Sans KR"}
 #soilHelpModal .shtip{background:#eaf6e3;border-radius:12px;padding:8px 12px;font:16px/1.5 "Noto Sans KR";margin-top:6px}
 #jrBox .pic{touch-action:none}   /* 그림 칸에서 시작한 손가락은 창을 굴리지 않음 — 자 끌기 · 잎 톡톡 */
+#jrBox .pic{position:relative}
+#jrBox #jrRes{max-height:none!important}
+#jrBox .pic #jrRes:not(:empty){position:absolute;inset:0;z-index:6;overflow:auto;background:rgba(255,255,255,.97);border-radius:16px;padding:40px 14px 12px;box-shadow:inset 0 0 0 2px #cfe3c4}
+#jrBox .pic #jrRes.hide{display:none}
+#jrBox .pic #jrRes .resclose{position:absolute;top:6px;right:8px;border:0;background:#e3f2dc;border-radius:999px;padding:4px 12px;font:15px "Jua";cursor:pointer}
+#jrBox .jf .jrow{margin:2px 0}
+#jrBox .jf .jrow .k{width:36px;height:36px}
+#jrBox .sws .sw{font-size:12px;padding:1px 3px}
+#jrBox .sws .sw i{width:24px!important;height:24px!important}
+#jrBox .jbtns{padding-top:2px!important}
+#jrBox .jbtns .big{padding:6px 22px!important}
+#jrBox .predq .ps{font-size:12.5px}
+#jrBox .stk{font:14px "Jua";padding:3px 9px}
+#jrBox .predq{padding:5px 10px}
+#jrBox .predq .ph{font-size:15px;margin-bottom:2px}
+#jrBox .predq .ps{margin:2px 0;font-size:13px;line-height:1.35}
+#jrBox .predq .ps small{display:inline;margin-left:4px}
+#jrBox .predq .predwx .pwd{flex-direction:row;gap:4px;padding:1px 7px}
+#jrBox .predq .predwx .pwd i{font-size:15px}
+#jrBox .predq .pbtns{margin-top:2px}
+#jrBox .predq .pbtn{flex-direction:row;gap:4px;padding:2px 10px;min-width:0}
+#jrBox .predq .pbtn i{font-size:16px}
+#jrBox .pinrow{margin-top:-2px!important}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -4349,7 +4372,7 @@ openJournal = function(){
   const plant = basilSVG(bare).replace('viewBox="0 0 300 400"', `viewBox="${v.x} ${v.y} ${v.w} ${v.h}"`);
   const none = `<span class="sub">🌱 아직 잎이 없어요</span>`;
   const leafRow = L === "easy" ? "" : `<div class="jrow"><span class="k">🍃</span>${seed ? none
-      : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onpointerdown="jrHold(-1,'l')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(1,'l')" onpointerleave="jrHoldEnd()">▲</button><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 흰 점이 있는 잎을 톡톡 — 작은 잎 · 뒤쪽 잎도 한 장</span>`}</div>`;
+      : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onpointerdown="jrHold(-1,'l')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(1,'l')" onpointerleave="jrHoldEnd()">▲</button><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 잎을 톡 — 마주 난 짝까지 두 장이 함께 세져요</span>`}</div>`;
   const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🍃</span><span class="cl" style="line-height:1.15">잎에서<br>가장 많은 색</span>
       <div class="sws">${JR_COLORS.map(([c, hx]) => `<button class="sw" data-c="${c}" onclick="jrColor('${c}')"><i style="background:${hx}"></i>${c}</button>`).join("")}</div></div>
     <div class="jrow" style="margin-top:-6px"><span class="k" style="background:none">➕</span><span class="cl" style="line-height:1.15">잎에<br>또 보이는 색</span>
@@ -6254,7 +6277,7 @@ function jrDots(){
   const svg = document.querySelector("#jrBox .pic .pl svg"); if (!svg) return;
   const lfs = [...svg.querySelectorAll(".lf")];
   lfs.forEach(l => { if (l.querySelector(".lfhit")) return; const b = l.getBBox(), c = document.createElementNS(SVGNS, "circle");
-    c.setAttribute("class", "lfhit"); c.setAttribute("cx", b.x + b.width / 2); c.setAttribute("cy", b.y + b.height / 2); c.setAttribute("r", Math.max(9, Math.min(b.width, b.height) / 2)); c.setAttribute("fill", "transparent"); l.dataset.cx = b.x + b.width / 2; l.dataset.cy = b.y + b.height / 2; l.appendChild(c); });
+    c.setAttribute("class", "lfhit"); c.setAttribute("cx", b.x + b.width / 2); c.setAttribute("cy", b.y + b.height / 2); c.setAttribute("r", Math.max(9, Math.min(b.width, b.height) / 2)); c.setAttribute("fill", "transparent"); l.dataset.cx = b.x + b.width / 2; l.dataset.cy = b.y + b.height / 2; l.dataset.ar = b.width * b.height; l.appendChild(c); });
   let g = svg.querySelector(".lfdots");
   if (!g){ g = document.createElementNS(SVGNS, "g"); g.setAttribute("class", "lfdots"); g.setAttribute("pointer-events", "none"); svg.insertBefore(g, svg.querySelector(".ckm")); }
   g.innerHTML = lfs.filter(l => !l.dataset.o).map(l => `<circle cx="${l.dataset.cx}" cy="${l.dataset.cy}" r="3.4" fill="#fff" stroke="#2f7a2a" stroke-width="1.3"/>`).join("");
@@ -6364,14 +6387,14 @@ openJournal = function(){
     const pic = document.querySelector("#jrBox .pic"), svg = document.querySelector("#jrBox .pic .pl svg");
     if (!pic || !svg || !$("jrLv")) return r;   // 쉬움 · 씨앗 땐 잎 세기 없음
     pic.style.position = "relative";
-    pic.insertAdjacentHTML("beforeend", `<div class="lfhint" id="lfHint">👆 흰 점이 있는 잎을 톡톡 눌러 세어요</div>`);
+    pic.insertAdjacentHTML("beforeend", `<div class="lfhint" id="lfHint">👆 흰 점 잎을 톡 — 마주 난 두 장이 함께 세져요</div>`);
     svg.addEventListener("click", e => {
       const h = $("lfHint"); if (!h) return;
       if (e.target.closest(".lf")){ if (_lfMiss < 3) h.classList.add("gone"); return; }
       _lfMiss++;
       if (_lfMiss === 3){
         h.classList.remove("gone"); h.classList.add("help");
-        h.innerHTML = "😅 잎이 작아 잘 안 눌리면 <b>▲ 단추</b>로 나머지를 세어요<small>눌러 센 수에 더해져요</small>";
+        h.innerHTML = "😅 잎이 작아 잘 안 눌리면 <b>▲ 단추</b>로 나머지를 세어요<small>눌러 센 수에 한 장씩 더해져요</small>";
         const row = $("jrLv").closest(".jrow"); if (row) row.querySelectorAll(".nb").forEach((b, i) => { if (i < 2) b.classList.add("blink"); });
         sfx("tap");
       }
@@ -6480,6 +6503,94 @@ renderMe = function(){
   return r;
 };
 SAY_WORD["겉흙"] = "겉흙 만져 보기"; SAY_WORD["속흙"] = "속흙 만져 보기";
+
+
+/* ═════════ 🍃 잎은 두 장씩 짝으로 (10-05 전무님 «잎이 무지 많은데 어떻게 다 세지» · 고르기 «두 장씩 짝으로») ═════════
+   한 잎을 누르면 같은 높이 · 같은 크기의 짝 잎도 함께 번호 (교과서 «마주나기») · 짝이 없는 잎(꼭대기 · 곁눈)은 한 장 */
+function lfPartner(l, all){
+  const cy = +l.dataset.cy, ar = +l.dataset.ar, cx = +l.dataset.cx; if (!ar) return null;
+  let best = null, bd = 1e9;
+  all.forEach(o => { if (o === l || !o.dataset.ar) return; if (Math.abs(+o.dataset.cy - cy) > 2.5 || Math.abs(+o.dataset.ar - ar) / ar > .06) return;
+    const d = Math.abs(+o.dataset.cx - cx); if (d < bd){ bd = d; best = o; } });
+  return best;
+}
+const _openJournalPair = openJournal;
+openJournal = function(){
+  const r = _openJournalPair.apply(this, arguments);
+  try {
+    const svg = document.querySelector("#jrBox .pic .pl svg"); if (!svg || !$("jrLv")) return r;
+    svg.addEventListener("click", e => {   // 원래 누름(한 장)이 먼저 돈 뒤 — 짝을 같은 상태로
+      const l = e.target.closest(".lf"); if (!l) return;
+      const all = [...svg.querySelectorAll(".lf")], pr = lfPartner(l, all); if (!pr) return;
+      if (l.dataset.o && !pr.dataset.o) pr.dataset.o = ++jrSeq;
+      if (!l.dataset.o && pr.dataset.o) delete pr.dataset.o;
+      jrMarks(true);
+    });
+  } catch (e) {}
+  return r;
+};
+
+
+/* ═════════ 📏 관찰일지 한 화면 (10-05 전무님 «일지를 한 장으로 끝낼 수 있게» · «틀린 것을 알려 주는 문장이 안 보인다») ═════════
+   · 저장 결과(틀린 것 · 안 한 것)는 왼쪽 그림 자리 위에 크게 — 전에는 아래 작은 칸(150) 안이라 첫 줄만 보였음
+   · 군더더기 줄 빼기 : 잎 줄 아래 안내(그림 위 안내가 있음) · 예상 숫자 줄의 날짜 · 날씨 글(위 예상 칸에 있음)
+   · 딱지 단추 작게 → 한 줄 · 예상 칸 촘촘하게 */
+function jrResShow(){
+  const res = $("jrRes"), pic = document.querySelector("#jrBox .pic"); if (!res || !pic) return;
+  if (res.parentNode !== pic){ pic.appendChild(res); }
+  if (res.innerHTML.trim() && !res.querySelector(".resclose")) res.insertAdjacentHTML("afterbegin", `<button class="resclose" onclick="$('jrRes').classList.add('hide')">✕ 그림으로</button>`);
+  res.classList.remove("hide"); res.scrollTop = 0;
+}
+const _openJournalOne = openJournal;
+openJournal = function(){
+  const r = _openJournalOne.apply(this, arguments);
+  try {
+    const box = $("jrBox"); if (!box) return r;
+    const res = $("jrRes"), pic = box.querySelector(".pic"); if (res && pic && res.parentNode !== pic) pic.appendChild(res);
+    box.querySelectorAll(".jrow .sub").forEach(sp => { if (/^👆 잎을 톡/.test(sp.textContent)) sp.style.display = "none"; });
+    const pin = $("jrPin"); if (pin){ const row = pin.closest(".jrow"); if (row){ row.querySelectorAll(".cl, .sub").forEach(x => x.style.display = "none"); row.classList.add("pinrow"); } }
+    box.querySelectorAll(".jrow .sub").forEach(sp => { if (/있으면 모두/.test(sp.textContent)) sp.style.display = "none"; });   // 또 보이는 색 줄 끝 글 — 줄 이름에 «잎에» 가 있음
+  } catch (e) {}
+  return r;
+};
+const _saveJournalOne = saveJournal;
+saveJournal = function(){
+  const again = !!(me && me.today && me.today.journal);   // 오늘 이미 썼으면 = «고쳐서 저장»
+  const r = _saveJournalOne.apply(this, arguments);
+  try {
+    if (again){ $("jrModal").classList.remove("on"); renderMe(); toast("✏️ 고쳐서 저장했어요"); }   // 고쳐서 저장하면 밖으로 (10-05 전무님)
+    else jrResShow();   // 처음 저장은 틀린 것 · 안 한 것을 그림 자리에 크게
+  } catch (e) {}
+  return r;
+};
+
+
+/* ═════════ 🌿 가꾸기 점수 설명 · 📏 자 놓은 자리 (10-05 전무님) ═════════
+   ① «가꾸기를 다 한 것 같은데 점수가 안 채워진다» — 못 푼 «생긴 일»(달팽이 · 기운 화분 …)과 «거름 너무 자주» 도
+      −5 씩 깎는데 설명 글에 안 나왔음 → 설명에 모두 보임
+   ② «끝단에 놓고 손을 뗐는데 줄자가 다른 곳에 가 있다» — 끄는 중 그림 위 끝을 넘으면 «손 떼면 그 높이로 그림을 넓힘» 을
+      기억해 두고, 다시 내려 놓아도 그 옛 높이로 줄을 옮겼음 → 끄는 동안은 그림 안에서만 움직이고 손 떼도 그 자리 그대로 */
+const _scoreWhyCare = scoreWhy;
+scoreWhy = function(p, k){
+  if (k !== "care" || !p) return _scoreWhyCare.apply(this, arguments);
+  const td = p.today, sc = todayScore(p);
+  const need = [p.saucer > 0 && "🍽 받침 물 버리기", p.moist > 95 && "💦 흙물 너무 많음 → 물 빼기", (p.air ?? 80) < 50 && !td.vent && "🌬 환기", p.bug && "🐛 벌레 잡기",
+    sickList(p).filter(x => x !== "bug" && x !== "wet").length && !td.diag && "🩺 진찰", LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert && "🧪 거름"].filter(Boolean)
+    .concat(p.dead ? [] : evPending(p).map(e => `${EV[e.k].pic} 생긴 일 → ${EV[e.k].how}`));
+  const often = td.fert && p.day - (p.prevFert ?? -99) < 6;
+  const parts = [];
+  if (need.length) parts.push(`남은 일 : ${need.join(" · ")} (하나에 −5)`);
+  if (often) parts.push("🧪 거름을 너무 자주 줬어요 −5 (6일에 한 번이면 돼요)");
+  if (evPending(p).length) parts.push("💬 «생긴 일» 은 바질 옆 말풍선에서 풀어요");
+  return `<b>🌿 가꾸기 ${sc.care}/15</b> — ` + (parts.length ? parts.join(" · ") : "오늘 해 줄 일이 없어요 → 만점");
+};
+const _jrSetHKeep = jrSetH;
+jrSetH = function(cm){
+  if (_jrDragNow && jrView){ const top = Math.floor((284 - jrView.y - 6) / CMV * 10) / 10; if (cm > top) cm = top; }   // 끄는 동안은 그림 위 끝까지만
+  const r = _jrSetHKeep.call(this, cm);
+  if (_jrDragNow) _jrRefitWant = null;   // 손 떼도 그림을 다시 맞추지 않음 = 놓은 자리 그대로
+  return r;
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
