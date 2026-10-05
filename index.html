@@ -721,6 +721,16 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 .schip button{border:0;background:#f3e3e0;color:#b0473a;border-radius:8px;width:24px;height:24px;font:13px "Noto Sans KR";cursor:pointer;padding:0}
 #sBack{margin-right:8px;font:18px "Jua"}
 #sBack small{font:13px "Noto Sans KR";color:var(--sub)}
+.simport{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0 6px}
+.simport .b{font:16px "Jua";padding:6px 12px}
+.simport .sub{font-size:13px;color:var(--sub)}
+#wxPanel .wxhelp{font-size:13px;line-height:1.5;color:#4a5a50;background:#f6f9f3;border-radius:10px;padding:6px 10px;margin:6px 0}
+.setup .panel > label{display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.setup .panel > label .lk{flex:0 0 132px;font:17px "Jua";color:#24332a}
+.setup .panel > label .lk small{font:12px 'Noto Sans KR'!important;color:var(--sub)}
+.setup .panel > label .lv{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.setup .panel > .hint.ind{margin-left:140px!important;margin-top:-4px!important}
+#pinPeek{font:15px "Jua";padding:4px 10px}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -2746,7 +2756,7 @@ function buildWXApp(){ buildWX(); if (WXCFG.mode === "today") WX_SRC = `오늘 �
 /* ── 반 설정 화면 ── */
 let setupDraft = null;
 function openSetup(){
-  const c = CFG || {className:"", start: new Date(Date.now() + 2 * DAYMS).toISOString().slice(0, 10), days:[1, 4], roster:[], pin:"", level:"normal", speed:2, startAs:"seed", demo:false, dayOffset:0, sound:true, teacher:"", wx:{mode:"today", region:"대전", dir:"남향"}};
+  const c = CFG || {className:"", start: new Date(Date.now() + 2 * DAYMS).toISOString().slice(0, 10), days:[1, 4], roster:[], pin:"", level:"normal", speed:2, startAs:"seed", demo:false, dayOffset:0, sound:true, teacher:"", wx:{mode:"preset", preset:"autumn", region:"대전", dir:"남향"}};
   setupDraft = JSON.parse(JSON.stringify(c));
   const d = setupDraft, D = ["일","월","화","수","목","금","토"];
   $("setupBody").innerHTML = `<div class="panel">
@@ -2770,7 +2780,7 @@ function openSetup(){
       <label>상장 · 보고서 이름 <input type="text" value="${esc(d.teacher)}" placeholder="예: 담임 ○○○" oninput="setupDraft.teacher=this.value"></label>
     </div>
     <div class="panel">
-      <label>학생 명단 <span class="hint">한 줄에 한 명 · 이름만 · 가나다순으로 저절로 줄 세움</span></label>
+      <label>학생 명단 <span class="hint">한 줄에 한 명 · 복사해 붙이면 이름만 골라 넣음 · 가나다순으로 저절로 줄 세움</span></label>
       <textarea id="sRoster" oninput="setupDraft.roster=this.value.split(/\\n/).map(s=>s.trim()).filter(Boolean);setupLock()">${esc(d.roster.join("\n"))}</textarea>
       <div class="hint" id="sCount"></div>
       <label>🧪 시연 모드 <button class="b ${d.demo ? "sel" : ""}" onclick="setupDraft.demo=true;openSetupKeep()">켬</button><button class="b ${d.demo ? "" : "sel"}" onclick="setupDraft.demo=false;openSetupKeep()">끔</button></label>
@@ -3418,7 +3428,7 @@ if (TEST){ try { sessionStorage.setItem("basil.test", "1"); } catch (e) {} }
 /* 시험 모드에서 반 설정이 없으면 시험 반을 저절로 만듦 (오늘 시작 · 매일 수업 · 비밀번호 0000) */
 if (TEST && !LS.get("basil.cfg", null)){
   const d0 = new Date(); d0.setHours(0, 0, 0, 0); const f = x => new Date(x - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라"], pin: "0000", level: "normal", speed: 2, startAs: "seed", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "record", region: "대전", dir: "남향"}});
+  LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라", "마바", "사아", "자차", "카타", "파하", "거너", "더러", "머버", "서어", "저처", "커터", "퍼허"], pin: "0000", level: "normal", speed: 2, startAs: "seed", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "preset", preset: "autumn", region: "대전", dir: "남향"}});
 }
 function nowDate(){ const now = new Date(); now.setHours(0, 0, 0, 0); if (CFG && (CFG.demo || TEST) && CFG.dayOffset) now.setDate(now.getDate() + CFG.dayOffset); return now; }
 let testOpen = true, testCare = "care";
@@ -4898,7 +4908,7 @@ const _renderTestT = renderTest;
 renderTest = function(){
   _renderTestT();
   const tp = document.querySelector("#testBox .testp"); if (!tp) return;
-  tp.insertAdjacentHTML("beforeend", `<div class="tr"><span>선생님</span><button class="b" onclick="testTeacher()">👩‍🏫 선생님 화면</button><button class="b" onclick="testFillClass()">👥 반 친구 채우기</button><span class="hint" style="font-size:13px;white-space:nowrap">가나 꼼꼼 · 다라 대충</span></div>`);
+  tp.insertAdjacentHTML("beforeend", `<div class="tr"><span>선생님</span><button class="b" onclick="testTeacher()">👩‍🏫 선생님 화면</button><button class="b" onclick="testFillClass()">👥 반 친구 채우기 (15명)</button><span class="hint" style="font-size:13px;white-space:nowrap">가나 꼼꼼 · 다라 대충</span></div>`);
 };
 function testTeacher(){ saveMe(); TEACHER_DAY = todayIdx(); repDay = TEACHER_DAY; rebuildSims(); show("p6"); renderTeacher(); }
 function testFillClass(){
@@ -5868,7 +5878,7 @@ document.addEventListener("click", e => { if (!e.target.closest(".tmenu") && !e.
   sort.className = "sort tmain";
   sort.innerHTML = `<button class="b" onclick="openIntro()">🎤 수업 도입</button>
     <button class="b" onclick="tMenu(this,[['📊 종합 보고','openReportGuard()'],['🏅 상장','openReportGuard(\\'award\\')']])">📊 보고 · 상장 ▾</button>
-    <button class="b" onclick="tMenu(this,[['⚙ 반 설정','openSetup()'],['🔑 학생 열쇠','openKeys()'],['☁ 구글 시트','openGs()']])">⚙ 설정 ▾</button>
+    <button class="b" onclick="tMenu(this,[['⚙ 반 설정','openSetup()'],['🔑 학생 열쇠','openKeys()'],['☁ 구글 시트','openGs()'],['🧹 처음으로 (모두 지우기)','resetAll()']])">⚙ 설정 ▾</button>
     <button class="b" onclick="leaveTeacher()">← 나가기</button>`;
 })();
 
@@ -5907,6 +5917,139 @@ setupLock = function(){
     c.innerHTML = names.length ? names.map((n, i) => `<span class="schip">${esc(n)}<button title="빼기" onclick="rosterDel(${i})">✕</button></span>`).join("") : `<span class="sub" style="font-size:14px">👆 위 칸에 한 줄에 한 명씩 적으면 여기 이름 단추로 보여요</span>`; }
   return r;
 };
+
+
+/* ═════════ 📋 학생 명단 붙여 넣기 · 가져오기 (10-05 전무님 «다른 데서 복사해 붙이면 알아서 · 명단 가지고 오기») ═════════
+   · 명단 칸에 붙여 넣으면 → 이름만 골라 한 줄에 한 명 (번호 · 성별 · 머리말 · 학년 반은 뺌) · 지금 명단에 더함(겹친 이름은 하나)
+   · 📂 명단 파일 가져오기 : 엑셀 .xlsx (글자만 꺼냄 · 바깥 도구 없이) · .csv (한글 엑셀이 저장한 CP949 도) · .txt
+   · ✨ 이름만 골라내기 : 칸에 적힌 글을 다시 정리
+   이름 = 한글 2~5자 낱말 · 아래 낱말은 뺌 */
+const NAME_STOP = new Set(["번호", "이름", "성명", "성별", "학년", "학년도", "학생", "학생명", "남자", "여자", "남학생", "여학생", "생년월일", "주소", "전화", "전화번호", "연락처",
+  "보호자", "비고", "담임", "명단", "명렬표", "출석", "출석번호", "학적", "상태", "재학", "전입", "전출", "휴학", "합계", "인원", "초등학교", "학교", "교실", "반명", "학번"]);
+function pickNames(text){
+  const out = [];
+  (String(text).match(/[가-힣]{2,5}/g) || []).forEach(w => { if (!NAME_STOP.has(w) && !/(학교|학년|교실)$/.test(w) && !out.includes(w)) out.push(w); });
+  return out;
+}
+function rosterAdd(names, how){
+  const before = new Set(setupDraft.roster), add = names.filter(n => !before.has(n));
+  setupDraft.roster = [...setupDraft.roster, ...add];
+  const ta = $("sRoster"); if (ta) ta.value = setupDraft.roster.join("\n");
+  setupLock();
+  toast(names.length ? `📋 ${how} 이름 ${names.length}명을 찾았어요${add.length < names.length ? ` · 새로 ${add.length}명 더함` : ""} — 지금 ${new Set(setupDraft.roster).size}명` : "😅 이름을 못 찾았어요 — 한글 이름이 있는 칸을 복사해 주세요");
+}
+function rosterTidy(){ const ta = $("sRoster"); if (!ta) return; const names = pickNames(ta.value); setupDraft.roster = []; rosterAdd(names, "정리 —"); }
+async function inflateRaw(data){
+  const ds = new DecompressionStream("deflate-raw"), w = ds.writable.getWriter(), r = ds.readable.getReader(), chunks = [];
+  w.write(data).catch(() => {}); w.close().catch(() => {});
+  try { for (;;){ const {done, value} = await r.read(); if (done) break; chunks.push(value); } } catch (e) {}   // 끝 군더더기 오류가 와도 받은 데까지
+  const o = new Uint8Array(chunks.reduce((n, c) => n + c.length, 0)); let q = 0; chunks.forEach(c => { o.set(c, q); q += c.length; }); return o;
+}
+async function xlsxText(buf){   // 엑셀 파일은 zip — 글자 칸(sharedStrings · 칸 안 글)만 꺼냄
+  const dv = new DataView(buf); let e = -1;
+  for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 66000); i--) if (dv.getUint32(i, true) === 0x06054b50){ e = i; break; }
+  if (e < 0) throw new Error("zip");
+  let ptr = dv.getUint32(e + 16, true), txt = "";
+  for (let k = 0, n = dv.getUint16(e + 10, true); k < n; k++){
+    const method = dv.getUint16(ptr + 10, true), csize = dv.getUint32(ptr + 20, true), nl = dv.getUint16(ptr + 28, true), el = dv.getUint16(ptr + 30, true), cl = dv.getUint16(ptr + 32, true), lho = dv.getUint32(ptr + 42, true);
+    const name = new TextDecoder().decode(new Uint8Array(buf, ptr + 46, nl)); ptr += 46 + nl + el + cl;
+    if (!/^xl\/(sharedStrings\.xml|worksheets\/sheet\d+\.xml)$/.test(name)) continue;
+    const start = lho + 30 + dv.getUint16(lho + 26, true) + dv.getUint16(lho + 28, true), data = new Uint8Array(buf, start, csize);
+    const xml = new TextDecoder().decode(method === 0 ? data : await inflateRaw(data));
+    (xml.match(/<t[^>]*>[^<]*<\/t>/g) || []).forEach(t => { txt += t.replace(/<[^>]+>/g, "").replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16))).replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") + "\n"; });
+  }
+  return txt;
+}
+function rosterFile(){
+  let inp = $("sRosterFile");
+  if (!inp){ inp = document.createElement("input"); inp.type = "file"; inp.id = "sRosterFile"; inp.accept = ".xlsx,.csv,.txt"; inp.style.display = "none"; document.body.appendChild(inp);
+    inp.onchange = async () => {
+      const f = inp.files[0]; inp.value = ""; if (!f) return;
+      try {
+        const buf = await f.arrayBuffer(); let txt;
+        if (/\.xlsx$/i.test(f.name)) txt = await xlsxText(buf);
+        else if (/\.xls$/i.test(f.name)){ toast("옛 엑셀(.xls)은 못 읽어요 — 엑셀에서 이름 칸을 복사해 붙여 넣어 주세요"); return; }
+        else { txt = new TextDecoder("utf-8").decode(buf); if (txt.includes("\uFFFD")) txt = new TextDecoder("euc-kr").decode(buf); }   // 한글 엑셀 CSV 는 CP949
+        rosterAdd(pickNames(txt), `«${f.name}» 에서`);
+      } catch (e) { toast("이 파일은 못 읽었어요 — 이름 칸을 복사해 붙여 넣어 주세요"); }
+    }; }
+  inp.click();
+}
+const _openSetupImport = openSetup;
+openSetup = function(){
+  const r = _openSetupImport.apply(this, arguments);
+  const ta = $("sRoster");
+  if (ta && !ta.dataset.paste){ ta.dataset.paste = "1";
+    ta.placeholder = "보기 :\n홍길동\n성춘향\n…\n엑셀 · 한글 · 나이스 명렬표를 통째로 붙여 넣어도 이름만 골라 넣어요";
+    ta.addEventListener("paste", ev => { const t = (ev.clipboardData || window.clipboardData).getData("text"); if (!t) return; ev.preventDefault(); rosterAdd(pickNames(t), "붙여 넣은 글에서"); }); }
+  if (ta && !$("sImport")) ta.insertAdjacentHTML("beforebegin", `<div id="sImport" class="simport"><button class="b" onclick="rosterFile()">📂 명단 파일 가져오기</button><button class="b" onclick="rosterTidy()">✨ 이름만 골라내기</button><span class="sub">엑셀 .xlsx · .csv · .txt</span></div>`);
+  return r;
+};
+
+
+/* ═════════ 10-05 전무님 반 설정 · 날씨 · 시험 · 처음으로 ═════════ */
+/* ③ 날씨 고를 때 «어떤 상황인지» 도움말 — 선생님 화면 «날씨 정하기» 와 반 설정 둘 다 */
+const WX_HELP = {
+  preset: "📗 미리 짠 3주 날씨 — 추운 밤 · 비 · 더운 날이 고루 나와 돌봄을 한 번씩 겪어요 (권함)",
+  today:  "📡 오늘 그 지역 실제 날씨 · 예보 — 진짜 날씨를 보며 배워요 · 날씨가 밋밋하면 할 일이 적을 수 있어요",
+  record: "📅 지난해 같은 때 실제 날씨를 다시 틀기 — 날짜를 골라 비 · 추운 밤이 많던 때로",
+  random: "🎲 맑음 · 비 비율과 추운 밤 · 더운 날 수를 정해 무작위로 — 반마다 다른 3주",
+  custom: "✏️ 날마다 선생님이 직접 — «오늘은 추운 밤» 처럼 일부러 상황을 만들 때",
+};
+function presetNote(k){ const v = PRESETS[k]; if (!v) return ""; return `${v.name} · ☀ ${v.sunny}% · 🌧 ${v.rainy}% · 낮 ${v.tmax[0]}→${v.tmax[1]}° · 밤 ${v.tmin[0]}→${v.tmin[1]}°${v.cold ? ` · 🥶 추운 밤 ${v.cold}번` : ""}${v.hot ? ` · 🔥 더운 날 ${v.hot}번` : ""}`; }
+const _renderWxPanelHelp = renderWxPanel;
+renderWxPanel = function(){
+  const r = _renderWxPanelHelp.apply(this, arguments);
+  const pn = $("wxPanel"); if (!pn) return r;
+  pn.querySelectorAll(".modes .b").forEach(b => { const k = (b.getAttribute("onclick") || "").match(/'mode','(\w+)'/); if (k && WX_HELP[k[1]]) b.title = WX_HELP[k[1]]; });
+  pn.querySelectorAll(".ctl .b").forEach(b => { const k = (b.getAttribute("onclick") || "").match(/'preset','(\w+)'/); if (k) b.title = presetNote(k[1]); });
+  const modes = pn.querySelector(".modes");
+  if (modes) modes.insertAdjacentHTML("afterend", `<div class="wxhelp">${WX_HELP[WXCFG.mode] || ""}${WXCFG.mode === "preset" ? `<br><b>지금 :</b> ${presetNote(WXCFG.preset)}` : ""}</div>`);
+  return r;
+};
+/* ④ 반 설정 줄 맞춤 · ⑤ 비밀번호 👁 · 날씨 도움말 — 반 설정을 그린 뒤 손봄 */
+function pinPeek(btn){ const i = $("sPin"); if (!i) return; const show = i.type === "password"; i.type = show ? "text" : "password"; btn.textContent = show ? "🙈 가리기" : "👁 보기"; }
+const _openSetupTidy = openSetup;
+openSetup = function(){
+  const r = _openSetupTidy.apply(this, arguments);
+  const body = $("setupBody"); if (!body) return r;
+  body.querySelectorAll(".panel > label").forEach(l => {
+    if (l.querySelector(".lk")) return;
+    const first = l.firstChild; if (!first || first.nodeType !== 3 || !first.textContent.trim()) return;
+    const k = document.createElement("span"); k.className = "lk"; k.textContent = first.textContent.trim();
+    const sm = first.nextSibling && first.nextSibling.nodeName === "SMALL" ? first.nextSibling : null;   // 비밀번호 옆 작은 글은 이름 밑으로
+    l.replaceChild(k, first); if (sm){ sm.remove(); sm.style.display = "block"; k.appendChild(sm); }
+    const v = document.createElement("span"); v.className = "lv"; while (k.nextSibling) v.appendChild(k.nextSibling); l.appendChild(v);
+  });
+  const pin = $("sPin"); if (pin && !$("pinPeek")) pin.insertAdjacentHTML("afterend", `<button class="b" id="pinPeek" type="button" onclick="pinPeek(this)">👁 보기</button>`);
+  const wxSel = [...body.querySelectorAll("select")].find(x => /setupDraft\.wx\.mode/.test(x.getAttribute("onchange") || ""));
+  if (wxSel && !$("sWxHelp")){
+    wxSel.setAttribute("onchange", "setupDraft.wx.mode=this.value;document.getElementById('sWxHelp').textContent=WX_HELP[this.value]||''");
+    wxSel.closest("label").insertAdjacentHTML("afterend", `<div class="hint ind" id="sWxHelp">${WX_HELP[setupDraft.wx.mode] || ""}</div>`);
+  }
+  body.querySelectorAll(".panel > .hint").forEach(h => h.classList.add("ind"));
+  return r;
+};
+/* ⑥ 시험 : 반 친구는 가상 15명까지 채움 */
+const FAKE15 = ["시험이", "가나", "다라", "마바", "사아", "자차", "카타", "파하", "거너", "더러", "머버", "서어", "저처", "커터", "퍼허"];
+const _testFillClass15 = testFillClass;
+testFillClass = function(){
+  const have = new Set(CFG.roster || []);
+  if (have.size < 15){ CFG.roster = [...have, ...FAKE15.filter(n => !have.has(n))].slice(0, Math.max(15, have.size)); LS.set("basil.cfg", CFG); }
+  return _testFillClass15.apply(this, arguments);
+};
+/* ⑦ 처음으로 (모두 지우기) — 배포 · 새 학기 · 새 반 전에 이 패드(컴퓨터)를 깨끗이 */
+const _lsSetWipe = LS.set;
+LS.set = function(k){ if (window._wiped && String(k).startsWith("basil.")) return; return _lsSetWipe.apply(this, arguments); };
+function resetAll(){
+  if (!confirm("🧹 이 패드(컴퓨터)에 저장된 것을 모두 지웁니다.\n반 설정 · 학생 명단 · 학생 바질 · 구글 시트 연결\n\n되돌릴 수 없어요. 지울까요?")) return;
+  if (!confirm("정말 모두 지울까요? (마지막 확인)")) return;
+  window._wiped = true; stuName = null;   // 지운 뒤 화면을 떠나며 바질을 다시 저장하지 않게
+  try { Object.keys(localStorage).filter(k => k.startsWith("basil.")).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+  try { Object.keys(sessionStorage).filter(k => k.startsWith("basil.")).forEach(k => sessionStorage.removeItem(k)); } catch (e) {}
+  alert("깨끗해졌어요. 처음 화면(반 설정)부터 다시 시작해요.\n※ 구글 시트에 올라간 자료는 시트에서 따로 지워 주세요.");
+  location.href = location.pathname;
+}
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
