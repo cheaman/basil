@@ -6668,8 +6668,9 @@ const _alertsOfLeafDry = alertsOf;
 alertsOf = function(p){
   const a = _alertsOfLeafDry.apply(this, arguments);
   a.forEach(x => { if (x.k === "leafwet"){
-    const why = p.cover ? " · 🧥 덮개를 씌우면 밤마다 또 젖어요" : p.today && p.today.leafW ? " · 잎에 뿌려서 젖었어요" : "";
+    const why = p.today && p.today.leafW ? " · 잎에 뿌려서 젖었어요" : p.cover ? " · 🧥 덮개를 씌우면 밤마다 또 젖어요" : "";
     x.hint = "👉 가꾸기 칸 <b>🌬 환기</b> 를 누르면 바로 말라요" + why;
+    if (p.today && p.today.leafW) x.word = "잎이 젖었어 — 말려 줘";   // 오늘 잎에 뿌려 젖은 것 = «그대로» 가 아님 (10-05)
     if (!x.ok.includes("vent")) x.ok.push("vent");
   } });
   return a;
