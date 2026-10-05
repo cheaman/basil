@@ -822,6 +822,7 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 .instbox h3 small{font:15px "Noto Sans KR";color:#6b7a70;margin-left:8px}
 .instbox ol{margin:0 0 10px;padding-left:24px;font:18px/1.7 "Noto Sans KR"}
 .instbox .instnote{background:#f4f7f1;border-radius:12px;padding:8px 12px;font:14px/1.6 "Noto Sans KR";color:#5f6e64;margin-bottom:12px}
+.kkbar{position:absolute;left:50%;top:70px;transform:translateX(-50%);z-index:8;background:#fff7e0;border:2px solid #f0c64a;border-radius:14px;padding:8px 16px;font:17px "Jua";color:#5a4510;box-shadow:0 4px 12px rgba(0,0,0,.12);white-space:nowrap}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -6792,6 +6793,18 @@ function instOpen(){
   if (instAsApp()) return;
   const host = document.querySelector("#p1 .frame"); if (!host) return;
   host.insertAdjacentHTML("beforeend", `<button id="instBtn" class="instbtn" onclick="instOpen()">📲 앱으로 깔기</button>`);
+})();
+
+
+/* ═════════ 💬 카카오톡 안 창 → 바깥 브라우저로 (10-05 전무님 «카카오톡에서 열면 바로가기 설정 안 보임») ═════════
+   카톡 안 창에는 «앱 설치 · 홈 화면에 추가» 메뉴가 없음 → 카톡이 주는 «바깥 브라우저로 열기» 길(kakaotalk://web/openExternal)로 한 번 넘김
+   · 넘어가지 못하면(옛 카톡 등) 첫 화면 위에 «⋮ → 다른 브라우저로 열기» 띠 · 한 번 넘겼으면 다시 안 함(되돌아와도 맴돌지 않게) */
+(() => {
+  if (!/KAKAOTALK/i.test(navigator.userAgent)) return;
+  let tried = false; try { tried = !!sessionStorage.getItem("kkOut"); sessionStorage.setItem("kkOut", "1"); } catch (e) {}
+  if (!tried) location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(location.href);
+  const host = document.querySelector("#p1 .frame");
+  if (host) host.insertAdjacentHTML("beforeend", `<div class="kkbar">💬 카카오톡 안에서 열렸어요 → 오른쪽 위 <b>⋮</b> → <b>«다른 브라우저로 열기»</b> 를 누르면 앱으로 깔 수 있어요</div>`);
 })();
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */

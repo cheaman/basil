@@ -32,9 +32,23 @@ th{font:15px "Jua";background:rgba(47,122,42,.08);white-space:nowrap}
 .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
 .warn{background:var(--hi);border-radius:14px;padding:10px 14px}
 @media print{body{background:#fff}main{padding:0}.c,.box,table{break-inside:avoid}}
+/* 좁은 화면 · 사파리 계열에서 표 첫 칸이 한 글자씩 꺾이고 오른쪽 칸이 잘리던 것 (10-05 전무님 사진) */
+td,th{word-break:keep-all;overflow-wrap:anywhere}
+td:first-child,th:first-child{white-space:nowrap}
+@media (max-width:640px){
+  table,tbody,tr,td{display:block;width:auto}
+  tr:has(th){display:none}
+  tr{border-bottom:1px solid var(--line);padding:6px 0}
+  td{border:0;padding:2px 12px}
+  td:first-child{font-family:"Jua";font-size:16px;color:var(--leaf)}
+}
 </style>
 </head>
 <body>
+<script>/* 카카오톡 안 창 → 바깥 브라우저로 (카톡 안 창에는 «앱 설치 · 홈 화면에 추가» 메뉴가 없음) */
+(function(){if(!/KAKAOTALK/i.test(navigator.userAgent))return;try{if(sessionStorage.getItem("kkOut"))return;sessionStorage.setItem("kkOut","1");}catch(e){}
+location.href="kakaotalk://web/openExternal?url="+encodeURIComponent(location.href);})();</script>
+
 <main>
 <h1>🌿 바질 키우기</h1>
 <p class="lead">실과 6 「친환경 재료로 허브 가꾸기」(교과서 72~75쪽)의 바질을, 교실 갤럭시탭에서 <b>3주 동안 실제 날짜대로</b> 가상으로 키우는 웹앱입니다.</p>
