@@ -756,6 +756,7 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #jrBox .predwx .pwd{display:flex;flex-direction:column;align-items:center;background:#fff;border:1px solid #e3dcf7;border-radius:10px;padding:3px 9px;font:12px "Noto Sans KR";color:#4a5a50;line-height:1.3}
 #jrBox .predwx .pwd b{font:13px "Jua";color:#24332a}
 #jrBox .predwx .pwd i{font-style:normal;font-size:20px}
+#jrBox h2 .jrSaveTop{margin-left:auto;width:auto;padding:6px 18px;font-size:19px}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -6357,6 +6358,18 @@ openJournal = function(){
   } catch (e) {}
   return r;
 };
+
+
+/* ═════════ 💾 관찰일지 저장 단추를 맨 위에도 (10-05 전무님 «저장 버튼이 안 보인다» — 키보드 · 작은 화면 · 세로 띠에 아래가 가려질 때) ═════════ */
+function jrSyncTop(){ const b = $("jrSave"), t = document.querySelector("#jrBox .jrSaveTop"); if (b && t) t.textContent = b.textContent; }
+const _openJournalTop = openJournal;
+openJournal = function(){
+  const r = _openJournalTop.apply(this, arguments);
+  try { const h = document.querySelector("#jrBox h2"); if (h && !h.querySelector(".jrSaveTop")){ h.style.display = "flex"; h.style.alignItems = "center"; h.insertAdjacentHTML("beforeend", `<button class="big jrSaveTop" onclick="saveJournal()">✅ 기록</button>`); } jrSyncTop(); } catch (e) {}
+  return r;
+};
+const _saveJournalTop = saveJournal;
+saveJournal = function(){ const r = _saveJournalTop.apply(this, arguments); jrSyncTop(); return r; };
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
