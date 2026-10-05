@@ -715,6 +715,7 @@ img.rphoto{display:block;width:100%;object-fit:cover;border-radius:12px}
 #peekModal .meter{height:16px;border-radius:999px;background:#eef2ea;overflow:hidden}
 #peekModal .meter i{display:block;height:100%;width:0;background:#5aa0d8}
 </style>
+<script src="guide/feedback.js"></script>
 </head>
 <body>
 <div id="rotateHint">📱 ↔ 패드를 가로로 돌려 주세요 — 화면이 크게 보여요</div>
@@ -5780,6 +5781,25 @@ renderCard = function(){
   return r;
 };
 SAY_WORD["카드 저장"] = "성장 카드 그림으로 저장하기"; SAY_WORD["클래스룸에 내기"] = "구글 클래스룸 열기";
+
+
+/* ═════════ 💬 선생님 의견 보내기 (10-05 · 고르기 «구글 폼 + 단추») ═════════
+   폼 주소는 guide/feedback.js 한 곳 (window.BASIL_FEEDBACK) — 비어 있으면 단추가 숨음
+   ?test 일 때만 : 시험기 맨 아래 줄 + 선생님 화면 위쪽 단추 · 아이들 화면(?test 없는 주소)에는 안 나옴 */
+function fbUrl(){ return (window.BASIL_FEEDBACK || "").trim(); }
+function fbOpen(){ const u = fbUrl(); if (u) window.open(u, "_blank"); }
+const _renderTestFb = renderTest;
+renderTest = function(){
+  const r = _renderTestFb.apply(this, arguments);
+  const tp = document.querySelector("#testBox .testp");
+  if (tp && fbUrl() && !tp.querySelector(".fbrow")) tp.insertAdjacentHTML("beforeend", `<div class="tr fbrow"><span>의견</span><button class="b" style="background:#e0a43a;color:#fff" onclick="fbOpen()">💬 의견 보내기 (선생님)</button></div>`);
+  return r;
+};
+(() => {
+  if (!TEST || !fbUrl()) return;
+  const bar = document.querySelector("#p6 .tbar"); if (!bar || bar.querySelector(".fbbtn")) return;
+  bar.insertAdjacentHTML("beforeend", `<button class="b fbbtn" style="background:#e0a43a;color:#fff" onclick="fbOpen()">💬 의견 보내기</button>`);
+})();
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
