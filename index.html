@@ -744,7 +744,7 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #jrBox .jrow .sub small{font-size:12px;color:#8c968f}
 /* 관찰일지 — 저장 뒤 결과 글이 길어져 «✅ 고쳐서 저장» 이 창 밖으로 밀리던 것 (10-05 전무님) → 결과 칸 높이 한도 · 단추 줄은 맨 아래에 붙음 */
 #jrBox #jrRes{max-height:150px;overflow:auto;overscroll-behavior:contain}
-#jrBox .jbtns{position:sticky;bottom:0;background:#fff;padding-top:6px;z-index:2}
+#jrBox .jbtns{padding-top:6px}   /* 떠 있지 않게 (10-05 «기록 버튼이 화면에 떠 있음») — 맨 위 제목 줄에 같은 단추가 늘 있음 */
 #jrBox{max-height:770px;overflow:auto;overscroll-behavior:contain}   /* 어려움 단계에선 창이 화면보다 길어 위가 잘렸음 → 창 안에서 굴림 */
 #jrBox .lfhint{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:3;pointer-events:none;background:rgba(255,255,255,.94);border:2px solid #cfe3c4;border-radius:14px;padding:5px 12px;font:15px "Jua";color:#24332a;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.1);transition:opacity .4s}
 #jrBox .lfhint.gone{opacity:0}
