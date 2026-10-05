@@ -6051,6 +6051,17 @@ function resetAll(){
   location.href = location.pathname;
 }
 
+
+/* ═════════ 🧪 반 설정에서 가상 학생 15명 넣기 (10-05 전무님 «설정 창에서 가상 이름 채우기가 안 보인다») — 시험판(?test)에서만 ═════════ */
+function rosterFake(){ rosterAdd(FAKE15.slice(), "가상 학생"); }
+const _openSetupFake = openSetup;
+openSetup = function(){
+  const r = _openSetupFake.apply(this, arguments);
+  const box = $("sImport");
+  if (TEST && box && !$("sFake")) box.insertAdjacentHTML("afterbegin", `<button class="b" id="sFake" style="background:#fff3dc" onclick="rosterFake()">🧪 가상 학생 15명 넣기</button>`);
+  return r;
+};
+
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
   document.querySelectorAll(".mk-page").forEach(s => s.classList.toggle("on", s.id === id));
