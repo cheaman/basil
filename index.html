@@ -757,6 +757,25 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #jrBox .predwx .pwd b{font:13px "Jua";color:#24332a}
 #jrBox .predwx .pwd i{font-style:normal;font-size:20px}
 #jrBox h2 .jrSaveTop{margin-left:auto;width:auto;padding:6px 18px;font-size:19px}
+#jrBox .predq .ph{font:17px "Jua";margin-bottom:4px}
+#jrBox .predq .ps{display:flex;gap:8px;align-items:flex-start;margin:4px 0;font:14px/1.5 "Noto Sans KR"}
+#jrBox .predq .ps .pn{flex:0 0 22px;height:22px;border-radius:50%;background:#8f7ad8;color:#fff;font:14px "Jua";display:flex;align-items:center;justify-content:center;margin-top:1px}
+#jrBox .predq .ps small{display:block;font-size:12px;color:#6b7a70}
+#jrBox .predq .predwx{display:inline-flex;margin:2px 0 0;vertical-align:middle}
+#jrBox .predq .pbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+#jrBox .predq .pbtn{display:flex;flex-direction:column;align-items:center;border:2px solid #dcd3f5;background:#fff;border-radius:12px;padding:4px 12px;font:14px "Jua";cursor:pointer;min-width:96px}
+#jrBox .predq .pbtn i{font-style:normal;font-size:22px}
+#jrBox .predq .pbtn b{font:15px "Jua";color:#5b46b0}
+#jrBox .predq .pbtn.on{border-color:#5b46b0;background:#efeafd;box-shadow:0 0 0 2px #5b46b0 inset}
+#jrBox .predq .pneed{font:15px "Jua";color:#b0473a}
+#care .tile .hd .qbtn{margin-left:auto;border:0;background:#eef6e8;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer}
+#soilHelpModal .shbox{width:820px;padding:18px 24px}
+#soilHelpModal h2{font:26px "Jua";margin:0 0 8px}
+#soilHelpModal .shrow{display:flex;gap:16px;align-items:flex-start}
+#soilHelpModal .shpic{width:230px;flex:0 0 auto}
+#soilHelpModal .shtxt p{margin:4px 0 8px;font:16px/1.5 "Noto Sans KR"}
+#soilHelpModal .shtip{background:#eaf6e3;border-radius:12px;padding:8px 12px;font:16px/1.5 "Noto Sans KR";margin-top:6px}
+#jrBox .pic{touch-action:none}   /* 그림 칸에서 시작한 손가락은 창을 굴리지 않음 — 자 끌기 · 잎 톡톡 */
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -6220,7 +6239,9 @@ function jrRefit(cm){
   jrView = nv; if (jrDragInit.off) jrDragInit.off(); jrDragInit(); jrBindDragFlag();
   const ln = $("jrLine"); if (ln) ln.setAttribute("transform", `translate(0 ${284 - cm * CMV})`); const t = $("jrLineT"); if (t) t.textContent = cm.toFixed(1);
 }
-function jrBindDragFlag(){ const r = $("jrRul"); if (r) r.addEventListener("pointerdown", () => { _jrDragNow = true; }, true); }
+function jrBindDragFlag(){ const r = $("jrRul"); if (r) r.addEventListener("pointerdown", () => { _jrDragNow = true; const bx = $("jrBox"); if (bx){ bx.dataset.lockY = bx.scrollTop; bx.style.overflow = "hidden"; } }, true); }   // 자 줄을 잡은 동안 창 굴림 잠금 (10-05 «자로 잴 때 칸 전체가 움직인다»)
+window.addEventListener("pointerup", () => { const bx = $("jrBox"); if (bx && bx.style.overflow === "hidden"){ bx.style.overflow = ""; if (bx.dataset.lockY) bx.scrollTop = +bx.dataset.lockY; } });
+window.addEventListener("pointercancel", () => { const bx = $("jrBox"); if (bx) bx.style.overflow = ""; });
 window.addEventListener("pointerup", () => { if (_jrDragNow){ _jrDragNow = false; if (_jrRefitWant != null){ const c = _jrRefitWant; _jrRefitWant = null; jrRefit(c); } } });
 const _jrSetHRefit = jrSetH;
 jrSetH = function(cm){
@@ -6370,6 +6391,95 @@ openJournal = function(){
 };
 const _saveJournalTop = saveJournal;
 saveJournal = function(){ const r = _saveJournalTop.apply(this, arguments); jrSyncTop(); return r; };
+
+
+/* ═════════ 🔮 예상 키 — 세 걸음 길잡이 (10-05 전무님 «예상 짜임이 나도 잘 모르겠다» · 고르기 «세 걸음 길잡이») ═════════
+   ① 지난번 잰 키 → 오늘 잰 키 (며칠 동안 몇 cm) · 기록이 없으면 요즘 하루 성장
+   ② 다음 수업까지 며칠 · 날마다 날씨
+   ③ 덜 / 지난번처럼 / 더 — 앱이 cm 를 계산해 보여 주고 아이는 고름 (어려움은 숫자 직접 + «지난번처럼이면 약 ○cm») */
+function predBasis(p){
+  const today = jrDraft && jrDraft.h !== "" ? +jrDraft.h : null;
+  const prev = (p.notes || []).filter(n => n.d < p.day && n.hIn != null).pop();
+  let rate = 0, info;
+  if (prev && today != null && p.day > prev.d){
+    const dd = p.day - prev.d, dh = today - prev.hIn; rate = Math.max(0, dh / dd);
+    info = `지난번 ${dateLab(prev.d).split(" · ")[1].replace(/^\d+월 /, "")}엔 <b>${(+prev.hIn).toFixed(1)}cm</b> → 오늘 <b>${today.toFixed(1)}cm</b> — ${dd}일 동안 <b>${dh >= 0 ? "+" : ""}${dh.toFixed(1)}cm</b> 컸어요`;
+  } else if (prev){
+    info = `지난번 ${dateLab(prev.d).split(" · ")[1].replace(/^\d+월 /, "")}엔 <b>${(+prev.hIn).toFixed(1)}cm</b> — 오늘 키를 재면 그동안 얼마나 컸는지 나와요`;
+  } else {
+    const h = p.hist || [], b = h[h.length - 1], a = h.filter(x => x.d >= p.day - 3)[0];
+    if (a && b && b.d > a.d) rate = Math.max(0, (b.h - a.h) / (b.d - a.d));
+    info = `지난번 기록이 없어요 — 요즘 하루에 <b>약 ${rate.toFixed(1)}cm</b> 씩 커요`;
+  }
+  return {today, rate, info};
+}
+function predChoices(p){
+  const B = predBasis(p), g = gapToNext(p); if (B.today == null) return null;
+  let grow = B.rate * g; const r1 = x => Math.round(x * 10) / 10;
+  if (grow < .3) return [["less", "🌱", "덜 클 거예요", r1(B.today)], ["same", "🌿", "지난번처럼", r1(B.today + .3)], ["more", "🪴", "더 클 거예요", r1(B.today + .6)]];
+  return [["less", "🌱", "덜 클 거예요", r1(B.today + grow * .5)], ["same", "🌿", "지난번처럼", r1(B.today + grow)], ["more", "🪴", "더 클 거예요", r1(B.today + grow * 1.5)]];
+}
+function jrPredPick(v){
+  jrDraft.pred = String(v);
+  document.querySelectorAll("#jrBox .pbtn").forEach(b => b.classList.toggle("on", +b.dataset.v === v));
+  sfx("tap"); jrLock();
+}
+function jrPredRender(){
+  const box = document.querySelector("#jrBox .predq"), p = me; if (!box || !p) return;
+  const g = gapToNext(p), nl = (dateLab(p.day + g).split(" · ")[1] || "").replace(/^\d+월 /, ""), hard = !!$("jrPin"), B = predBasis(p), C = predChoices(p);
+  const days = Array.from({length: g}, (_, k) => { const d = p.day + k + 1, w = wxOf(d), lab = (dateLab(d).split(" · ")[1] || "").replace(/^\d+월 /, "");
+    return `<span class="pwd"><b>${lab}</b><i>${KIND_ICON[kindOf(w)]}</i>낮 ${Math.round(w.tmax)}° · 밤 ${Math.round(w.tmin)}°</span>`; }).join("");
+  const step3 = B.today == null ? `<span class="pneed">📏 먼저 위에서 오늘 키를 재요</span>`
+    : hard ? `아래 숫자 칸에 적어요 · <b>지난번처럼이면 약 ${C[1][3]}cm</b> <small>(날씨가 좋으면 더 · 나쁘면 덜)</small>`
+    : C.map(([k, ic, w, v]) => `<button class="pbtn ${+jrDraft.pred === v ? "on" : ""}" data-v="${v}" onclick="jrPredPick(${v})"><i>${ic}</i>${w}<b>→ ${v}cm</b></button>`).join("");
+  box.innerHTML = `<div class="ph">🔮 예상해 봐요 — 다음 수업 <b>${nl}</b> · ${g}일 뒤 키는?</div>
+    <div class="ps"><span class="pn">①</span><div>${B.info}</div></div>
+    <div class="ps"><span class="pn">②</span><div>${nl}까지 ${g}일 · 날씨 예보 <span class="predwx">${days}</span><small>☀ 맑고 따뜻하면 더 커요 · 🌧 흐리거나 추우면 덜 커요</small></div></div>
+    <div class="ps"><span class="pn">③</span><div>그러면 ${nl}엔?<div class="pbtns">${step3}</div></div></div>`;
+  const pv = $("jrPv"); if (pv && !hard){ const row = pv.closest(".jrow"); if (row) row.style.display = "none"; }   // 예전 +0 / +1 / +2 줄은 숨김
+}
+const _openJournalPred3 = openJournal;
+openJournal = function(){ const r = _openJournalPred3.apply(this, arguments); try { jrPredRender(); } catch (e) {} return r; };
+const _jrSetHPred3 = jrSetH;
+jrSetH = function(){ const r = _jrSetHPred3.apply(this, arguments); try { if (document.querySelector("#jrBox .predq")) jrPredRender(); } catch (e) {} return r; };
+
+
+/* ═════════ 👆 흙 «겉흙 · 속흙» 알기 쉽게 (10-05 전무님 «말이 너무 간단 · 물을 어떻게 줘야 두 칸이 차는지 모름») ═════════
+   단추 «겉흙 · 속흙» · 칸 머리 ❓ → 그림 설명 창 (어디를 만지나 · 물이 어떻게 스며드나 · 💧 칸 읽는 법 · 그래서 물은) */
+function soilHelp(){
+  let m = $("soilHelpModal");
+  if (!m){ m = document.createElement("div"); m.id = "soilHelpModal"; m.className = "modal"; m.onclick = e => { if (e.target === m) m.classList.remove("on"); }; $("jrModal").parentNode.appendChild(m); }
+  m.innerHTML = `<div class="box shbox"><h2>👆 겉흙 · 👇 속흙 — 어떻게 보나요?</h2>
+    <div class="shrow"><svg viewBox="0 0 220 210" class="shpic">
+      <path d="M30 40 H190 L176 196 Q174 204 166 204 H54 Q46 204 44 196 Z" fill="#d9805a"/>
+      <rect x="34" y="40" width="152" height="18" fill="#c9a27a"/><rect x="36" y="58" width="148" height="132" fill="#6b4a2f"/>
+      <text x="196" y="54" font-size="13" fill="#6b4a2f" font-family="Jua">겉흙</text><text x="196" y="120" font-size="13" fill="#fff" font-family="Jua" style="paint-order:stroke" stroke="#6b4a2f" stroke-width="3">속흙</text>
+      <text x="58" y="44" font-size="26">👆</text><path d="M72 40 v10" stroke="#fff" stroke-width="3"/>
+      <text x="128" y="96" font-size="26">👇</text><path d="M142 40 v36" stroke="#fff" stroke-width="3" stroke-dasharray="4 3"/>
+      <path d="M110 4 v26" stroke="#5aa0d8" stroke-width="4"/><text x="98" y="18" font-size="18">💧</text>
+      <path d="M100 66 q10 14 0 28 M120 66 q10 14 0 28" stroke="#9fd3ff" stroke-width="3" fill="none" opacity=".9"/>
+    </svg>
+    <div class="shtxt">
+      <p><b>👆 겉흙</b> = 흙 맨 위를 손가락 끝으로 살짝 — 햇빛 · 바람에 <b>금방 말라요</b></p>
+      <p><b>👇 속흙</b> = 손가락 한 마디(2~3cm)를 넣어서 — <b>뿌리가 물을 먹는 곳</b>이에요</p>
+      <p><b>💧 물을 주면</b> → 겉흙이 먼저 젖고, 속흙은 천천히 젖어요 (물 일부만 속까지 내려가요)</p>
+      <p><b>칸 읽기</b> : ○○○ 바싹 · 💧○○ 조금 · 💧💧○ 촉촉(좋아요) · 💧💧💧 흠뻑 · 💦 너무 많아요</p>
+    </div></div>
+    <div class="shtip"><b>그래서 물은?</b> 겉흙이 말랐어도 <b>속흙이 💧💧 촉촉하면 물을 참아요</b> (🚱 오늘 그만) · <b>속흙까지 마르면</b> 💧 물을 넉넉히 · 두 칸이 다 💧💧 가 되면 딱 좋아요</div>
+    <div class="rbtns"><button class="big" style="width:auto;padding:8px 26px" onclick="$('soilHelpModal').classList.remove('on')">알았어요</button></div></div>`;
+  m.classList.add("on"); sfx("tap");
+}
+const _renderMeSoil = renderMe;
+renderMe = function(){
+  const r = _renderMeSoil.apply(this, arguments);
+  try {
+    const t = document.querySelectorAll("#care .step.tile")[0]; if (!t) return r;
+    const hd = t.querySelector(".hd"); if (hd && !hd.querySelector(".qbtn")) hd.insertAdjacentHTML("beforeend", `<button class="qbtn" onclick="event.stopPropagation();soilHelp()" title="겉흙 · 속흙이 뭐예요?">❓</button>`);
+    t.querySelectorAll(".row .ib").forEach(b => { const tx = b.lastChild; if (tx && tx.nodeType === 3){ if (tx.textContent === "겉") tx.textContent = "겉흙"; if (tx.textContent === "속") tx.textContent = "속흙"; } });
+  } catch (e) {}
+  return r;
+};
+SAY_WORD["겉흙"] = "겉흙 만져 보기"; SAY_WORD["속흙"] = "속흙 만져 보기";
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
