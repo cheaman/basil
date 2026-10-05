@@ -3749,7 +3749,7 @@ function renderMe(){
     <div class="row tight">${B("🗺", "낮 자리", "openMap()", dead ? "dead" : "")}${B("🌙", p.nightSpot && p.nightSpot !== p.spot ? SPOTS[p.nightSpot].icon + " 밤" : "밤 자리", "openNightMap()", dead ? "dead" : "", nightsAhead(p, nSpot(p), gapToNext(p)) < 10 ? "main" : p.nightSpot && p.nightSpot !== p.spot ? "sel" : "")}${L !== "easy" && (p.spot === "window" || p.spot === "side") ? B("🪟", p.blind ? "올리기" : "내리기", `doBlind(${!p.blind})`, dead ? "dead" : "", p.blind ? "sel" : "") : ""}${L === "hard" ? B("🧥", p.cover ? "벗기기" : "덮개", "toggleCover()", dead ? "dead" : "", p.cover ? "sel" : "") : ""}</div>`;
   // ④ 가꾸기
   const prog = [lk.pinch === "grow" ? (p.h < 10 ? `✂ 📏${p.h.toFixed(1)}/10` : `✂ 🍃${leaves(p)}/8`) : "", lk.pick === "pick" && !p.done ? (leaves(p) < 10 ? `🧺 🍃${leaves(p)}/10` : `🧺 ⏳${3 - (p.day - p.lastPick)}일`) : p.harvested ? `🧺 ${p.harvested}장` : ""].filter(Boolean).join("　");   // 가장 가까운 조건 하나씩만
-  const garden = `<div class="row tight">${B("🌬", "환기", "ventNow()", dead ? "dead" : p.today.vent ? "done" : "", (p.air ?? 80) < 50 ? "main" : "")}${L === "easy" ? "" : B("🥚", "비료", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}${B("🔍", "잎 뒤", "peekLeaf()", dead ? "dead" : "")}</div><div class="tiny">${prog}</div>`;
+  const garden = `<div class="row tight">${B("🌬", "환기", "ventNow()", dead ? "dead" : p.today.vent && !((p.leafWet || 0) >= 1.5) ? "done" : "", (p.air ?? 80) < 50 || (p.leafWet || 0) >= 1.5 ? "main" : "")}${L === "easy" ? "" : B("🥚", "비료", "doFert()", lk.fert)}${B("✂", "순", "doPinch()", lk.pinch)}${B("🧺", "잎", "doPick()", lk.pick)}${B("🔍", "잎 뒤", "peekLeaf()", dead ? "dead" : "")}</div><div class="tiny">${prog}</div>`;
   // ⑤ 일지
   const lp = lastPred(p), n = p.notes[p.notes.length - 1];
   const jrNote = p.today.journal && n ? `📏 ${n.hIn}${n.lIn != null && L !== "easy" ? ` · 🍃 ${n.lIn}` : ""}` : (lp && !lp.checked && L !== "easy") ? `🔮 지난 예상 ${lp.pred}?` : "";
@@ -6642,6 +6642,32 @@ openJournal = function(){
 window.addEventListener("resize", () => { try { jrFit(); } catch (e) {} });
 ["jrLock", "jrMarks", "jrPredRender", "saveJournal"].forEach(n => { const f = window[n]; if (typeof f !== "function") return;   // 칸을 고칠 때마다 바로 다시 맞춤 (크기 감지가 늦는 기기 대비)
   window[n] = function(){ const r = f.apply(this, arguments); try { jrFit(); } catch (e) {} return r; }; });
+
+
+/* ═════════ 💧🍃 «잎에 물방울이 그대로야» 를 그 자리에서 풀기 (10-05 전무님 «어떻게 해결해야 되는지 매우 어려워한다») ═════════
+   전에는 잎 물방울이 «밤이 지나야만» 줄어 수업 중엔 무엇을 해도 알림이 안 사라졌음 · 환기는 하루 한 번 누르면 잠김
+   → 🌬 환기를 누르면 바로 잎이 마름 (바람이 잘 통하면 잎이 마른다 — 교과서) · 잎이 젖어 있으면 환기를 또 누를 수 있음
+   → 알림 아래 글 : 무엇을 누르나 + 왜 자꾸 젖나 (🧥 덮개 · 잎에 뿌림) */
+const _ventNowDry = ventNow;
+ventNow = function(){
+  const wet = me && !me.dead && (me.leafWet || 0) >= .3;
+  const r = _ventNowDry.apply(this, arguments);
+  if (wet && me && !me.dead){
+    me.leafWet = 0; renderMe();
+    setTimeout(() => toast("🌬 바람이 잘 통해 잎의 물방울이 말랐어요 💨🍃"), 900);
+  }
+  return r;
+};
+const _alertsOfLeafDry = alertsOf;
+alertsOf = function(p){
+  const a = _alertsOfLeafDry.apply(this, arguments);
+  a.forEach(x => { if (x.k === "leafwet"){
+    const why = p.cover ? " · 🧥 덮개를 씌우면 밤마다 또 젖어요" : p.today && p.today.leafW ? " · 잎에 뿌려서 젖었어요" : "";
+    x.hint = "👉 가꾸기 칸 <b>🌬 환기</b> 를 누르면 바로 말라요" + why;
+    if (!x.ok.includes("vent")) x.ok.push("vent");
+  } });
+  return a;
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
