@@ -742,6 +742,10 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #jrBox .predq{font:16px "Jua";color:#24332a;background:#f6f3ff;border-radius:12px;padding:6px 12px;margin:4px 0 -2px;line-height:1.45}
 #jrBox .predq small{display:block;font:13px "Noto Sans KR";color:#6b7a70}
 #jrBox .jrow .sub small{font-size:12px;color:#8c968f}
+/* 관찰일지 — 저장 뒤 결과 글이 길어져 «✅ 고쳐서 저장» 이 창 밖으로 밀리던 것 (10-05 전무님) → 결과 칸 높이 한도 · 단추 줄은 맨 아래에 붙음 */
+#jrBox #jrRes{max-height:150px;overflow:auto;overscroll-behavior:contain}
+#jrBox .jbtns{position:sticky;bottom:0;background:#fff;padding-top:6px;z-index:2}
+#jrBox{max-height:770px;overflow:auto;overscroll-behavior:contain}   /* 어려움 단계에선 창이 화면보다 길어 위가 잘렸음 → 창 안에서 굴림 */
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -6223,7 +6227,18 @@ function jrDots(){
   g.innerHTML = lfs.filter(l => !l.dataset.o).map(l => `<circle cx="${l.dataset.cx}" cy="${l.dataset.cy}" r="3.4" fill="#fff" stroke="#2f7a2a" stroke-width="1.3"/>`).join("");
 }
 const _jrMarksDots = jrMarks;
-jrMarks = function(){ const r = _jrMarksDots.apply(this, arguments); try { jrDots(); } catch (e) {} return r; };
+jrMarks = function(){
+  const r = _jrMarksDots.apply(this, arguments);
+  try {
+    jrDots();
+    /* 번호 동그라미가 옆 작은 잎을 덮고, 동그라미를 누르면 밑 잎에 안 닿던 것 (10-05 전무님) → 작게 · 반투명 · 누름은 통과 */
+    const ck = document.querySelector("#jrBox .pic .pl svg .ckm");
+    if (ck){ ck.setAttribute("pointer-events", "none");
+      ck.querySelectorAll("circle").forEach(c => { c.setAttribute("r", "3.8"); c.setAttribute("fill-opacity", ".82"); c.setAttribute("stroke-width", ".7"); });
+      ck.querySelectorAll("text").forEach(t => { t.setAttribute("font-size", "5.2"); t.setAttribute("y", (+t.getAttribute("y") - 0.6).toFixed(1)); }); }
+  } catch (e) {}
+  return r;
+};
 const _openJournalFit = openJournal;
 openJournal = function(){
   const r = _openJournalFit.apply(this, arguments);
@@ -6251,6 +6266,44 @@ openJournal = function(){
       sp.innerHTML = `그때까지 날씨 ${sp.textContent.replace(/^그때까지 /, "")}<br><small>☀ 맑고 따뜻한 날이 많으면 더 커요 · 🌧 흐리거나 추우면 덜 커요</small>`; } });
   } catch (e) {}
   return r;
+};
+
+
+/* ═════════ 📏 일지 점수 = 채운 만큼 (10-05 전무님 «일지를 다 못 채웠는데 100점») ═════════
+   전에는 키만 적으면 10 + 정확 5 = 만점 → 이제 «일지 칸 다 채우기 10 × 채운 비율» + «처음 적은 키가 정확 +5»
+   채울 칸 = 키 · 잎 수(보통 · 어려움) · 잎 색(어려움) · 본 것 · 예상(어려움) — 관찰일지 «아직 안 한 것» 과 같음 */
+function jrNeedN(){ const L = LV(), seed = stage(me) === 0; return 1 + (L !== "easy" && !seed ? 1 : 0) + (L === "hard" && !seed ? 1 : 0) + 1 + (L === "hard" ? 1 : 0); }
+const _saveJournalScore = saveJournal;
+saveJournal = function(){
+  const r = _saveJournalScore.apply(this, arguments);
+  try {
+    const miss = jrMissing(), td = me.today, L = LV(), seed = stage(me) === 0, n = me.notes.filter(x => x.d === me.day).pop();
+    td.jrNeedN = jrNeedN(); td.jrMissN = miss.length; td.jrMissT = miss.join(" · ");
+    if (L === "hard" && !seed && n && n.color && td.jrColorOk == null) td.jrColorOk = n.color === leafColorName(me);   // 잎 색 — 처음 고른 것으로
+    saveMe(); renderMe();
+  } catch (e) {}
+  return r;
+};
+/* 일지 15 = 칸 채우기 7 × 채운 비율 + 맞힌 것 8 × 맞힌 비율 (키 · 잎 수(보통 · 어려움) · 잎 색(어려움) — 모두 처음 적은 것으로) — 10-05 «틀린 내용이 있는데도 100점» */
+function jrScoreParts(p){
+  const td = p.today, L = LV(), seed = stage(p) === 0, need = td.jrNeedN, done = Math.max(0, need - (td.jrMissN || 0));
+  const acc = [["키", !!(td.jrH && td.jrAcc)]];
+  if (L !== "easy" && !seed) acc.push(["잎 수", !!td.accL]);
+  if (L === "hard" && !seed) acc.push(["잎 색", !!td.jrColorOk]);
+  const ok = acc.filter(a => a[1]).length, fill = Math.round(7 * done / need), right = Math.round(8 * ok / acc.length);
+  return {jr: fill + right, fill, right, done, need, acc};
+}
+const _todayScoreJr = todayScore;
+todayScore = function(p){
+  const s = _todayScoreJr.apply(this, arguments), td = p && p.today;
+  if (td && td.journal && td.jrNeedN && !p.dead){ const j = jrScoreParts(p); s.total += j.jr - s.jr; s.jr = j.jr; }
+  return s;
+};
+const _scoreWhyJr = scoreWhy;
+scoreWhy = function(p, k){
+  if (k !== "jr" || !p.today || !p.today.journal || !p.today.jrNeedN) return _scoreWhyJr.apply(this, arguments);
+  const td = p.today, j = jrScoreParts(p);
+  return `<b>📏 일지 ${j.jr}/15</b> — 칸 채우기 ${j.done}/${j.need} → ${j.fill}/7${td.jrMissT ? ` (아직 : ${td.jrMissT})` : " ✔"} · 맞힌 것 ${j.acc.map(a => a[0] + " " + (a[1] ? "✔" : "✘")).join(" · ")} → ${j.right}/8 <small>(처음 적은 것으로)</small>`;
 };
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
