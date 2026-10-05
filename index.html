@@ -6062,6 +6062,27 @@ openSetup = function(){
   return r;
 };
 
+
+/* ═════════ 학생 명단 칸도 가나다순으로 (10-05 전무님 «학생 이름 칸 정렬된 채로») ═════════
+   붙여 넣기 · 가상 15명 · 파일 · ✕ 빼기 뒤 바로 · 손으로 칠 때는 칸을 벗어날 때(겹친 이름은 하나로) */
+function rosterSortBox(){
+  const ta = $("sRoster"); if (!ta || !setupDraft) return;
+  const names = [...new Set(setupDraft.roster.map(x => x.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ko"));
+  setupDraft.roster = names; ta.value = names.join("\n");
+}
+const _rosterAddSort = rosterAdd;
+rosterAdd = function(){ const r = _rosterAddSort.apply(this, arguments); rosterSortBox(); setupLock(); return r; };
+const _rosterDelSort = rosterDel;
+rosterDel = function(){ const r = _rosterDelSort.apply(this, arguments); rosterSortBox(); return r; };
+const _openSetupSort = openSetup;
+openSetup = function(){
+  const r = _openSetupSort.apply(this, arguments);
+  const ta = $("sRoster");
+  if (ta && !ta.dataset.sortbind){ ta.dataset.sortbind = "1"; ta.addEventListener("blur", () => { rosterSortBox(); setupLock(); }); }
+  rosterSortBox();
+  return r;
+};
+
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
   document.querySelectorAll(".mk-page").forEach(s => s.classList.toggle("on", s.id === id));
