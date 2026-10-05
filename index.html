@@ -2766,7 +2766,7 @@ function buildWXApp(){ buildWX(); if (WXCFG.mode === "today") WX_SRC = `오늘 �
 /* ── 반 설정 화면 ── */
 let setupDraft = null;
 function openSetup(){
-  const c = CFG || {className:"", start: new Date(Date.now() + 2 * DAYMS).toISOString().slice(0, 10), days:[1, 4], roster:[], pin:"", level:"normal", speed:2, startAs:"seed", demo:false, dayOffset:0, sound:true, teacher:"", wx:{mode:"preset", preset:"autumn", region:"대전", dir:"남향"}};
+  const c = CFG || {className:"", start: new Date(Date.now() + 2 * DAYMS).toISOString().slice(0, 10), days:[1, 4], roster:[], pin:"", level:"normal", speed:2, startAs:"seedling", demo:false, dayOffset:0, sound:true, teacher:"", wx:{mode:"preset", preset:"autumn", region:"대전", dir:"남향"}};
   setupDraft = JSON.parse(JSON.stringify(c));
   const d = setupDraft, D = ["일","월","화","수","목","금","토"];
   $("setupBody").innerHTML = `<div class="panel">
@@ -3439,7 +3439,7 @@ if (TEST){ try { sessionStorage.setItem("basil.test", "1"); } catch (e) {} }
 /* 10-05 : 저절로 만들지 않음 — «처음으로» 로 지운 뒤 ?test 로 들어오면 시험반이 다시 생겨 «자료가 남았다» 로 보였음 → 반 설정 화면의 «🧪 시험반으로 시작» 단추로만 */
 function makeTestCfg(){
   const d0 = new Date(); d0.setHours(0, 0, 0, 0); const f = x => new Date(x - x.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라", "마바", "사아", "자차", "카타", "파하", "거너", "더러", "머버", "서어", "저처", "커터", "퍼허"], pin: "0000", level: "normal", speed: 2, startAs: "seed", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "preset", preset: "autumn", region: "대전", dir: "남향"}});
+  LS.set("basil.cfg", {className: "시험반", start: f(d0), days: [1, 2, 3, 4, 5], roster: ["시험이", "가나", "다라", "마바", "사아", "자차", "카타", "파하", "거너", "더러", "머버", "서어", "저처", "커터", "퍼허"], pin: "0000", level: "normal", speed: 2, startAs: "seedling", demo: false, dayOffset: 0, sound: true, teacher: "", wx: {mode: "preset", preset: "autumn", region: "대전", dir: "남향"}});
 }
 function nowDate(){ const now = new Date(); now.setHours(0, 0, 0, 0); if (CFG && (CFG.demo || TEST) && CFG.dayOffset) now.setDate(now.getDate() + CFG.dayOffset); return now; }
 let testOpen = true, testCare = "care";
