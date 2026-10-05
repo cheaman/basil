@@ -734,6 +734,14 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 .stest{grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:#fff3dc;border:2px dashed #e0a43a;border-radius:16px;padding:10px 16px;font:17px "Jua";margin-bottom:10px}
 .stest .big{width:auto;padding:10px 22px;font-size:20px;background:#e0a43a}
 .setup .demohelp{line-height:1.6;background:#f6f9f3;border-radius:10px;padding:6px 10px}
+#care .step.tile.nextup{position:relative;animation:nxtGlow 1.1s ease-in-out infinite alternate;z-index:1}
+@keyframes nxtGlow{from{box-shadow:0 0 0 3px #f0c64a,0 0 6px rgba(240,198,74,.5)}to{box-shadow:0 0 0 5px #f0c64a,0 0 22px rgba(240,198,74,.95)}}
+#care .step.tile .nxt{position:absolute;top:-12px;right:10px;background:#e0a43a;color:#fff;font:16px "Jua";padding:3px 12px;border-radius:999px;box-shadow:0 3px 8px rgba(0,0,0,.18);animation:nxtBob .9s ease-in-out infinite alternate;pointer-events:none}
+@keyframes nxtBob{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+#score .alldone{font:15px "Jua";color:#2f7a2a;background:#e3f2dc;border-radius:999px;padding:2px 10px;margin-left:6px;white-space:nowrap}
+#jrBox .predq{font:16px "Jua";color:#24332a;background:#f6f3ff;border-radius:12px;padding:6px 12px;margin:4px 0 -2px;line-height:1.45}
+#jrBox .predq small{display:block;font:13px "Noto Sans KR";color:#6b7a70}
+#jrBox .jrow .sub small{font-size:12px;color:#8c968f}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -4307,7 +4315,7 @@ openJournal = function(){
   const plant = basilSVG(bare).replace('viewBox="0 0 300 400"', `viewBox="${v.x} ${v.y} ${v.w} ${v.h}"`);
   const none = `<span class="sub">🌱 아직 잎이 없어요</span>`;
   const leafRow = L === "easy" ? "" : `<div class="jrow"><span class="k">🍃</span>${seed ? none
-      : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onpointerdown="jrHold(-1,'l')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(1,'l')" onpointerleave="jrHoldEnd()">▲</button><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 그림의 잎을 톡톡</span>`}</div>`;
+      : `<span class="val empty" id="jrLv">?</span><span>장</span><button class="nb" onpointerdown="jrHold(-1,'l')" onpointerleave="jrHoldEnd()">▼</button><button class="nb" onpointerdown="jrHold(1,'l')" onpointerleave="jrHoldEnd()">▲</button><button class="nb" onclick="jrLeafClear()" title="처음부터">↺</button><span class="sub">👆 흰 점이 있는 잎을 톡톡 — 작은 잎 · 뒤쪽 잎도 한 장</span>`}</div>`;
   const colorRow = L !== "hard" || seed ? "" : `<div class="jrow"><span class="k">🍃</span><span class="cl" style="line-height:1.15">잎에서<br>가장 많은 색</span>
       <div class="sws">${JR_COLORS.map(([c, hx]) => `<button class="sw" data-c="${c}" onclick="jrColor('${c}')"><i style="background:${hx}"></i>${c}</button>`).join("")}</div></div>
     <div class="jrow" style="margin-top:-6px"><span class="k" style="background:none">➕</span><span class="cl" style="line-height:1.15">잎에<br>또 보이는 색</span>
@@ -6133,6 +6141,117 @@ openSetup = function(){
 /* ═════════ 📱 앱처럼 깔기 (10-05 · 고르기 «앱처럼 깔기 + 아이콘 A») ═════════
    manifest.webmanifest(전체 화면 · 가로) + icons/ + sw.js(담아 두지 않음) → 패드마다 «홈 화면에 추가 / 앱 설치» 한 번 → 주소창 없이 열림 */
 try { if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js"); } catch (e) {}
+
+
+/* ═════════ 👉 오늘 할 일 — 다음 칸 하나만 반짝 (10-05 전무님 «어디부터 해야 하는지» · 고르기 «다음 칸 하나만 반짝») ═════════
+   ① 흙(만져 봄) → ② 물(줬거나 오늘 그만) → ③ 자리(지도를 열어 봤거나 이미 가장 좋은 자리) → ④ 가꾸기(할 일이 있을 때만) → ⑤ 일지(썼음)
+   그날 처음 칸은 «👉 여기부터!» · 그다음은 «👉 다음» · 다 하면 점수 줄에 «🎉 오늘 할 일 끝!» */
+function todaySteps(p){
+  const td = p.today || {}, sc = todayScore(p);
+  return [!!td.checked, !!(td.watered || td.noWater), !!td.spotSeen || sc.spot >= 20, sc.care >= 15, !!td.journal];
+}
+function markSpotSeen(){ if (me && me.today && !me.today.spotSeen){ me.today.spotSeen = true; try { saveMe(); } catch (e) {} } }
+const _openMapNx = openMap; openMap = function(){ markSpotSeen(); return _openMapNx.apply(this, arguments); };
+const _openNightMapNx = openNightMap; openNightMap = function(){ markSpotSeen(); return _openNightMapNx.apply(this, arguments); };
+const _renderMeNx = renderMe;
+renderMe = function(){
+  const r = _renderMeNx.apply(this, arguments);
+  try {
+    const tiles = document.querySelectorAll("#care .step.tile"); if (!me || tiles.length < 5) return r;
+    tiles.forEach(t => { t.classList.remove("nextup"); const b = t.querySelector(".nxt"); if (b) b.remove(); });
+    const old = document.querySelector("#score .alldone"); if (old) old.remove();
+    if (me.dead || me.done || (typeof PEEK !== "undefined" && PEEK)) return r;
+    const st = todaySteps(me), i = st.indexOf(false);
+    if (i < 0){ const sc = document.querySelector("#score .sbig"); if (sc) sc.insertAdjacentHTML("afterend", `<span class="alldone">🎉 오늘 할 일 끝!</span>`); return r; }
+    const td = me.today || {}, first = !(td.checked || td.watered || td.noWater || td.spotSeen || td.journal);   // 학생이 오늘 직접 한 것이 없으면 «여기부터»
+    tiles[i].classList.add("nextup");
+    tiles[i].insertAdjacentHTML("beforeend", `<span class="nxt">👉 ${first ? "여기부터!" : "다음"}</span>`);
+  } catch (e) {}
+  return r;
+};
+
+
+/* ═════════ 📏 관찰일지 그림 손질 (10-05 전무님 «잎 세기가 헷갈림 · 잎 셀 때 키가 바뀜 · 20cm 면 자가 밖으로 · 또 보이는 색이 모자람») ═════════ */
+const SVGNS = "http://www.w3.org/2000/svg";
+/* ① 그림 칸 = 바질 전체 + 왼쪽 자 자리 (전에는 키로만 맞춰 옆 잎이 잘렸음) */
+function plantBoxOf(p){
+  try {
+    let hb = document.getElementById("_pbox");
+    if (!hb){ hb = document.createElement("div"); hb.id = "_pbox"; hb.style.cssText = "position:absolute;left:-9999px;top:0;width:300px;height:400px;visibility:hidden"; document.body.appendChild(hb); }
+    hb.innerHTML = basilSVG(Object.assign({}, p, {deco: null, leafWet: 0, snail: 0, flower: false}));
+    const g = hb.querySelector(".plantg"); return g ? g.getBBox() : null;
+  } catch (e) { return null; }
+}
+const _jrViewOfFit = jrViewOf;
+jrViewOf = function(p){
+  const v = _jrViewOfFit.apply(this, arguments), b = plantBoxOf(p);
+  if (!b || !b.width) return v;
+  const x0 = Math.min(v.x, b.x - 34), x1 = Math.max(v.x + v.w, b.x + b.width + 10), y0 = Math.min(v.y, b.y - 12);
+  return {x: x0, y: y0, w: x1 - x0, h: v.y + v.h - y0};
+};
+/* ③ 자 — 키 줄은 자 기둥 · ✋ 손잡이에서만 (전에는 줄 높이의 그림 폭 전체가 누름 자리라 잎을 누르면 키가 바뀜) */
+const _jrRulerSVGNarrow = jrRulerSVG;
+jrRulerSVG = function(v){
+  return _jrRulerSVGNarrow.apply(this, arguments).replace(/<rect class="hit" x="([\d.\-]+)" y="-7" width="[\d.\-]+" height="14" fill="transparent"\/>/, '<rect class="hit" x="$1" y="-7" width="26" height="14" fill="transparent"/>');
+};
+/* ④ 키를 그림 칸보다 크게 올리면 칸을 위로 늘림 (끄는 중에는 손을 뗀 뒤에) */
+let _jrDragNow = false, _jrRefitWant = null;
+function jrRefit(cm){
+  const v = jrView, need = 284 - cm * CMV - 16; if (!v || need >= v.y) return;
+  const nv = {x: v.x, y: need, w: v.w, h: v.y + v.h - need};
+  const pl = document.querySelector("#jrBox .pic .pl svg"); if (pl) pl.setAttribute("viewBox", `${nv.x} ${nv.y} ${nv.w} ${nv.h}`);
+  const rul = $("jrRul"); if (rul){ rul.outerHTML = jrRulerSVG(nv); }
+  jrView = nv; if (jrDragInit.off) jrDragInit.off(); jrDragInit(); jrBindDragFlag();
+  const ln = $("jrLine"); if (ln) ln.setAttribute("transform", `translate(0 ${284 - cm * CMV})`); const t = $("jrLineT"); if (t) t.textContent = cm.toFixed(1);
+}
+function jrBindDragFlag(){ const r = $("jrRul"); if (r) r.addEventListener("pointerdown", () => { _jrDragNow = true; }, true); }
+window.addEventListener("pointerup", () => { if (_jrDragNow){ _jrDragNow = false; if (_jrRefitWant != null){ const c = _jrRefitWant; _jrRefitWant = null; jrRefit(c); } } });
+const _jrSetHRefit = jrSetH;
+jrSetH = function(cm){
+  const r = _jrSetHRefit.apply(this, arguments), c = +jrDraft.h;
+  if (jrView && 284 - c * CMV - 16 < jrView.y){ if (_jrDragNow) _jrRefitWant = c; else jrRefit(c); }
+  return r;
+};
+/* ② 잎 세기 — 셀 잎마다 흰 점 · 작은 잎은 누름 자리를 넓힘 */
+function jrDots(){
+  const svg = document.querySelector("#jrBox .pic .pl svg"); if (!svg) return;
+  const lfs = [...svg.querySelectorAll(".lf")];
+  lfs.forEach(l => { if (l.querySelector(".lfhit")) return; const b = l.getBBox(), c = document.createElementNS(SVGNS, "circle");
+    c.setAttribute("class", "lfhit"); c.setAttribute("cx", b.x + b.width / 2); c.setAttribute("cy", b.y + b.height / 2); c.setAttribute("r", Math.max(9, Math.min(b.width, b.height) / 2)); c.setAttribute("fill", "transparent"); l.dataset.cx = b.x + b.width / 2; l.dataset.cy = b.y + b.height / 2; l.appendChild(c); });
+  let g = svg.querySelector(".lfdots");
+  if (!g){ g = document.createElementNS(SVGNS, "g"); g.setAttribute("class", "lfdots"); g.setAttribute("pointer-events", "none"); svg.insertBefore(g, svg.querySelector(".ckm")); }
+  g.innerHTML = lfs.filter(l => !l.dataset.o).map(l => `<circle cx="${l.dataset.cx}" cy="${l.dataset.cy}" r="3.4" fill="#fff" stroke="#2f7a2a" stroke-width="1.3"/>`).join("");
+}
+const _jrMarksDots = jrMarks;
+jrMarks = function(){ const r = _jrMarksDots.apply(this, arguments); try { jrDots(); } catch (e) {} return r; };
+const _openJournalFit = openJournal;
+openJournal = function(){
+  const r = _openJournalFit.apply(this, arguments);
+  try { jrDots(); jrBindDragFlag(); } catch (e) {}
+  return r;
+};
+/* «잎에 또 보이는 색» 고르기 — 진초록 · 거무스름 더함 (전엔 연두 · 노랑 · 갈색 · 흰색 넷뿐) */
+if (!JR_OTHER.some(x => x[0] === "진초록")) JR_OTHER.unshift(["진초록", "#3e8e3a"]);
+if (!JR_OTHER.some(x => x[0] === "거무스름")) JR_OTHER.push(["거무스름", "#3f5640"]);
+
+
+/* ═════════ 🔮 관찰일지 «다음 수업 예상» 을 알기 쉽게 (10-05 전무님 «무엇을 써야 하는지 · 그때까지 날씨가 무슨 뜻인지 불명확») ═════════
+   예상 줄 위에 물음 한 줄 · 단추에 몇 cm 인지 · 날씨 줄에 뜻 */
+JR_PREDS[0][3] = "그대로 +0"; JR_PREDS[1][3] = "조금 +1cm"; JR_PREDS[2][3] = "많이 +2cm";
+const _openJournalPred = openJournal;
+openJournal = function(){
+  const r = _openJournalPred.apply(this, arguments);
+  try {
+    const p = me, el = $("jrPv") || $("jrPin"); if (!el || !p) return r;
+    const row = el.closest(".jrow"), nl = (dateLab(p.day + gapToNext(p)).split(" · ")[1] || "").replace(/^\d+월 /, ""), g = gapToNext(p);
+    if (row && !document.querySelector("#jrBox .predq")) row.insertAdjacentHTML("beforebegin",
+      `<div class="predq">🔮 <b>예상해 봐요</b> — 다음 수업 ${nl}, ${g}일 뒤에는 키가 몇 cm 일까요?<small>오늘 잰 키에서 얼마나 클지 ${$("jrPin") ? "숫자로 적어요" : "골라요"} · 다음 시간에 진짜 키와 견줘 봐요</small></div>`);
+    const pv = $("jrPv"); if (pv && /땐\?$/.test(pv.textContent)) pv.textContent = "👆 하나 골라요";
+    document.querySelectorAll("#jrBox .jrow .sub").forEach(sp => { if (/^그때까지 /.test(sp.textContent) && !sp.dataset.wx){ sp.dataset.wx = "1";
+      sp.innerHTML = `그때까지 날씨 ${sp.textContent.replace(/^그때까지 /, "")}<br><small>☀ 맑고 따뜻한 날이 많으면 더 커요 · 🌧 흐리거나 추우면 덜 커요</small>`; } });
+  } catch (e) {}
+  return r;
+};
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
