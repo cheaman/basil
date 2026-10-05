@@ -810,6 +810,12 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #jrBox .lfhint small{font-size:13px!important}
 @keyframes lfpulse{50%{opacity:.25}}
 #jrBox .pic:has(.lfhint:not(.gone)) .lfdots circle{animation:lfpulse 1.1s ease-in-out infinite}
+#care .caretodo{margin-top:6px;background:#fff7e0;border:2px solid #f0c64a;border-radius:12px;padding:5px 9px;font:13px "Noto Sans KR";color:#4a3a10;line-height:1.45}
+#care .caretodo b{display:block;font:15px "Jua";color:#a0620a;margin-bottom:1px}
+#care .caretodo.ok{background:#eaf7e3;border-color:#9ccf86}
+#care .caretodo.ok b{color:#2f7a2a;margin:0}
+.th .build{font:12px "Noto Sans KR";color:#8a8a8a}
+#jrBox h2 .keptbtn{margin-left:10px;border:2px solid #f0c64a;background:#fff7e0;border-radius:999px;padding:3px 12px;font:15px "Jua";color:#a0620a;cursor:pointer;vertical-align:middle}
 #peekModal{z-index:40}
 #peekModal .pkbox{width:900px;height:560px;padding:18px 26px;display:flex;flex-direction:column;gap:10px}
 #peekModal .shd{display:flex;align-items:center;gap:12px;font:28px "Jua"}
@@ -6667,6 +6673,73 @@ alertsOf = function(p){
     if (!x.ok.includes("vent")) x.ok.push("vent");
   } });
   return a;
+};
+
+
+/* ═════════ 🌿 가꾸기 칸에 «남은 일» (10-05 전무님 «가꾸기 단추를 다 한 번씩 눌렀는데 점수가 안 오른다») ═════════
+   가꾸기 점수는 «누르면 오르는» 점수가 아니라 «남은 문제마다 −5» — 말풍선의 생긴 일(달팽이 · 화분 …)은 가꾸기 단추로 안 풀림
+   → 가꾸기 칸 아래에 지금 깎이는 것을 «어디서 무엇을» 로 보임 · 다 풀면 «✔ 가꾸기 끝» */
+function careTodo(p){
+  const td = p.today || {}, out = [];
+  if (p.saucer > 0) out.push("🍽 받침 물 → 💧 칸 🪴 물 빼기");
+  if (p.moist > 95) out.push("💦 흙물 너무 많음 → 🪴 물 빼기");
+  if ((p.air ?? 80) < 50 && !td.vent) out.push("🌬 환기 누르기");
+  if (p.bug) out.push("🐛 벌레 → 🔍 잎 뒤 보고 씻기");
+  if (sickList(p).filter(x => x !== "bug" && x !== "wet").length && !td.diag) out.push("🩺 진찰 (말풍선)");
+  if (LV() !== "easy" && stage(p) >= 2 && p.nutr < 25 && !td.fert) out.push("🥚 비료 주기");
+  evPending(p).forEach(e => out.push(`${EV[e.k].pic} ${EV[e.k].how} (바질 그림 · 말풍선)`));
+  if (td.fert && p.day - (p.prevFert ?? -99) < 6) out.push("🥚 비료를 너무 자주 줬어요 — 오늘은 −5 (6일에 한 번)");
+  return out;
+}
+const _renderMeCareTodo = renderMe;
+renderMe = function(){
+  const r = _renderMeCareTodo.apply(this, arguments);
+  try {
+    if (!me || me.dead || !stuName) return r;
+    const t = [...document.querySelectorAll("#care .tile")].find(x => /가꾸기/.test((x.querySelector(".hd") || {}).textContent || "")); if (!t) return r;
+    const sc = todayScore(me).care, list = careTodo(me);
+    t.insertAdjacentHTML("beforeend", list.length
+      ? `<div class="caretodo"><b>🌿 ${sc}/15 — 남은 일 ${list.length}</b>${list.slice(0, 4).map(x => `<div>· ${x}</div>`).join("")}</div>`
+      : `<div class="caretodo ok"><b>✔ 오늘 가꾸기 끝! 🌿 ${sc}/15</b></div>`);
+  } catch (e) {}
+  return r;
+};
+/* 🧪 시험기 머리에 «판 시각» — 패드가 새 판을 받았는지 바로 확인 (공개 주소는 올린 뒤 최대 10분 옛 판) */
+const BUILD_AT = "10-05 10:38";
+const _renderTestBuild = typeof renderTest === "function" ? renderTest : null;
+if (_renderTestBuild) renderTest = function(){
+  const r = _renderTestBuild.apply(this, arguments);
+  try { document.querySelectorAll(".th").forEach(h => { if (!h.querySelector(".build")) h.insertAdjacentHTML("beforeend", ` <small class="build">판 ${BUILD_AT}</small>`); }); } catch (e) {}
+  return r;
+};
+
+
+/* ═════════ 📋 일지를 다시 열면 «고칠 것» 이 보이게 (10-05 전무님 «일지 점수가 모자라는데 들어가 보면 뭘 고쳐야 되는지 모른다») ═════════
+   저장 때 그림 자리에 뜨던 «틀린 것 · 안 한 것» 을 오늘 기록에 남겨 두고, 다시 열면 그대로 보임 · 머리 줄 «📋 고칠 것» 으로 언제든 다시 */
+const _saveJournalKeepRes = saveJournal;
+saveJournal = function(){
+  const r = _saveJournalKeepRes.apply(this, arguments);
+  try {
+    const res = $("jrRes");
+    if (res && me && me.today && res.innerHTML.trim()){ const c = res.cloneNode(true); c.querySelectorAll(".resclose").forEach(x => x.remove()); me.today.jrResHTML = c.innerHTML; saveMe(); }
+  } catch (e) {}
+  return r;
+};
+function jrShowKept(){
+  const res = $("jrRes"); if (!res || !me || !me.today || !me.today.jrResHTML) return;
+  res.innerHTML = me.today.jrResHTML; jrResShow();
+}
+const _openJournalKeepRes = openJournal;
+openJournal = function(){
+  const r = _openJournalKeepRes.apply(this, arguments);
+  try {
+    if (me && me.today && me.today.journal && me.today.jrResHTML){
+      const h = document.querySelector("#jrBox h2");
+      if (h && !h.querySelector(".keptbtn")) h.insertAdjacentHTML("beforeend", `<button class="keptbtn" onclick="jrShowKept()">📋 고칠 것</button>`);
+      jrShowKept();
+    }
+  } catch (e) {}
+  return r;
 };
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
