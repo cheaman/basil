@@ -748,6 +748,13 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #peekModal .meter i{display:block;height:100%;width:0;background:#5aa0d8}
 </style>
 <script src="guide/feedback.js"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-180.png">
+<meta name="apple-mobile-web-app-title" content="바질 키우기">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1d1d1f">
 </head>
 <body>
 <div id="rotateHint">📱 ↔ 패드를 가로로 돌려 주세요 — 화면이 크게 보여요</div>
@@ -5220,7 +5227,12 @@ function sdCarton(o){
   g += `<path d="M112 250 L122 232 L178 232 L188 250" fill="none" stroke="#7fb2e0" stroke-width="2.4"/>`;
   for (let i = 0; i < (o.holes || 0); i++) g += `<circle cx="${119 + i * 12.4}" cy="399" r="2.8" fill="#2a1c12"/>`;
   if (o.wet > SD_WET_OK) for (let i = 0; i < 6; i++) g += `<ellipse cx="${119 + i * 12.4}" cy="${404 + (i % 2) * 5}" rx="2.4" ry="3.6" fill="#7fbfea"/>`;
-  if (o.spray) for (let i = 0; i < 7; i++) g += `<circle cx="${122 + ((i * 41 + Date.now() / 30) % 56)}" cy="${200 + ((i * 29 + Date.now() / 12) % 70)}" r="3.2" fill="#7fbfea"/>`;
+  if (o.spray){   // 분무기 노즐(오른쪽 위 🧴)에서 흙으로 퍼지는 물안개 — 부채꼴 + 날아가는 물방울
+    const nx = 198, ny = 214, now = Date.now();
+    g += `<path d="M${nx} ${ny} L118 ${top - 2} L184 ${top + 2} Z" fill="#9fd3ff" opacity=".28"/>`;
+    for (let i = 0; i < 18; i++){ const t = ((i * .137) + now / 650) % 1, tx = 120 + (i * 37) % 62;
+      g += `<circle cx="${(nx + (tx - nx) * t).toFixed(1)}" cy="${(ny + (top - ny) * t).toFixed(1)}" r="${(1.4 + t * 2).toFixed(1)}" fill="#7fbfea" opacity="${(1 - t * .5).toFixed(2)}"/>`; }
+  }
   return g;
 }
 function sdPlantG(d){   // 바질 그림에서 식물(.plantg)만 떼어 우유갑에 심음
@@ -5254,8 +5266,12 @@ function sdRulerSVG(top, cur){   // cur = 지금 파는 구멍 · 막 넣은 씨
 }
 function sdSeedStage(s){   // 3걸음 그림 — 파는 중인 구멍도 씨앗처럼 그려 봄
   const top = [393, 356, 320, 284][s.fill || 0], dg = s._dig;
-  const v = dg ? Object.assign({}, s, {seeds: s.seeds.concat([dg.x]), sdep: sdDep(s).concat([dg.d])}) : s;
-  return sdStateSVG(v, sdRulerSVG(top, dg || s._last));
+  const v = !dg ? s : dg.edit != null ? Object.assign({}, s, {sdep: sdDep(s).map((d, i) => i === dg.edit ? dg.d : d)})
+                     : Object.assign({}, s, {seeds: s.seeds.concat([dg.x]), sdep: sdDep(s).concat([dg.d])});
+  const hint = !dg && !s.seeds.length ? `<g opacity=".9"><animateTransform attributeName="transform" type="translate" values="0 -6;0 34;0 34;0 -6" keyTimes="0;.55;.8;1" dur="1.8s" repeatCount="indefinite"/>
+    <text x="150" y="${top + 8}" font-size="30" text-anchor="middle">👆</text></g><path d="M176 ${top + 6} V${top + 40}" stroke="#e06a3a" stroke-width="2.4" stroke-dasharray="4 3" marker-end="url(#sdArr)"/>
+    <defs><marker id="sdArr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#e06a3a"/></marker></defs>` : "";
+  return sdStateSVG(v, sdRulerSVG(top, dg || s._last) + hint);
 }
 function sdSprouts(s, d){   // 빨리 감기 — 깊이가 맞은 씨앗 자리마다 싹 (여럿이면 조금 작게)
   const g = sdPlantG(d); if (!s.seeds.length) return g;
@@ -5264,6 +5280,11 @@ function sdSprouts(s, d){   // 빨리 감기 — 깊이가 맞은 씨앗 자리�
   return good.map(x => `<g transform="translate(${x} 284) scale(${k}) translate(-150 -284)">${g}</g>`).join("");
 }
 function sdBadN(s){ return sdDep(s).filter(d => !sdDepOk(d)).length; }
+function sdSeedSay(d, how){
+  const cm = d.toFixed(1) + "cm";
+  if (sdDepOk(d)){ sfx("pop"); sdSay(cm.replace("cm", "센티") + ", 좋아요!"); if (how) toast(`🌰 ${how} — ${cm} 좋아요!`); }
+  else { sfx("bad"); const t = d < SD_DEP_OK[0] ? `너무 얕아요 (${cm}) — 씨앗이 말라 버려요` : `너무 깊어요 (${cm}) — 싹이 흙을 못 뚫어요`; toast("🔴 " + t); sdSay(t.split(" (")[0]); }
+}
 /* 🛍 배양토 봉지 — 🟫 네모 글자는 봉지로 안 보였음 (10-04 전무님) · 우유갑 쪽으로 기울임 */
 const SD_BAG = `<g transform="rotate(-28 220 240)"><path d="M201 214 L239 214 L244 266 L196 266 Z" fill="#d4ab72" stroke="#8a6a3a" stroke-width="1.4"/>
   <path d="M201 214 L205 205 L235 205 L239 214 Z" fill="#b8894f" stroke="#8a6a3a" stroke-width="1.2"/><rect x="203" y="230" width="34" height="22" rx="3" fill="#fff6e0"/>
@@ -5296,9 +5317,9 @@ sdRender = function(){
     done = s.fill >= 3 && s.wet >= 1 && !over; }
   if (s.step === 3){ const n = s.seeds.length, bad = sdBadN(s);
     stage = sdSeedStage(s);
-    say = n < 3 ? `손가락으로 1~3cm 구멍을 파고 씨앗을 넣어요<small>👇 흙을 누른 채 아래로 쓱 — 옆 자의 초록 칸(1~3cm)까지 · 톡만 하면 2cm</small>`
-        : bad >= 3 ? `🔴 세 개 모두 깊이가 맞지 않아요<small>너무 얕으면 씨앗이 말라 버리고, 너무 깊으면 싹이 흙을 못 뚫어요 — ↺ 다시 눌러 심어 봐요</small>`
-        : bad ? `씨앗 3개 쏙! 그런데 🔴 ${bad}개는 깊이가 안 맞아요<small>빨간 씨앗은 싹이 안 나요 — ↺ 다시 하거나 그대로 다음으로</small>`
+    say = n < 3 ? `손가락으로 1~3cm 구멍을 파고 씨앗을 넣어요<small>👇 그림 아무 데나 누른 채 아래로 쭉 — 옆 자의 초록 칸(1~3cm)에서 손을 떼요 · 톡만 하면 2cm · 심은 씨앗을 다시 누르고 끌면 깊이를 고쳐요</small>`
+        : bad >= 3 ? `🔴 세 개 모두 깊이가 맞지 않아요<small>빨간 씨앗을 누른 채 위아래로 끌어 초록 칸(1~3cm)에 맞춰요 — 너무 얕으면 말라 버리고, 너무 깊으면 싹이 못 뚫어요</small>`
+        : bad ? `씨앗 3개 쏙! 그런데 🔴 ${bad}개는 깊이가 안 맞아요<small>빨간 씨앗을 누른 채 위아래로 끌어 초록 칸에 맞춰요 — 또는 그대로 다음으로</small>`
         : `씨앗 3개 모두 알맞은 깊이!<small>1~3cm — 싹이 잘 올라올 거예요</small>`;
     acts = n < 3 ? `<button class="big" onclick="sdAct('seed')">🌰 씨앗 톡</button><span style="font:24px Jua">${n} / 3</span>` : "";
     done = n >= 3 && bad < 3; }
@@ -5370,8 +5391,12 @@ sdBind = function(){
     const q = pt(e, "sdSvg");
     if (s.step === 0 && q && q.x > 100 && q.x < 200) sdAct("hole");
     if (s.step === 2 && s.fill < 3) sdAct("fill");   // 그림 어디를 눌러도 흙 (봉지 자리만 받던 것 · 10-04 전무님 «세 번 눌렀는데 반응 없음»)
-    if (s.step === 3 && s.seeds.length < 3 && q && q.x > 108 && q.x < 192 && q.y > top() - 24 && q.y < 398){   // 흙 어디를 눌러도 (10-04 전무님)
-      s._dig = {x: sdFreeX(s, Math.max(122, Math.min(178, q.x))), y0: q.y, d: 0, moved: false};   // 누른 채 아래로 끌면 깊어짐 → 손을 떼면 씨앗
+    if (s.step === 3 && q){   // 그림 어디를 눌러도 (10-05 전무님 «터치가 잘 안 먹는다 · 어디든 누른 채 쭉 내려오게»)
+      const cx = Math.max(122, Math.min(178, q.x)), dp = sdDep(s);
+      let ni = -1; s.seeds.forEach((x, i) => { if (ni < 0 || Math.abs(x - cx) < Math.abs(s.seeds[ni] - cx)) ni = i; });
+      const edit = ni >= 0 && (s.seeds.length >= 3 || Math.abs(s.seeds[ni] - cx) <= 12);   // 심은 씨앗 가까이 · 셋 다 심은 뒤 = 그 씨앗 깊이 고치기
+      s._dig = edit ? {x: s.seeds[ni], y0: q.y, base: dp[ni], d: dp[ni], edit: ni, moved: false}
+                    : {x: sdFreeX(s, cx), y0: q.y, base: 0, d: 0, moved: false};   // 누른 채 아래로 끌면 깊어짐 → 손을 떼면 씨앗
       try { st.setPointerCapture(e.pointerId); } catch (x) {}
       st.innerHTML = sdSeedStage(s); }
     if (s.step === 1 && !s.towel && q && q.x > 100 && q.x < 200) sdAct("towel");
@@ -5383,7 +5408,7 @@ sdBind = function(){
   st.onpointermove = e => {
     if (s.step === 3 && s._dig){ const q = pt(e, "sdSvg"), dg = s._dig;
       if (q){ if (Math.abs(q.y - dg.y0) > 3) dg.moved = true;
-        dg.d = Math.round(Math.max(0, Math.min(5, (q.y - dg.y0) / SD_CM)) * 10) / 10;   // 끈 거리 = 구멍 깊이 (0.1cm)
+        dg.d = Math.round(Math.max(0, Math.min(5, (dg.base || 0) + (q.y - dg.y0) / SD_CM)) * 10) / 10;   // 끈 거리 = 구멍 깊이 (0.1cm) · 고칠 때는 그 깊이에서 더하고 뺌
         st.innerHTML = sdSeedStage(s); } }
     if (s.step === 4 && s._drag){ const q = pt(e, "sdSvg"); if (q){ const dd = Math.hypot(q.x - s._drag.x, q.y - s._drag.y); s._mvd = (s._mvd || 0) + dd; if (s._mvd > 12) s._tap = false;   // 손가락이 조금 미끄러져도(12칸 ≈ 2~3mm) 톡으로
       s.cover = Math.min(1, s.cover + dd / 300); s._drag = q; const b = document.querySelector("#seedModal .meter i"); if (b) b.style.width = s.cover * 100 + "%"; if (s.cover >= 1){ s._drag = null; sfx("chime"); sdRender(); } } }
@@ -5391,7 +5416,9 @@ sdBind = function(){
   };
   const end = () => {
     if (s._spr){ s._spr = false; sdSpray(false); return; }
-    if (s.step === 3 && s._dig){ const dg = s._dig; s._dig = null; sdAct("seed", dg.x, dg.moved ? dg.d : SD_DEP_TAP); return; }   // 톡만 = 2cm
+    if (s.step === 3 && s._dig){ const dg = s._dig; s._dig = null;
+      if (dg.edit != null){ if (dg.moved){ sdDep(s)[dg.edit] = dg.d; sdSeedSay(dg.d, "고쳤어요"); } s._last = {x: dg.x, d: sdDep(s)[dg.edit]}; sdRender(); return; }   // 심은 씨앗 깊이 고치기
+      sdAct("seed", dg.x, dg.moved ? dg.d : SD_DEP_TAP); return; }   // 톡만 = 2cm
     if (s.step === 4 && s._drag){ s._drag = null; if (s._tap){ s._tap = false; sdAct("cover"); return; } sdRender(); }   // 톡 = 한 번에 ⅓ 덮기
     if (s.step === 6 && s._tapMv && !s.moved){ s._tapMv = false; s._mv = null; sdAct("move"); return; }
     s._mv = null;
@@ -5418,7 +5445,9 @@ sdAct = function(a, x, d){
 sdSpray = function(on){
   const s = SD; if (!s || s.step !== 2 || s.fill < 3) return;
   clearInterval(_sdSprayT); s.spray = on;
-  if (on){ sfx("water", .5); s.wet = Math.min(SD_WET_MAX, s.wet + .12); _sdSprayT = setInterval(() => { s.wet += .05; if (s.wet >= SD_WET_MAX){ s.wet = SD_WET_MAX; clearInterval(_sdSprayT); s.spray = false; }
+  if (on){ sfx("water", .5); s.wet = Math.min(SD_WET_MAX, s.wet + .12);
+    { const st0 = $("sdStage"); if (st0) st0.innerHTML = sdStateSVG(s, `<text x="196" y="236" font-size="32">🧴</text>`); }   // 누른 순간 바로 물안개
+    _sdSprayT = setInterval(() => { s.wet += .05; if (s.wet >= SD_WET_MAX){ s.wet = SD_WET_MAX; clearInterval(_sdSprayT); s.spray = false; }
     const st = $("sdStage"); if (st) st.innerHTML = sdStateSVG(s, `<text x="196" y="236" font-size="32">🧴</text>`);
     const b = $("sdWetBar"); if (b){ b.style.width = Math.min(s.wet, SD_WET_MAX) / SD_WET_MAX * 100 + "%"; b.style.background = s.wet > SD_WET_OK ? "#c9573f" : "#5aa0d8"; }
     if (s.wet >= 1 && !s._wetSaid){ s._wetSaid = true; sdSay("흙 색이 진해졌어요. 그만!"); }
@@ -6099,6 +6128,11 @@ openSetup = function(){
     body.insertAdjacentHTML("afterbegin", `<div id="sTestStart" class="stest"><b>🧪 시험판이에요</b> — 반 설정을 하나하나 넣지 않고 바로 써 보려면 <button class="big" onclick="startTestClass()">🧪 시험반으로 시작 (가상 학생 15명)</button></div>`);
   return r;
 };
+
+
+/* ═════════ 📱 앱처럼 깔기 (10-05 · 고르기 «앱처럼 깔기 + 아이콘 A») ═════════
+   manifest.webmanifest(전체 화면 · 가로) + icons/ + sw.js(담아 두지 않음) → 패드마다 «홈 화면에 추가 / 앱 설치» 한 번 → 주소창 없이 열림 */
+try { if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js"); } catch (e) {}
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
