@@ -858,6 +858,58 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
 #peekModal .acts .big{width:auto;padding:14px 30px;font-size:26px}
 #peekModal .meter{height:16px;border-radius:999px;background:#eef2ea;overflow:hidden}
 #peekModal .meter i{display:block;height:100%;width:0;background:#5aa0d8}
+/* 🕐 한 시간 미션 수업 — 지금 앱 모양(Jua · 연두)을 그대로 씀 (디자인 손질은 허락 뒤) */
+#pL .bar{gap:10px}#pL .bar .b{font-size:16px;padding:6px 11px;white-space:nowrap}
+#pL .mlpl{font:17px "Jua"}#pL select,#pS select{font:16px "Noto Sans KR";padding:5px 8px;border-radius:10px;border:1px solid var(--line);background:#fff;max-width:100%}
+.mlwrap{flex:1;display:grid;grid-template-columns:740px 1fr;gap:14px;padding:12px 16px;min-height:0}
+.mlcol{display:flex;flex-direction:column;gap:9px;min-height:0;min-width:0}
+.mlcard{background:#fff7e0;border-radius:14px;padding:8px 14px;font-size:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px 12px}
+.mlcard .in{grid-column:1/-1;font-size:15px}.mlcard b{font:17px "Jua"}
+.mlsteps{display:flex;gap:4px}
+.mlsteps div{flex:1;text-align:center;padding:6px 2px;border-radius:10px;background:#e9efe4;font:15px "Jua";color:var(--sub);white-space:nowrap;overflow:hidden}
+.mlsteps div.done{background:#d6ecc9;color:#2f7a2a}.mlsteps div.on{background:var(--leaf);color:#fff}
+.mlrow{display:flex;gap:8px;align-items:center;font:17px "Jua"}
+.mlnext{flex:1;padding:10px;font-size:22px}.mlnext:disabled{opacity:.5}
+.mltip{font-size:14px;color:var(--sub);min-height:20px}
+.mlbox{background:#fff;border:1px solid var(--line);border-radius:16px;padding:9px 12px;display:flex;flex-direction:column;gap:6px}
+.mlbox h3{font:19px "Jua";margin:0;display:flex;align-items:center;gap:8px;white-space:nowrap}.mlbox h3 small{font:13px "Noto Sans KR";color:var(--sub)}
+.mlbox .hint{font-size:14px}
+.mlmis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.mlmis button{display:flex;align-items:center;gap:6px;border:0;border-radius:12px;padding:6px 8px;background:#f1f6ec;font:16px "Jua";color:#24502a;cursor:pointer;text-align:left}
+.mlmis button i{font-style:normal;font-size:24px;white-space:nowrap}
+.mlmis button.sel{outline:3px solid var(--warn);background:#fff1e4}
+.b.warn{background:#fde3d6;color:#8a3a12}.b:disabled{opacity:.45;cursor:default}
+.mlbar{height:16px;border-radius:999px;background:#e9efe4;overflow:hidden;display:flex}.mlbar i{display:block;height:100%}
+.mlkids{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;overflow:auto;align-content:start;flex:1;min-height:0}
+.mlkids .mlk{border:1px solid var(--line);border-radius:10px;padding:4px 6px;font-size:12px;min-height:54px;background:#fff}
+.mlkids .mlk b{font:15px "Jua";display:block}.mlkids .mlk .st{display:block;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mlkids .mlk.wait{background:#fff3ea;border-color:#f0b48a}.mlkids .mlk.ok{background:#eaf7e3;border-color:#9ccf86}.mlkids .mlk.out{opacity:.5}
+.mllog{font-size:13px;color:var(--sub);height:92px;overflow:auto;border-top:1px dashed var(--line);padding-top:4px}
+.mlnet{font-size:13px;color:#2f7a2a}.mlnet.fail{color:#b0473a}.mlnet.busy{color:#8a6400}
+#pS .mlnet{font:18px "Jua";cursor:help}
+/* 학생 */
+.mlsteps.mlstk{padding:10px 18px 0}.mlsteps.mlstk div{font-size:26px;padding:6px 2px;line-height:1.1}.mlsteps.mlstk div small{display:block;font-size:14px}
+.mlsbody{flex:1;display:grid;grid-template-columns:1fr 460px;gap:18px;padding:14px 22px 20px;min-height:0}
+.mlsstage{background:linear-gradient(#eaf6fd,#f7fbf3 70%);border-radius:26px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px}
+.mlsstage .ic{font-size:190px;line-height:1.05}.mlsstage .cap{font:40px "Jua";color:var(--leaf)}.mlsstage .sub{font:24px "Jua";color:var(--sub);text-align:center}
+.mlsstage .last{margin-top:12px;font:19px "Jua";color:#7a4a00;background:#fff6d6;border-radius:14px;padding:8px 16px;max-width:92%;text-align:center}
+.mlsside{background:#fff;border:1px solid var(--line);border-radius:22px;padding:16px 20px;overflow:auto;font-size:17px}
+.mlsside h3{font:26px "Jua";margin:0 0 8px;color:var(--leaf)}.mlsside .tx{font:20px/1.45 "Jua";color:var(--ink)}
+.mlsside .grow{display:flex;flex-direction:column;gap:6px;margin-top:10px;font-size:16px}.mlsside .grow b{font:17px "Jua";margin-right:4px}
+.mlsside .food{margin-top:8px}.mlsside .food b{font:22px "Jua"}.mlsside .food ol{margin:4px 0 0;padding-left:24px;font:19px/1.5 "Jua"}
+.mlsside .res{display:flex;gap:12px;margin:10px 0}.mlsside .res div{flex:1;background:#f1f6ec;border-radius:16px;text-align:center;padding:10px;font:18px "Jua"}.mlsside .res b{display:block;font-size:52px;color:var(--leaf)}
+.mlpop{position:absolute;inset:0;background:rgba(30,40,34,.55);display:none;align-items:center;justify-content:center;z-index:30}
+.mlpop.on{display:flex}
+.mlpop .card{background:#fff;border-radius:28px;padding:24px 34px;width:640px;text-align:center;border:6px solid var(--warn);animation:mlshake .5s}
+.mlpop .card.q{border-color:#6aa6e0}
+.mlpop .card h2{font:36px "Jua";margin:0}.mlpop .card .big{font-size:84px;line-height:1.1;width:auto;background:none;color:inherit;padding:0;cursor:default}
+.mlpop .card .ask{font:28px/1.35 "Jua";margin:8px 0 12px}
+.mlpop .card .opts{display:flex;flex-direction:column;gap:10px}
+.mlpop .card .opts .b{font-size:24px;padding:14px}.mlpop .card .opts .b.right{background:#6cc04a;color:#fff;opacity:1}.mlpop .card .opts .b.wrong{background:#f2b8a8;opacity:1}
+.mlpop .card .why{font:24px "Jua";color:#2f7a2a;margin-top:10px}.mlpop .card .why small{font:19px "Jua";color:var(--sub)}
+.mlpop .card .why .big{font-size:24px;width:auto;padding:10px 30px;margin-top:10px;background:var(--leaf);color:#fff;cursor:pointer}
+@keyframes mlshake{0%,100%{transform:none}25%{transform:rotate(-2deg)}75%{transform:rotate(2deg)}}
+.setup .mlmode .b{font-size:18px}
 </style>
 <script src="guide/feedback.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
@@ -879,6 +931,56 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
     <div class="app">
       <div class="bar"><span class="logo">🌿 바질 키우기</span><span class="who">⚙ 반 설정 — 선생님이 처음 한 번</span><span class="day">이 패드에 저장됩니다</span></div>
       <div class="setup" id="setupBody"></div>
+    </div>
+  </div></div>
+</section>
+
+
+<!-- 🕐 선생님 «수업 진행 판» (한 시간 미션 수업) -->
+<section class="mk-page" id="pL">
+  <div class="fit" data-w="1280" data-h="800"><div class="frame pc">
+    <div class="app" style="position:relative">
+      <div class="bar"><span class="logo">👩‍🏫 수업 진행 판</span><span class="who"><span class='mlcls'></span> · ⏱ <b id="mlClk">0:00</b></span>
+        <span class="mlpl">오늘의 식물 <select id="mlPlant" onchange="mlSetPlant(this.value)"></select></span>
+        <span class="day"></span><button class="b" onclick="mlRestart()">🔄 새 수업</button><button class="b" onclick="openSetup()">⚙ 반 설정</button><button class="b" onclick="mlOpenGs()">☁ 구글 시트</button><button class="b" onclick="mlLeaveT()">← 나가기</button></div>
+      <div class="mlwrap">
+        <div class="mlcol">
+          <div class="mlcard" id="mlCard"></div>
+          <div class="mlsteps" id="mlSteps"></div>
+          <div class="mlrow"><button class="big mlnext" id="mlNext" onclick="mlNext()"></button><button class="b" id="mlBack" onclick="mlBack()" title="한 단계 되돌리기">◀</button></div>
+          <div class="mltip" id="mlStepTip"></div>
+          <div class="mlbox"><h3>❓ 문제 내기</h3>
+            <div class="mlrow"><select id="mlQ" style="flex:1"></select><button class="b" onclick="mlSendQuiz()">📤 반 전체에 보내기</button></div>
+            <div class="hint" id="mlQRes"></div></div>
+          <div class="mlbox"><h3>🚨 미션 보내기 <small>— 골라서 누구에게</small></h3>
+            <div class="mlmis" id="mlMis"></div>
+            <div class="mlrow">누구에게 <select id="mlTo"></select><button class="b warn" id="mlMisSend" onclick="mlSendMis()">🚨 미션 보내기</button></div>
+            <div class="hint" id="mlMisWhy"></div></div>
+        </div>
+        <div class="mlcol">
+          <div class="mlbox" style="flex:1;display:flex;flex-direction:column;min-height:0"><h3>📋 반 현황 <button class="b" id="mlSim" onclick="mlToggleSim()" style="margin-left:auto;font-size:13px;padding:3px 8px">🧪 가상 학생이 풀기</button></h3>
+            <div class="hint" id="mlSum"></div><div class="mlbar" id="mlBar"></div><div class="hint" id="mlBarTx"></div>
+            <div class="mlkids" id="mlKids"></div>
+            <div class="mllog" id="mlLog"></div>
+            <div class="mlnet" id="mlNet"></div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 🕐 학생 «미션 수업» (한 시간 미션 수업) -->
+<section class="mk-page" id="pS">
+  <div class="fit" data-w="1280" data-h="800"><div class="frame">
+    <div class="app" style="position:relative">
+      <div class="bar"><span class="logo">🌿 미션 수업</span><span class="who"><span id="mlsWho"></span> <span id="mlsPlantNm"></span></span>
+        <span class="day"></span><span class="coin" id="mlsScore"></span><span class="mlnet" id="mlsNet"></span><button class="nmbtn rnd" id="mlsSay" onclick="if(me){toggleSay()}" title="읽어 주기" style="display:none">🔈</button><button class="nmbtn rnd" onclick="mlLeaveS()" title="나가기">🚪</button></div>
+      <div class="mlsteps mlstk" id="mlsSteps"></div>
+      <div class="mlsbody">
+        <div class="mlsstage"><div class="ic" id="mlsIcon">🪴</div><div class="cap" id="mlsCap"></div><div class="sub" id="mlsSub"></div><div class="last" id="mlsLast"></div></div>
+        <div class="mlsside" id="mlsSide"></div>
+      </div>
+      <div class="mlpop" id="mlsPop"><div class="card" id="mlsCard"></div></div>
     </div>
   </div></div>
 </section>
@@ -6947,6 +7049,447 @@ renderMe = function(){
   } catch (e) {}
   return r;
 };
+
+/* ═════════ 식물 다섯 가지 자료 — 원본 2_목업\식물5가지_자료.js 를 조립 때 그대로 넣음 ═════════ */
+/* ═════════ 한 시간 미션 수업 — 식물 다섯 가지 자료 (2026-10-08 · 전무님 «다섯 가지 식물 정도로 준비») ═════════
+   식물 하나 = 한 벌 : 단계 · 키우는 기준 · 문제 · 미션 · 수확 · 음식
+   · 다음 시간엔 이 한 벌만 갈아 끼우면 같은 수업 화면으로 돌아감
+   · 내용은 일반 원예 기준 — 사모님 교과서(실과 · 과학)와 맞는지 확인 받을 것 (★ 표시는 꼭 확인)
+   미션 꼴 : [열쇠, 그림, 짧은 이름, 아이에게 뜨는 말, [고를 것들], 정답 번호, 왜(풀고 나서 보여 줌)] */
+const PLANTS = {
+basil: {
+  name: "바질", icon: "🌿",
+  intro: "향이 좋은 허브 · 이탈리아 요리에 많이 써요 · 따뜻한 곳 · 햇빛을 좋아해요",
+  grow: {seedDepth: "0.5cm 쯤 — 흙을 아주 살짝 덮어요", sprout: "5~10일", temp: "20~30°", sun: "하루 6시간 넘게", water: "속흙이 마르면 듬뿍 · 잎엔 안 뿌려요", harvestDays: "심고 6~8주"},
+  steps: [["수업 시작","🪴","오늘의 식물 : 바질"],["씨앗 심기","🌰","까만 씨앗 · 흙 살짝"],["떡잎","🌱","동그란 떡잎 두 장"],["본잎","🌿","마주 나는 본잎 · 순지르기"],["수확","✂️","위쪽 잎부터 따요"],["음식","🍝","페스토 · 피자 · 카프레제"],["결과","🏆","반 결과 · 내 바질 카드"]],
+  quiz: [
+    ["바질 씨앗은 얼마나 깊이 심을까요?", ["흙을 아주 살짝 (0.5cm 쯤)", "손가락 한 마디 (3cm)", "10cm 깊이"], 0],
+    ["바질은 하루에 햇빛을 얼마나 좋아해요?", ["6시간 넘게", "1시간", "햇빛을 싫어해요"], 0],
+    ["꼭대기 순을 잘라 주면(순지르기)?", ["곁가지가 나와 잎이 많아져요", "바질이 죽어요", "키만 커져요"], 0],
+    ["꽃대가 올라오면?", ["잘라 줘요 — 잎이 더 자라요", "그대로 둬요", "물을 더 줘요"], 0],
+    ["바질 페스토에 들어가지 않는 것은?", ["설탕 한 컵", "바질 잎", "올리브유"], 0]
+  ],
+  missions: [
+    ["tip","⚽🪴","화분이 쓰러졌어요","공에 맞아 화분이 넘어졌어!",["🪴 화분 세우기 · 🟫 흙 채우기","💧 물 주기"],0,"쏟아진 흙을 다시 채워야 뿌리가 마르지 않아요"],
+    ["aphid","🐛","진딧물","잎 뒤에 작은 초록 벌레가 잔뜩!",["🔍 잎 뒤 보고 💦 물로 씻기","🥚 비료 주기"],0,"진딧물은 물로 씻어 내요"],
+    ["cold","🥶","찬 바람","밤에 8°까지 내려가요!",["🌙 밤엔 교실 안쪽으로","🪟 블라인드 내리기"],0,"바질은 추위에 약해요 — 10° 아래면 잎이 검게 돼요"],
+    ["heat","☀🔥","땡볕","한낮 33° 땡볕!",["🪟 블라인드 내리기","💧 잎에 물 뿌리기만"],0,"너무 센 햇빛은 잎을 태워요"],
+    ["rain","🌧","장마","며칠째 흐려서 흙이 안 말라",["🚱 오늘은 물 참기","💧 물 더 주기"],0,"젖은 흙에 물을 더 주면 뿌리가 숨을 못 쉬어요"],
+    ["flower","🌸","꽃대","꼭대기에 하얀 꽃대가 올라왔어!",["✂ 꽃대 자르기","그대로 두기"],0,"꽃이 피면 잎이 질겨지고 향이 줄어요"],
+    ["mildew","⚪","흰가루","잎에 하얀 가루가 생겼어!",["🌬 창문 열기(환기) · 아픈 잎 떼기","💧 잎에 물 더 뿌리기"],0,"흰가루병은 축축하고 바람이 안 통하면 생겨요"],
+    ["snail","🐌","달팽이","달팽이가 잎을 갉아 먹어!",["👆 달팽이를 살살 옮기기","🥚 비료 주기"],0,"달팽이는 손으로 살살 옮겨 줘요"]
+  ],
+  harvest: "꼭대기 잎부터 마디 위를 잘라요 — 자른 자리에서 곁가지가 또 나와요",
+  food: [["바질 페스토", ["바질 잎 씻기", "잣 · 마늘 · 치즈와 함께 갈기", "올리브유 넣고 섞기", "빵이나 파스타에 바르기"]], ["카프레제", ["토마토 · 치즈 썰기", "바질 잎 올리기", "올리브유 뿌리기"]]]
+},
+lettuce: {
+  name: "상추", icon: "🥬",
+  intro: "쌈으로 먹는 잎채소 · 서늘한 날씨를 좋아해요 · 빨리 자라 키우기 쉬워요",
+  grow: {seedDepth: "흙을 아주 얇게 — 씨앗이 빛을 받아야 싹이 잘 터요 ★", sprout: "3~7일", temp: "15~20° (서늘한 날)", sun: "하루 4~6시간", water: "겉흙이 마르면 · 잎이 시들기 전에", harvestDays: "심고 4~6주"},
+  steps: [["수업 시작","🪴","오늘의 식물 : 상추"],["씨앗 심기","🌰","작은 씨앗 · 아주 얇게 덮기"],["떡잎","🌱","길쭉한 떡잎 두 장"],["본잎","🥬","본잎이 둥글게 퍼져요 · 솎아 주기"],["수확","✂️","바깥 잎부터 한 장씩"],["음식","🥗","쌈 · 겉절이 · 샐러드"],["결과","🏆","반 결과 · 내 상추 카드"]],
+  quiz: [
+    ["상추 씨앗은 어떻게 덮을까요?", ["흙을 아주 얇게 — 빛을 받아야 싹이 터요", "손가락 한 마디 깊이", "흙을 많이 덮어요"], 0],
+    ["상추가 좋아하는 날씨는?", ["서늘한 날 (15~20°)", "아주 더운 날 (35°)", "얼음이 어는 날"], 0],
+    ["상추는 어떻게 수확할까요?", ["바깥 잎부터 한 장씩 따요", "뿌리째 한 번에 뽑아요", "꼭대기부터 잘라요"], 0],
+    ["싹이 빽빽하게 났을 때 몇 개를 뽑아 주는 것은?", ["솎아 주기", "순지르기", "옮겨 심기"], 0],
+    ["상추를 먹는 부분은?", ["잎", "뿌리", "열매"], 0]
+  ],
+  missions: [
+    ["tip","⚽🪴","화분이 쓰러졌어요","공에 맞아 화분이 넘어졌어!",["🪴 화분 세우기 · 🟫 흙 채우기","✂ 잎 다 따기"],0,"뿌리가 드러나면 말라요 — 흙부터 채워요"],
+    ["crowd","🌱🌱🌱","빽빽해요","싹이 너무 빽빽하게 났어!",["👆 약한 싹 몇 개 솎아 주기","💧 물 더 주기"],0,"솎아 줘야 남은 상추가 크게 자라요"],
+    ["bolt","🌸🥬","꽃대(추대)","날이 더워 가운데서 꽃대가 쑥!",["✂ 얼른 수확 · 서늘한 곳으로","☀ 더 따뜻한 곳으로"],0,"상추는 더우면 꽃대가 올라오고 잎이 써져요 ★"],
+    ["slug","🐌","민달팽이","밤사이 잎에 구멍이 숭숭!",["👆 민달팽이 찾아 옮기기","🥚 비료 주기"],0,"민달팽이는 축축한 밤에 나와 잎을 갉아요"],
+    ["aphid","🐛","진딧물","잎 뒤에 진딧물이 잔뜩!",["💦 물로 씻기","☀ 땡볕에 두기"],0,"진딧물은 물로 씻어 내요"],
+    ["heat","☀🔥","더위","한낮 30° 넘는 더위!",["🪟 그늘 · 블라인드","☀ 햇빛 더 받기"],0,"상추는 더위에 약해요 — 시원하게"],
+    ["dry","🏜","시들시들","잎이 축 처졌어!",["👆 흙 만져 보고 💧 물 주기","✂ 잎 따기"],0,"상추는 물이 모자라면 바로 시들어요"],
+    ["rain","🌧","장마","며칠째 비 · 흙이 질척",["🚱 물 참기 · 받침 물 버리기","💧 물 더 주기"],0,"뿌리가 숨을 쉬게 물을 참아요"]
+  ],
+  harvest: "바깥쪽 큰 잎부터 한 장씩 아래로 꺾어 따요 — 가운데 어린잎은 남겨 두면 또 자라요",
+  food: [["상추쌈", ["상추 씻어 물기 빼기", "밥 · 고기 올리기", "쌈장 조금", "돌돌 싸서 먹기"]], ["상추 겉절이", ["상추 씻어 찢기", "양념(간장 · 고춧가루 · 참기름) 만들기", "살살 버무리기"]]]
+},
+tomato: {
+  name: "방울토마토", icon: "🍅",
+  intro: "작고 빨간 열매 · 햇빛을 아주 좋아해요 · 꽃이 피고 열매가 맺히는 것을 볼 수 있어요",
+  grow: {seedDepth: "0.5~1cm", sprout: "5~10일", temp: "20~30° (따뜻하게)", sun: "하루 6~8시간 넘게 (많이)", water: "겉흙이 마르면 듬뿍 · 들쭉날쭉하면 열매가 갈라져요", harvestDays: "심고 10~12주 (모종이면 6~8주)"},
+  steps: [["수업 시작","🪴","오늘의 식물 : 방울토마토"],["씨앗 심기","🌰","납작한 씨앗 · 1cm 쯤"],["떡잎","🌱","길쭉한 떡잎 두 장"],["본잎 · 꽃","🌼","본잎 · 노란 꽃 · 지지대 · 곁순 따기"],["열매 · 수확","🍅","초록 열매 → 빨갛게 익으면 따요"],["음식","🥗","샐러드 · 카프레제 · 주스"],["결과","🏆","반 결과 · 내 토마토 카드"]],
+  quiz: [
+    ["방울토마토는 햇빛을 얼마나 좋아해요?", ["아주 많이 (6~8시간 넘게)", "조금 (1시간)", "그늘을 좋아해요"], 0],
+    ["잎과 줄기 사이에서 나오는 곁순은?", ["따 줘요 — 열매로 영양이 가요", "그대로 키워요", "물을 줘요"], 0],
+    ["키가 커서 휘청거리면?", ["지지대를 세워 묶어 줘요", "줄기를 잘라요", "화분을 눕혀요"], 0],
+    ["토마토 꽃은 무슨 색이에요?", ["노란색", "빨간색", "파란색"], 0],
+    ["열매는 언제 따요?", ["빨갛게 익었을 때", "초록색일 때", "꽃이 필 때"], 0]
+  ],
+  missions: [
+    ["tip","⚽🪴","화분이 쓰러졌어요","공에 맞아 화분이 넘어졌어!",["🪴 세우기 · 🟫 흙 채우기 · 지지대 다시 묶기","💧 물 주기"],0,"키 큰 토마토는 지지대가 꼭 필요해요"],
+    ["sucker","🌿➕","곁순","잎과 줄기 사이에 곁순이 났어!",["✂ 곁순 따기","그대로 두기"],0,"곁순을 따야 열매로 영양이 가요"],
+    ["lean","🌿↘","휘청휘청","줄기가 길어져 옆으로 쓰러져!",["🪵 지지대 세워 묶기","✂ 줄기 자르기"],0,"지지대에 8자로 느슨하게 묶어요"],
+    ["crack","🍅💥","열매 갈라짐","비 온 뒤 열매가 쩍 갈라졌어!",["💧 물을 날마다 고르게","💧 한 번에 아주 많이"],0,"물이 들쭉날쭉하면 열매가 갈라져요"],
+    ["whitefly","🪰","온실가루이","하얀 작은 벌레가 날아다녀!",["🔍 잎 뒤 보고 💦 물로 씻기 · 🌬 환기","🥚 비료 더 주기"],0,"잎 뒤에 붙어 즙을 빨아요"],
+    ["cold","🥶","찬 바람","밤에 10° 아래로!",["🌙 밤엔 안쪽 따뜻한 곳으로","💧 물 더 주기"],0,"토마토는 따뜻해야 꽃과 열매가 잘 맺혀요"],
+    ["dark","🌑","그늘","청소하다 화분을 그늘에 뒀어!",["☀ 햇빛 잘 드는 창가로","💧 물 주기"],0,"햇빛이 모자라면 꽃이 떨어져요"],
+    ["yellow","🍂","아래 잎 누렇게","아래쪽 잎이 누렇게 됐어!",["✂ 누런 잎 떼기 · 🥚 비료 조금","💧 물 많이"],0,"오래된 아래 잎은 떼 주면 바람이 잘 통해요"]
+  ],
+  harvest: "빨갛게 익은 열매를 꼭지째 살짝 비틀어 따요",
+  food: [["방울토마토 샐러드", ["토마토 씻어 반 자르기", "채소와 담기", "드레싱 뿌리기"]], ["카프레제 꼬치", ["토마토 · 치즈 · 바질을 꼬치에", "올리브유 조금"]]]
+},
+bean: {
+  name: "강낭콩", icon: "🫘",
+  intro: "과학 시간 «식물의 한살이» 단골 · 씨앗이 커서 싹 트는 모습이 잘 보여요 · 꽃 → 꼬투리 → 콩",
+  grow: {seedDepth: "2~3cm — 씨앗 크기의 2~3배 ★", sprout: "5~10일", temp: "20~25°", sun: "하루 6시간 넘게", water: "심은 뒤 싹 트기 전엔 너무 많이 주지 않기 (씨앗이 썩어요)", harvestDays: "심고 8~10주"},
+  steps: [["수업 시작","🪴","오늘의 식물 : 강낭콩"],["씨앗 심기","🫘","큰 씨앗 · 2~3cm 깊이"],["떡잎","🌱","두툼한 떡잎이 흙 위로 올라와요"],["본잎 · 꽃","🌸","본잎 · 덩굴 · 지지대 · 꽃"],["꼬투리 · 수확","🫛","꼬투리가 누렇게 마르면 따요"],["음식","🍚","콩밥 · 강낭콩 조림"],["결과","🏆","반 결과 · 내 강낭콩 카드"]],
+  quiz: [
+    ["강낭콩 씨앗은 얼마나 깊이 심을까요?", ["2~3cm (씨앗 크기의 2~3배)", "흙 위에 그냥 올려요", "20cm"], 0],
+    ["강낭콩 떡잎은 무슨 일을 해요?", ["싹이 자랄 영양분을 줘요", "꽃을 피워요", "뿌리가 돼요"], 0],
+    ["심은 뒤 물을 너무 많이 주면?", ["씨앗이 썩을 수 있어요", "더 빨리 자라요", "꽃이 펴요"], 0],
+    ["콩은 어디에서 생겨요?", ["꼬투리 안", "뿌리 안", "잎 안"], 0],
+    ["식물이 씨앗 → 싹 → 꽃 → 열매 → 씨앗으로 이어지는 것을?", ["한살이", "광합성", "증산 작용"], 0]
+  ],
+  missions: [
+    ["tip","⚽🪴","화분이 쓰러졌어요","공에 맞아 화분이 넘어졌어!",["🪴 세우기 · 🟫 흙 채우기","✂ 덩굴 자르기"],0,"뿌리를 흙으로 덮어 줘요"],
+    ["rot","🫘💧","씨앗이 썩어요","물을 너무 많이 줘서 흙이 질척!",["🚱 물 참기 · 받침 물 버리기","💧 물 더 주기"],0,"싹 트기 전에는 흙이 촉촉한 정도면 돼요 ★"],
+    ["vine","🌿➰","덩굴이 뻗어요","덩굴이 이리저리 뻗어!",["🪵 지지대 · 줄 세워 감기","✂ 덩굴 자르기"],0,"덩굴은 지지대를 감고 올라가요"],
+    ["aphid","🐛","진딧물","새순에 진딧물이 잔뜩!",["💦 물로 씻기","🥚 비료 주기"],0,"새순을 좋아해요 — 물로 씻어 내요"],
+    ["bird","🐦","새가 콕콕","창가에 새가 와서 떡잎을 쪼아!",["🪟 안쪽으로 옮기기 · 망 씌우기","💧 물 주기"],0,"막 올라온 떡잎을 새가 좋아해요"],
+    ["cold","🥶","찬 바람","밤에 8°까지!",["🌙 밤엔 안쪽으로","🪟 블라인드"],0,"콩은 추우면 싹이 잘 안 터요"],
+    ["dry","🏜","꼬투리가 바싹","꼬투리가 누렇게 말랐어!",["✂ 꼬투리 따서 콩 꺼내기","💧 물 많이 주기"],0,"누렇게 마른 꼬투리가 다 익은 거예요"],
+    ["heat","☀🔥","땡볕","한낮 33°!",["🪟 블라인드 · 물 고르게","☀ 그대로"],0,"너무 더우면 꽃이 떨어져요"]
+  ],
+  harvest: "꼬투리가 누렇게 마르면 따서 콩을 꺼내요 — 콩 한 알이 다시 씨앗이 돼요",
+  food: [["콩밥", ["콩 씻어 물에 불리기", "쌀과 함께 안치기", "밥 짓기"]], ["강낭콩 조림", ["콩 삶기", "간장 · 설탕 넣기", "졸이기"]]]
+},
+radish: {
+  name: "적환무 (20일무)", icon: "🔴",
+  intro: "작고 빨간 무 · 한 달 안에 먹을 수 있을 만큼 빨리 자라요 · 땅속 뿌리가 커져요",
+  grow: {seedDepth: "1cm 쯤", sprout: "3~5일", temp: "15~20° (서늘하게)", sun: "하루 5~6시간", water: "겉흙이 마르기 전에 고르게 · 마르면 뿌리가 갈라져요", harvestDays: "심고 3~5주"},
+  steps: [["수업 시작","🪴","오늘의 식물 : 적환무"],["씨앗 심기","🌰","동그란 씨앗 · 1cm · 간격 두고"],["떡잎","🌱","하트 모양 떡잎"],["본잎 · 뿌리","🌿","본잎 · 솎아 주기 · 뿌리가 빨갛게"],["수확","🔴","빨간 뿌리가 흙 위로 보이면 쏙"],["음식","🥗","샐러드 · 무 피클"],["결과","🏆","반 결과 · 내 적환무 카드"]],
+  quiz: [
+    ["적환무를 먹는 부분은?", ["뿌리", "꽃", "열매"], 0],
+    ["싹이 빽빽하면?", ["솎아서 간격을 넓혀요", "물을 더 줘요", "그대로 둬요"], 0],
+    ["물을 들쭉날쭉 주면 뿌리가?", ["갈라져요", "더 빨개져요", "꽃이 펴요"], 0],
+    ["적환무 떡잎 모양은?", ["하트 모양", "바늘 모양", "별 모양"], 0],
+    ["언제 뽑을까요?", ["빨간 뿌리가 흙 위로 조금 보일 때", "꽃이 필 때", "씨앗을 심은 다음 날"], 0]
+  ],
+  missions: [
+    ["tip","⚽🪴","화분이 쓰러졌어요","공에 맞아 화분이 넘어졌어!",["🪴 세우기 · 🟫 흙 채우기","✂ 잎 자르기"],0,"뿌리가 드러나면 흙을 덮어 줘요"],
+    ["crowd","🌱🌱🌱","빽빽해요","싹이 다닥다닥 붙어 났어!",["👆 약한 싹 솎아 주기 (3~5cm 간격)","💧 물 더 주기"],0,"솎아 줘야 뿌리가 둥글게 커요"],
+    ["crack","🔴💥","뿌리 갈라짐","흙이 말랐다 젖었다 해서 뿌리가 쩍!",["💧 물을 고르게 · 겉흙 마르기 전에","💧 한 번에 아주 많이"],0,"물이 들쭉날쭉하면 뿌리가 갈라져요"],
+    ["leafy","🌿🌿","잎만 무성","잎만 크고 뿌리가 안 커!",["☀ 햇빛 잘 드는 곳 · 솎아 주기","🥚 비료 많이"],0,"그늘지고 빽빽하면 잎만 자라요"],
+    ["flea","🐞","벼룩잎벌레","잎에 작은 구멍이 송송!",["🔍 잎 살펴 벌레 털어 내기 · 망 씌우기","💧 물 많이"],0,"작은 잎벌레가 잎을 갉아요 ★"],
+    ["heat","☀🔥","더위","한낮 30° 넘어!",["🪟 그늘 · 시원하게","☀ 그대로"],0,"더우면 뿌리가 맵고 질겨져요"],
+    ["late","⏰","늦게 뽑았어","너무 오래 둬서 뿌리 속이 텅!",["🔴 알맞을 때 바로 뽑기 (3~5주)","💧 물 더 주기"],0,"늦으면 바람이 든 것처럼 속이 비어요"],
+    ["rain","🌧","장마","흙이 질척!",["🚱 물 참기 · 받침 물 버리기","💧 물 더 주기"],0,"뿌리가 썩지 않게 물을 참아요"]
+  ],
+  harvest: "빨간 뿌리 윗부분이 흙 위로 2cm 쯤 보이면 잎을 잡고 쏙 뽑아요",
+  food: [["적환무 샐러드", ["무 씻어 얇게 썰기", "채소와 담기", "드레싱 뿌리기"]], ["적환무 피클", ["무 썰기", "식초 · 설탕 · 소금물 끓여 붓기", "하루 두기"]]]
+}
+};
+
+/* ═════════ 🕐 한 시간 미션 수업 (10-09 · 목업 2_목업\8_한시간_미션수업_목업.html 이 잣대) ═════════
+   반 설정 «수업 꼴» 에서 고름 : 🕐 한 시간 미션 수업 / 📅 2~3주 키우기 (지금까지 반은 그대로 2~3주)
+   · 선생님 «수업 진행 판»(pL) : 오늘의 식물 · ▶ 다음 단계 · ❓ 문제 내기 · 🚨 미션 보내기(반 전체 · 모둠 · 한 명) · 반 현황
+   · 학생 «미션 수업» 화면(pS) : 선생님이 넘긴 단계 그림 · 미션 · 문제가 크게 뜸 → 풀면 선생님 현황으로
+   주고받는 길 (둘 중 하나 — 앱이 저절로 고름)
+   · 구글 시트 연결됨 → 구글 다리 2판 : 선생님 livePut(«지금 수업» 한 칸) · 패드 live(4~6초마다 · 잠금 없음) · 패드 ans(내 칸) · 선생님 ansAll(4초마다 한 번에)
+   · 연결 안 됨 → 이 브라우저 안 (basil.live · basil.ans.<이름>) — 같은 컴퓨터의 창 둘로 선생님 · 학생을 시험할 때
+   «지금 수업» 한 칸 꼴 : {id 수업 번호(시작 시각), plant 식물 열쇠, step 단계, mis {s 미션 번호, i 몇째 미션, to "all" 또는 [이름…]}, quiz {s 문제 번호, i 몇째 문제}}
+   아이 칸 꼴 (ans 의 seq 자리에 통째로) : {id, step 본 단계, m {s 푼 미션 번호, t 걸린 초, n 고친 번수}, q {s 답한 문제 번호, ok 맞음}, sc {m 푼 미션 수, q 맞힌 문제 수, qn 답한 문제 수}} */
+function lessonOn(){ return !!(CFG && CFG.mode === "lesson"); }
+const ML_GROUP = 5;   // 모둠 = 가나다 차례로 5명씩 (나중에 반 설정에서 고칠 거리)
+function mlRoster(){ return [...new Set(CFG.roster || [])].sort((a, b) => a.localeCompare(b, "ko")); }
+function mlGroupOf(name){ const i = mlRoster().indexOf(name); return i < 0 ? 0 : Math.floor(i / ML_GROUP) + 1; }
+function mlGroups(){ return Math.ceil(mlRoster().length / ML_GROUP); }
+function mlTargets(to){ const r = mlRoster(); return to === "all" ? r : Array.isArray(to) ? to.filter(n => r.includes(n)) : []; }
+function mlMix(arr){ return arr.map((o, i) => [o, i]).sort(() => Math.random() - .5); }   // 고를 것 차례 섞기 (자료는 정답이 첫째)
+function mlClock(ms){ const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; }
+
+/* ── 주고받는 길 ── */
+async function mlPut(live){
+  if (gsOn()) return gsCall("livePut", {live}, {ms: 12000});
+  LS.set("basil.live", live);
+}
+async function mlGet(){
+  if (gsOn()) return (await gsCall("live", {}, {ms: 8000})).live;
+  return LS.get("basil.live", null);
+}
+async function mlAnsPut(name, rec){
+  if (gsOn()) return gsCall("ans", {name, seq: rec, ok: true, ms: 0, pick: 0}, {ms: 8000});
+  LS.set("basil.ans." + name, {seq: rec, at: Date.now()});
+}
+async function mlAnsAll(names){
+  if (gsOn()){ const j = await gsCall("ansAll", {names}, {ms: 10000}); return j.ans || {}; }
+  const o = {}; names.forEach(n => { const v = LS.get("basil.ans." + n, null); if (v) o[n] = v; }); return o;
+}
+function mlErr(e){ const m = String(e && e.message || e); return /옛 판|모르는 부탁/.test(m) ? "구글 쪽 스크립트가 1판이에요 — ☁ 구글 시트에서 스크립트를 다시 복사해 «새 버전» 으로 배포해 주세요 (2판 필요)" : m; }
+
+/* ═════ 👩‍🏫 선생님 «수업 진행 판» ═════ */
+let ML = null, _mlT = null, _mlClockT = null, _mlAns = {}, _mlSim = {}, _mlState = "", _mlMsg = "", _mlPick = -1, _mlSimOn = TEST;
+function mlNew(plant){ return {id: Date.now(), plant: plant || "basil", step: 0, mis: null, quiz: null, misN: 0, quizN: 0, log: []}; }
+function mlLoad(){ ML = LS.get("basil.lesson", null); if (!ML || !PLANTS[ML.plant]) ML = mlNew(); }
+function mlLive(){ return {id: ML.id, plant: ML.plant, step: ML.step, mis: ML.mis, quiz: ML.quiz}; }
+function mlLog(t){ ML.log.unshift(`${mlClock(Date.now() - ML.id)} ${t}`); ML.log = ML.log.slice(0, 60); }
+async function mlPush(){
+  LS.set("basil.lesson", ML); mlStatus("busy", "패드로 보내는 중");
+  try { await mlPut(mlLive()); mlStatus("ok", gsOn() ? "☁ 구글로 보냈어요 — 패드에 2~6초 뒤 떠요" : "이 브라우저 안 (구글 시트 연결 전 · 같은 컴퓨터 창끼리)"); }
+  catch (e){ mlStatus("fail", "☁ 못 보냈어요 — " + mlErr(e)); setTimeout(() => { if ($("pL").classList.contains("on")) mlPush(); }, 5000); }
+}
+function mlStatus(st, msg){ _mlState = st; _mlMsg = msg; const c = $("mlNet"); if (!c) return; c.className = "mlnet " + st; c.textContent = (st === "fail" ? "☁✘ " : st === "busy" ? "☁… " : gsOn() ? "☁✔ " : "💻 ") + msg; }
+function mlTeacher(){
+  mlLoad(); _mlPick = -1; show("pL"); mlRender(); mlPush(); mlPoll();
+}
+function mlLeaveT(){ show("p1"); renderLogin(); }
+function mlSetPlant(k){
+  if (!PLANTS[k] || k === ML.plant) return;
+  if (ML.step > 0 && !confirm(`오늘의 식물을 ${PLANTS[k].name}(으)로 바꿀까요?\n단계 · 미션 · 문제가 처음으로 돌아가요`)){ mlRender(); return; }
+  const old = ML.log; ML = mlNew(k); ML.log = old; _mlSim = {}; _mlPick = -1; mlLog(`🌱 오늘의 식물 → ${PLANTS[k].icon} ${PLANTS[k].name}`); mlRender(); mlPush();
+}
+function mlRestart(){
+  if (!confirm("새 수업을 시작할까요?\n지금 수업의 단계 · 미션 · 문제 · 아이들 점수가 처음으로 돌아가요")) return;
+  ML = mlNew(ML.plant); _mlSim = {}; _mlAns = {}; _mlPick = -1; mlLog("🔄 새 수업 시작"); mlRender(); mlPush();
+}
+function mlNext(){
+  const P = PLANTS[ML.plant]; if (ML.step >= P.steps.length - 1) return;
+  ML.step++; mlLog(`▶ «${P.steps[ML.step][0]}» 단계 — 모든 패드가 이 단계로`); sfx("grow"); mlRender(); mlPush();
+}
+function mlBack(){ if (ML.step <= 0) return; ML.step--; mlLog(`◀ «${PLANTS[ML.plant].steps[ML.step][0]}» 단계로 되돌림`); mlRender(); mlPush(); }
+function mlPickMis(i){ _mlPick = i; mlRender(); }
+function mlSendMis(){
+  const P = PLANTS[ML.plant]; if (_mlPick < 0) return;
+  const v = $("mlTo").value, to = v === "all" ? "all" : v.startsWith("g") ? mlRoster().filter(n => mlGroupOf(n) === +v.slice(1)) : [v.slice(2)];
+  ML.misN++; ML.mis = {s: ML.misN, i: _mlPick, to, at: Date.now()};
+  const m = P.missions[_mlPick], n = mlTargets(to).length;
+  mlLog(`🚨 미션 ${ML.misN} «${m[2]}» → ${$("mlTo").selectedOptions[0].text} (${n}명)`); sfx("tap");
+  _mlPick = -1; mlSimMis(); mlRender(); mlPush();
+}
+function mlSendQuiz(){
+  const P = PLANTS[ML.plant], qi = +$("mlQ").value;
+  ML.quizN++; ML.quiz = {s: ML.quizN, i: qi, at: Date.now()};
+  mlLog(`❓ 문제 ${ML.quizN} «${P.quiz[qi][0]}» → 반 전체`); sfx("tap");
+  mlSimQuiz(); mlRender(); mlPush();
+}
+/* 🧪 시험 모드 — 아직 안 들어온 아이는 가상으로 풀어 줌 (진짜 패드가 들어오면 진짜가 이김) */
+function mlSimRec(n){ return _mlSim[n] || (_mlSim[n] = {id: ML.id, step: ML.step, m: {}, q: {}, sc: {m: 0, q: 0, qn: 0}, sim: true}); }
+function mlSimMis(){
+  if (!_mlSimOn || !ML.mis) return; const s = ML.mis.s, id = ML.id;
+  mlTargets(ML.mis.to).forEach(n => { const t = 4 + Math.random() * 20; setTimeout(() => { if (!ML || ML.id !== id) return; const r = mlSimRec(n); if (r.m.s === s) return; r.m = {s, t: Math.round(t), n: Math.random() < .25 ? 1 : 0}; r.sc.m++; mlRender(); }, t * 1000); });
+}
+function mlSimQuiz(){
+  if (!_mlSimOn || !ML.quiz) return; const s = ML.quiz.s, id = ML.id;
+  mlRoster().forEach(n => { setTimeout(() => { if (!ML || ML.id !== id) return; const r = mlSimRec(n); if (r.q.s === s) return; const ok = Math.random() < .7; r.q = {s, ok}; r.sc.qn++; if (ok) r.sc.q++; mlRender(); }, 3000 + Math.random() * 15000); });
+}
+function mlToggleSim(){ _mlSimOn = !_mlSimOn; if (!_mlSimOn) _mlSim = {}; else { mlRoster().forEach(mlSimRec); } mlRender(); }
+/* 아이 칸 — 진짜(이번 수업 것)가 있으면 진짜 · 없으면 가상 · 둘 다 없으면 null(아직 안 들어옴) */
+function mlRec(n){ const a = _mlAns[n], r = a && a.seq; if (r && r.id === ML.id) return r; return _mlSimOn ? mlSimRec(n) : null; }
+async function mlPoll(){
+  clearTimeout(_mlT); if (!$("pL").classList.contains("on")) return;
+  try { _mlAns = await mlAnsAll(mlRoster()); if (_mlState === "fail") mlStatus("ok", "다시 이어졌어요"); mlRender(true); }
+  catch (e){ mlStatus("fail", "☁ 아이들 답을 못 받았어요 — " + mlErr(e)); }
+  _mlT = setTimeout(mlPoll, 4000);
+}
+function mlRender(onlyKids){
+  const P = PLANTS[ML.plant], roster = mlRoster();
+  if (!onlyKids){
+    $("mlPlant").innerHTML = Object.entries(PLANTS).map(([k, v]) => `<option value="${k}" ${k === ML.plant ? "selected" : ""}>${v.icon} ${v.name}</option>`).join("");
+    const g = P.grow;
+    $("mlCard").innerHTML = `<div class="in"><b>${P.icon} ${P.name}</b> — ${P.intro}</div>
+      <div>🌰 심는 깊이 : ${g.seedDepth}</div><div>🌱 싹 : ${g.sprout}</div><div>🌡 온도 : ${g.temp}</div>
+      <div>☀ 햇빛 : ${g.sun}</div><div>💧 물 : ${g.water}</div><div>✂ 수확 : ${g.harvestDays}</div>`;
+    $("mlSteps").innerHTML = P.steps.map((s, i) => `<div class="${i < ML.step ? "done" : i === ML.step ? "on" : ""}">${s[1]} ${s[0]}</div>`).join("");
+    const nx = P.steps[ML.step + 1];
+    $("mlNext").textContent = nx ? `▶ 다음 단계 : ${nx[1]} ${nx[0]}` : "✔ 마지막 단계예요";
+    $("mlNext").disabled = !nx; $("mlBack").disabled = ML.step <= 0;
+    $("mlStepTip").innerHTML = ML.step === 4 ? `✂ ${P.harvest}` : ML.step === 5 ? P.food.map(f => `🍽 <b>${f[0]}</b> : ${f[1].join(" → ")}`).join("<br>") : `지금 «${P.steps[ML.step][0]}» — ${P.steps[ML.step][2]}`;
+    const qv = $("mlQ").value;
+    $("mlQ").innerHTML = P.quiz.map((q, i) => `<option value="${i}">${i + 1}. ${esc(q[0])}</option>`).join(""); if (qv !== "" && P.quiz[+qv]) $("mlQ").value = qv;
+    $("mlMis").innerHTML = P.missions.map((m, i) => `<button class="${i === _mlPick ? "sel" : ""}" onclick="mlPickMis(${i})"><i>${m[1]}</i>${m[2]}</button>`).join("");
+    const tv = $("mlTo").value;
+    $("mlTo").innerHTML = `<option value="all">반 전체 (${roster.length}명)</option>` + Array.from({length: mlGroups()}, (_, i) => `<option value="g${i + 1}">${i + 1}모둠 (${roster.filter(n => mlGroupOf(n) === i + 1).length}명)</option>`).join("")
+      + roster.map(n => `<option value="n:${esc(n)}">한 명 : ${esc(n)}</option>`).join("");
+    if (tv && [...$("mlTo").options].some(o => o.value === tv)) $("mlTo").value = tv;
+    $("mlMisSend").disabled = _mlPick < 0; $("mlMisWhy").textContent = _mlPick < 0 ? "👆 위에서 미션을 먼저 골라요" : `«${P.missions[_mlPick][2]}» — ${P.missions[_mlPick][3]}`;
+    $("mlLog").innerHTML = ML.log.map(t => `<div>${esc(t)}</div>`).join("");
+    $("mlSim").classList.toggle("sel", _mlSimOn); $("mlSim").style.display = TEST ? "" : "none";
+    mlStatus(_mlState, _mlMsg);
+  }
+  /* 반 현황 */
+  const recs = roster.map(n => [n, mlRec(n)]), inN = recs.filter(([, r]) => r).length;
+  const mis = ML.mis, misTo = mis ? mlTargets(mis.to) : [], quiz = ML.quiz;
+  $("mlKids").innerHTML = recs.map(([n, r]) => {
+    let st = "mlk", line = r ? "들어옴" : "아직 안 들어옴";
+    if (r && mis && misTo.includes(n)){ if (r.m && r.m.s === mis.s){ st += " ok"; line = `✔ ${r.m.t}초${r.m.n ? " · 고침 " + r.m.n : ""}`; } else { st += " wait"; line = "🚨 푸는 중"; } }
+    if (!r) st += " out";
+    const qk = r && quiz ? (r.q && r.q.s === quiz.s ? (r.q.ok ? "❓✔" : "❓✘") : "❓…") : "";
+    return `<div class="${st}"><b>${esc(n)}</b><span class="st">${line}</span><span class="st">${mlGroupOf(n)}모둠 ${qk}${r ? ` · ⭐${r.sc.m + r.sc.q}` : ""}${r && r.sim ? " 🧪" : ""}</span></div>`;
+  }).join("");
+  if (mis){
+    const ok = misTo.filter(n => { const r = mlRec(n); return r && r.m && r.m.s === mis.s; }).length, k = misTo.length || 1;
+    $("mlBar").innerHTML = `<i style="width:${ok / k * 100}%;background:#6cc04a"></i><i style="width:${(k - ok) / k * 100}%;background:#f0b48a"></i>`;
+    $("mlBarTx").textContent = `미션 ${mis.s} «${PLANTS[ML.plant].missions[mis.i][2]}» — 해결 ${ok} / ${misTo.length}명` + (ok === misTo.length && misTo.length ? " · 🎉 모두 해결!" : "");
+  } else { $("mlBar").innerHTML = ""; $("mlBarTx").textContent = "아직 보낸 미션이 없어요"; }
+  if (quiz){
+    const ans = recs.filter(([, r]) => r && r.q && r.q.s === quiz.s), ok = ans.filter(([, r]) => r.q.ok).length;
+    $("mlQRes").innerHTML = `문제 ${quiz.s} «${esc(PLANTS[ML.plant].quiz[quiz.i][0])}» — 답한 아이 <b>${ans.length} / ${inN}</b> · 정답 <b>${ans.length ? Math.round(ok / ans.length * 100) : 0}%</b>` + (ans.length && ans.length === inN ? " · ✔ 모두 답했어요" : "");
+  } else $("mlQRes").textContent = "보내면 아이들 패드에 바로 떠요 → 여기 정답률이 모여요";
+  const tot = recs.filter(([, r]) => r).map(([, r]) => r.sc), sum = k => tot.reduce((s, x) => s + (x[k] || 0), 0);
+  $("mlSum").textContent = `들어온 아이 ${inN} / ${roster.length}명 · 푼 미션 ${sum("m")} · 맞힌 문제 ${sum("q")} / ${sum("qn")}`;
+}
+function mlTick(){ const c = $("mlClk"); if (c && ML) c.textContent = mlClock(Date.now() - ML.id); }
+/* ☁ 구글 시트 창 — 원래 선생님 화면(p6) 안에서 열리던 창을 이 화면으로 가져와 엶 */
+function mlOpenGs(){
+  let m = $("gsModal");
+  if (!m){ m = document.createElement("div"); m.id = "gsModal"; m.className = "modal"; m.onclick = e => { if (e.target === m) m.classList.remove("on"); }; }
+  document.querySelector("#pL .app").appendChild(m); openGs();
+}
+
+/* ═════ 📱 학생 «미션 수업» 화면 ═════ */
+let mlName = "", MY = null, _mlLive = null, _mlPT = null, _mlPop = null, _mlSendFail = false;
+function mlMyLoad(name){ MY = LS.get("basil.mlme." + name, null) || {id: 0, step: 0, m: {}, q: {}, sc: {m: 0, q: 0, qn: 0}}; }
+function mlMySave(){ if (mlName) LS.set("basil.mlme." + mlName, MY); }
+async function mlSend(){
+  if (!mlName) return; mlMySave();
+  try { await mlAnsPut(mlName, MY); _mlSendFail = false; mlNetS("ok"); } catch (e){ _mlSendFail = true; mlNetS("fail", mlErr(e)); }
+}
+function mlNetS(st, msg){ const c = $("mlsNet"); if (!c) return; c.className = "mlnet " + st; c.textContent = st === "fail" ? "☁✘" : st === "busy" ? "☁…" : gsOn() ? "☁✔" : "💻"; c.title = msg || (gsOn() ? "선생님과 이어져 있어요" : "이 브라우저 안에서만 (구글 시트 연결 전)"); }
+function mlEnter(name){
+  if (!TEST && !fsOn() && matchMedia("(pointer:coarse)").matches) toggleFS();
+  mlName = name; mlMyLoad(name); _mlLive = null; _mlPop = null;
+  $("mlsWho").textContent = `${CFG.className} ${name}`;
+  show("pS"); mlSRender(); mlSend(); mlSPoll(true);
+  sfx("chime");
+}
+function mlLeaveS(){ clearTimeout(_mlPT); mlMySave(); mlName = ""; MY = null; $("mlsPop").classList.remove("on"); show("p1"); renderLogin(); toast("잘했어요! 다음 시간에 또 만나요 👋"); }
+async function mlSPoll(first){
+  clearTimeout(_mlPT); if (!mlName || !$("pS").classList.contains("on")) return;
+  try { const lv = await mlGet(); mlNetS(_mlSendFail ? "fail" : "ok"); mlTake(lv); if (_mlSendFail) mlSend(); }
+  catch (e){ mlNetS("fail", mlErr(e)); }
+  _mlPT = setTimeout(mlSPoll, first ? 1500 : 4000 + Math.random() * 2000);   // 패드마다 4~6초로 흩어 묻기 (구글이 한꺼번에 몰리지 않게)
+}
+function mlTake(lv){
+  _mlLive = lv;
+  if (!lv || !PLANTS[lv.plant]){ mlSRender(); return; }
+  if (lv.id !== MY.id){ MY = {id: lv.id, step: lv.step, m: {}, q: {}, sc: {m: 0, q: 0, qn: 0}}; mlSend(); }   // 새 수업 — 내 점수 처음부터
+  if (lv.step !== MY.step){ const up = lv.step > MY.step; MY.step = lv.step; mlSend(); if (up){ sfx("grow"); toast(`${PLANTS[lv.plant].steps[lv.step][1]} «${PLANTS[lv.plant].steps[lv.step][0]}» 단계예요!`); } }
+  mlSRender(); mlSNextPop();
+}
+/* 뜰 것 고르기 — 미션 먼저, 그다음 문제 (하나 풀면 다음 것이 바로) */
+function mlSNextPop(){
+  const lv = _mlLive; if (!lv || _mlPop || !PLANTS[lv.plant]) return;
+  const P = PLANTS[lv.plant];
+  if (lv.mis && mlTargets(lv.mis.to).includes(mlName) && MY.m.s !== lv.mis.s && P.missions[lv.mis.i]) return mlShowMis(lv.mis, P.missions[lv.mis.i]);
+  if (lv.quiz && MY.q.s !== lv.quiz.s && P.quiz[lv.quiz.i]) return mlShowQuiz(lv.quiz, P.quiz[lv.quiz.i]);
+}
+function mlShowMis(mis, m){
+  _mlPop = {k: "m", s: mis.s, t0: Date.now(), n: 0, m};
+  $("mlsCard").className = "card";
+  $("mlsCard").innerHTML = `<h2>🚨 미션!</h2><div class="big">${m[1]}</div><div class="ask" id="mlsAsk">${esc(m[3])}</div>
+    <div class="opts">${mlMix(m[4]).map(([o, i]) => `<button class="b" onclick="mlAnsMis(${i}, this)">${esc(o)}</button>`).join("")}</div><div class="why" id="mlsWhy"></div>`;
+  $("mlsPop").classList.add("on"); sfx("bad"); if (sayOn()) speak(m[3]);
+}
+function mlAnsMis(i, el){
+  const p = _mlPop; if (!p || p.k !== "m" || p.done) return;
+  if (i !== p.m[5]){ p.n++; el.disabled = true; $("mlsAsk").textContent = "❌ 다시 생각해 봐요 — " + p.m[3]; sfx("bad"); return; }
+  p.done = true; const t = Math.round((Date.now() - p.t0) / 1000);
+  MY.m = {s: p.s, t, n: p.n}; MY.sc.m++; mlSend(); sfx("chime");
+  [...document.querySelectorAll("#mlsCard .opts .b")].forEach(b => b.disabled = true); el.classList.add("right");
+  $("mlsWhy").innerHTML = `✔ 해결! ${t}초<br><small>${esc(p.m[6] || "")}</small><br><button class="big" onclick="mlClosePop()">알았어요 👍</button>`;
+  MY.last = `✔ 미션 «${p.m[2]}» 해결! ${p.m[6] || ""}`;
+}
+function mlShowQuiz(quiz, q){
+  _mlPop = {k: "q", s: quiz.s, q};
+  $("mlsCard").className = "card q";
+  $("mlsCard").innerHTML = `<h2>❓ 선생님 문제</h2><div class="ask">${esc(q[0])}</div>
+    <div class="opts">${mlMix(q[1]).map(([o, i]) => `<button class="b" onclick="mlAnsQuiz(${i}, this)">${esc(o)}</button>`).join("")}</div><div class="why" id="mlsWhy"></div>`;
+  $("mlsPop").classList.add("on"); sfx("pop"); if (sayOn()) speak(q[0]);
+}
+function mlAnsQuiz(i, el){
+  const p = _mlPop; if (!p || p.k !== "q" || p.done) return;
+  p.done = true; const ok = i === p.q[2];
+  MY.q = {s: p.s, ok}; MY.sc.qn++; if (ok) MY.sc.q++; mlSend(); sfx(ok ? "chime" : "bad");
+  [...document.querySelectorAll("#mlsCard .opts .b")].forEach(b => { b.disabled = true; if (b.textContent === p.q[1][p.q[2]]) b.classList.add("right"); }); if (!ok) el.classList.add("wrong");
+  $("mlsWhy").innerHTML = (ok ? "⭕ 맞았어요!" : `❌ 아쉬워요 — 답은 «${esc(p.q[1][p.q[2]])}»`) + `<br><button class="big" onclick="mlClosePop()">알았어요 👍</button>`;
+  MY.last = ok ? `⭕ 문제를 맞혔어요!` : `❌ 문제 답 : ${p.q[1][p.q[2]]}`;
+}
+function mlClosePop(){ $("mlsPop").classList.remove("on"); _mlPop = null; mlSRender(); setTimeout(mlSNextPop, 300); }
+function mlSRender(){
+  const lv = _mlLive, P = lv && PLANTS[lv.plant];
+  $("mlsScore").textContent = MY ? `⭐ 미션 ${MY.sc.m} · 문제 ${MY.sc.q}/${MY.sc.qn}` : "";
+  if (!P){
+    $("mlsPlantNm").textContent = "";
+    $("mlsSteps").innerHTML = ""; $("mlsIcon").textContent = "🪴"; $("mlsCap").textContent = "선생님이 수업을 시작하길 기다려요";
+    $("mlsSub").textContent = "선생님 화면에서 «수업 진행 판» 을 열면 여기에 오늘의 식물이 나와요"; $("mlsSide").innerHTML = ""; return;
+  }
+  const s = P.steps[lv.step] || P.steps[0], g = P.grow;
+  $("mlsPlantNm").textContent = `· 오늘의 식물 ${P.icon} ${P.name}`;
+  $("mlsSteps").innerHTML = P.steps.map((x, i) => `<div class="${i < lv.step ? "done" : i === lv.step ? "on" : ""}">${x[1]}<small>${x[0]}</small></div>`).join("");
+  $("mlsIcon").textContent = s[1]; $("mlsCap").textContent = s[0]; $("mlsSub").textContent = s[2];
+  const last = lv.step === P.steps.length - 1;
+  $("mlsSide").innerHTML = last
+    ? `<h3>🏆 오늘 내 결과</h3><div class="res"><div><b>${MY.sc.m}</b>미션 해결</div><div><b>${MY.sc.q}<small>/${MY.sc.qn}</small></b>문제 맞힘</div></div><div class="tx">${P.icon} ${P.name} 키우기를 끝까지 해냈어요! 🎉</div>`
+    : lv.step === 4 ? `<h3>✂ 이렇게 거둬요</h3><div class="tx">${esc(P.harvest)}</div>`
+    : lv.step === 5 ? `<h3>🍽 이렇게 만들어요</h3>${P.food.map(f => `<div class="food"><b>${esc(f[0])}</b><ol>${f[1].map(x => `<li>${esc(x)}</li>`).join("")}</ol></div>`).join("")}`
+    : `<h3>${P.icon} ${P.name} 키우는 법</h3><div class="tx">${esc(P.intro)}</div>
+       <div class="grow"><div>🌰 <b>심는 깊이</b> ${esc(g.seedDepth)}</div><div>🌱 <b>싹</b> ${esc(g.sprout)}</div><div>🌡 <b>온도</b> ${esc(g.temp)}</div><div>☀ <b>햇빛</b> ${esc(g.sun)}</div><div>💧 <b>물</b> ${esc(g.water)}</div><div>✂ <b>수확</b> ${esc(g.harvestDays)}</div></div>`;
+  $("mlsLast").textContent = MY && MY.last ? MY.last : "🚨 미션 · ❓ 문제가 오면 화면에 크게 떠요";
+}
+
+/* ── 앱에 잇기 ── */
+/* 반 설정 : 맨 위에 «수업 꼴» · 한 시간 수업이면 2~3주에만 쓰는 칸(날짜 · 요일 · 속도 · 날씨 …)을 숨김 */
+const _openSetupML = openSetup;
+openSetup = function(){
+  const r = _openSetupML.apply(this, arguments);
+  try {
+    const d = setupDraft, L = d.mode === "lesson", pans = document.querySelectorAll("#setupBody > .panel");
+    pans[0].insertAdjacentHTML("afterbegin", `<label class="mlmode">수업 꼴 <button class="b ${L ? "sel" : ""}" onclick="setupDraft.mode='lesson';openSetupKeep()">🕐 한 시간 미션 수업</button><button class="b ${L ? "" : "sel"}" onclick="setupDraft.mode='weeks';openSetupKeep()">📅 2~3주 키우기</button></label>
+      <div class="hint" style="margin-top:-6px">${L ? "한 수업 시간(40분) 안에 씨앗 → 수확 → 음식까지 · 선생님이 단계를 넘기고 미션 · 문제를 보내요 · 식물 다섯 가지 중 수업 때 골라요" : "실제 날짜대로 2~3주 동안 바질을 키워요 · 수업 요일마다 돌봐요"}</div>`);
+    if (L){
+      const keep = /학년|학생 명단|비밀번호|상장/;
+      [...pans[0].children, ...pans[1].children].forEach(el => {
+        if (el.classList.contains("mlmode") || el.previousElementSibling && el.previousElementSibling.classList.contains("mlmode")) return;
+        if (el.tagName === "LABEL") { el._ml = keep.test((el.firstChild && el.firstChild.textContent) || ""); if (!el._ml) el.style.display = "none"; return; }   // 칸 이름(첫 글)만 봄 — «난이도 … (4~6학년)» 이 «학년» 에 걸리지 않게
+        if (el.classList.contains("hint") && el.previousElementSibling && el.previousElementSibling.style.display === "none" && el.id !== "sCount") el.style.display = "none";   // 숨긴 칸 밑 설명(이어진 설명까지)
+        if (el.classList.contains("demohelp") || /시연한 학생/.test(el.textContent) && el.tagName === "BUTTON") el.style.display = "none";
+      });
+      const b = $("sSave"); if (b) b.textContent = "저장하고 시작 (한 시간 미션 수업)";
+    }
+  } catch (e) {}
+  return r;
+};
+/* 들어가기 : 한 시간 수업이면 이름만 누르고 들어감 (그림 열쇠 없음 — 한 시간 수업은 기록을 쌓지 않아서) */
+const _renderLoginML = renderLogin;
+renderLogin = function(){
+  const r = _renderLoginML.apply(this, arguments);
+  const L = lessonOn();
+  ["pics", "pw", "pwTitle"].forEach(id => { const e = $(id); if (e) e.style.display = L ? "none" : ""; });
+  if (!L){ $("goBtn").textContent = "🌿 들어가기 →"; return r; }
+  let no = null;
+  $("goBtn").textContent = "🌿 수업 들어가기 →"; $("goBtn").disabled = true; $("goWhy").textContent = "👆 내 이름을 눌러요";
+  $("pickNo").onclick = ev => { const n = ev.target.dataset.n; if (!n) return; no = n; sfx("tap"); [...$("pickNo").children].forEach(s => s.classList.toggle("on", s.dataset.n === n)); $("goBtn").disabled = false; $("goWhy").textContent = `${n} — 맞으면 들어가기`; };
+  $("goBtn").onclick = () => { if (no) mlEnter(no); };
+  return r;
+};
+const _applyCfgML = applyCfg;
+applyCfg = function(){ const r = _applyCfgML.apply(this, arguments); if (lessonOn()) $("loginMeta").textContent = `${CFG.className} · 🕐 한 시간 미션 수업`; return r; };
+const _teacherLoginML = teacherLogin;
+teacherLogin = function(){
+  if (!lessonOn()) return _teacherLoginML.apply(this, arguments);
+  if (TEACHER_PIN_ASK && CFG.pin){ const v = prompt("선생님 비밀번호 (숫자 4자리)"); if (v === null) return; if (v !== CFG.pin){ toast("비밀번호가 달라요"); return; } }
+  mlTeacher();
+};
+const _showML = show;
+show = function(id){
+  const r = _showML.apply(this, arguments);
+  clearInterval(_mlClockT); if (id === "pL") _mlClockT = setInterval(mlTick, 1000); else clearTimeout(_mlT);
+  if (id !== "pS") clearTimeout(_mlPT);
+  return r;
+};
+/* 같은 컴퓨터 창 둘로 시험할 때 — 다른 창이 바꾸면 바로 알아챔 (구글 연결 전) */
+window.addEventListener("storage", ev => {
+  if (gsOn() || !ev.key) return;
+  if (ev.key === "basil.live" && mlName && $("pS").classList.contains("on")) mlSPoll();
+  if (ev.key.startsWith("basil.ans.") && ML && $("pL").classList.contains("on")) mlPoll();
+});
+
+/* 반 이름 표시 */
+const _mlRenderCls = mlRender; mlRender = function(){ document.querySelectorAll('.mlcls').forEach(e => e.textContent = CFG ? CFG.className : ''); return _mlRenderCls.apply(this, arguments); };
 
 /* ═════════════════ 6. 목업 틀 — 탭 · 창 폭 맞춤 ═════════════════ */
 function show(id){
