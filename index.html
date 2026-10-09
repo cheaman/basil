@@ -7227,10 +7227,18 @@ function mlNew(plant){ return {id: Date.now(), plant: plant || "basil", step: 0,
 function mlLoad(){ ML = LS.get("basil.lesson", null); if (!ML || !PLANTS[ML.plant]) ML = mlNew(); }
 function mlLive(){ return {id: ML.id, plant: ML.plant, step: ML.step, mis: ML.mis, quiz: ML.quiz}; }
 function mlLog(t){ ML.log.unshift(`${mlClock(Date.now() - ML.id)} ${t}`); ML.log = ML.log.slice(0, 60); }
+/* 보내기는 한 줄로 — 연달아 누르면(다음 단계 → 미션) 구글에 두 번 가는데, 늦게 보낸 것이 먼저 닿으면 옛 모습이 덮어씀 (10-09 진짜 구글 시험에서 찾음)
+   → 앞 것이 끝난 뒤 «그때의 마지막 모습» 을 한 번 더 보냄 */
+let _mlPushing = false, _mlPushAgain = false;
 async function mlPush(){
-  LS.set("basil.lesson", ML); mlStatus("busy", "패드로 보내는 중");
-  try { await mlPut(mlLive()); mlStatus("ok", gsOn() ? "☁ 구글로 보냈어요 — 패드에 2~6초 뒤 떠요" : "이 브라우저 안 (구글 시트 연결 전 · 같은 컴퓨터 창끼리)"); }
-  catch (e){ mlStatus("fail", "☁ 못 보냈어요 — " + mlErr(e)); setTimeout(() => { if ($("pL").classList.contains("on")) mlPush(); }, 5000); }
+  LS.set("basil.lesson", ML);
+  if (_mlPushing){ _mlPushAgain = true; return; }
+  _mlPushing = true; mlStatus("busy", "패드로 보내는 중");
+  try {
+    do { _mlPushAgain = false; await mlPut(mlLive()); } while (_mlPushAgain);
+    mlStatus("ok", gsOn() ? "☁ 구글로 보냈어요 — 패드에 2~6초 뒤 떠요" : "이 브라우저 안 (구글 시트 연결 전 · 같은 컴퓨터 창끼리)");
+  } catch (e){ mlStatus("fail", "☁ 못 보냈어요 — " + mlErr(e)); setTimeout(() => { if ($("pL").classList.contains("on")) mlPush(); }, 5000); }
+  finally { _mlPushing = false; }
 }
 function mlStatus(st, msg){ _mlState = st; _mlMsg = msg; const c = $("mlNet"); if (!c) return; c.className = "mlnet " + st; c.textContent = (st === "fail" ? "☁✘ " : st === "busy" ? "☁… " : gsOn() ? "☁✔ " : "💻 ") + msg; }
 function mlTeacher(){
@@ -7344,9 +7352,14 @@ function mlOpenGs(){
 let mlName = "", MY = null, _mlLive = null, _mlPT = null, _mlPop = null, _mlSendFail = false;
 function mlMyLoad(name){ MY = LS.get("basil.mlme." + name, null) || {id: 0, step: 0, m: {}, q: {}, sc: {m: 0, q: 0, qn: 0}}; }
 function mlMySave(){ if (mlName) LS.set("basil.mlme." + mlName, MY); }
+let _mlSending = false, _mlSendAgain = false;   // 답 보내기도 한 줄로 (늦게 보낸 옛 점수가 덮어쓰지 않게)
 async function mlSend(){
   if (!mlName) return; mlMySave();
-  try { await mlAnsPut(mlName, MY); _mlSendFail = false; mlNetS("ok"); } catch (e){ _mlSendFail = true; mlNetS("fail", mlErr(e)); }
+  if (_mlSending){ _mlSendAgain = true; return; }
+  _mlSending = true;
+  try { do { _mlSendAgain = false; await mlAnsPut(mlName, MY); } while (_mlSendAgain && mlName); _mlSendFail = false; mlNetS("ok"); }
+  catch (e){ _mlSendFail = true; mlNetS("fail", mlErr(e)); }
+  finally { _mlSending = false; }
 }
 function mlNetS(st, msg){ const c = $("mlsNet"); if (!c) return; c.className = "mlnet " + st; c.textContent = st === "fail" ? "☁✘" : st === "busy" ? "☁…" : gsOn() ? "☁✔" : "💻"; c.title = msg || (gsOn() ? "선생님과 이어져 있어요" : "이 브라우저 안에서만 (구글 시트 연결 전)"); }
 function mlEnter(name){
