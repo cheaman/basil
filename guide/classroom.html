@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>클래스룸으로 수업하기</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7f1;--card:#fff;--ink:#24332a;--sub:#5f6e64;--line:#dfe8d8;--leaf:#2f7a2a;--hi:#fff3dc;--blue:#1f4f8a;--bluebg:#e3eefb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b211d;--card:#252d27;--ink:#e6efe6;--sub:#a3b3a6;--line:#38443b;--leaf:#7fcf6a;--hi:#4a3d1e;--blue:#9cc4f2;--bluebg:#20304a}}
+:root[data-theme="dark"]{--bg:#1b211d;--card:#252d27;--ink:#e6efe6;--sub:#a3b3a6;--line:#38443b;--leaf:#7fcf6a;--hi:#4a3d1e;--blue:#9cc4f2;--bluebg:#20304a}
+*{box-sizing:border-box}
+a{color:var(--leaf)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Noto Sans KR",sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 48px}
+h1{font:30px "Jua";margin:0}
+h2{font:21px "Jua";margin:24px 0 8px}
+h3{font:18px "Jua";margin:14px 0 4px}
+.sub{color:var(--sub);font-size:14px}
+.step{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0}
+.step .n{flex:0 0 34px;height:34px;border-radius:50%;background:var(--leaf);color:#fff;display:flex;align-items:center;justify-content:center;font:18px "Jua"}
+.step.blue .n{background:var(--blue)}
+em{font-style:normal;background:var(--hi);border-radius:5px;padding:0 5px;font-weight:700}
+.btn{display:inline-block;background:var(--bluebg);color:var(--blue);border-radius:8px;padding:0 7px;font-weight:700;white-space:nowrap}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.warn{background:var(--hi);border-radius:14px;padding:10px 14px}
+.flow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;margin:8px 0}
+.flow div{flex:1 1 150px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:15px}
+.flow div b{display:block;font:17px "Jua";color:var(--leaf)}
+.flow .ar{flex:0 0 auto;border:0;background:none;padding:0;display:flex;align-items:center;font-size:22px;color:var(--sub)}
+table{border-collapse:collapse;width:100%;background:var(--card);border-radius:12px;overflow:hidden}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;font-size:15px}
+th{font:15px "Jua";background:rgba(47,122,42,.08)}
+td,th{word-break:keep-all;overflow-wrap:anywhere}
+td:first-child,th:first-child{white-space:nowrap}
+@media (max-width:640px){
+  .flow .ar{display:none}
+  table,tbody,tr,td{display:block;width:auto}
+  tr:has(th){display:none}
+  tr{border-bottom:1px solid var(--line);padding:6px 0}
+  td{border:0;padding:2px 12px}
+  td:first-child{font-family:"Jua";font-size:16px;color:var(--leaf);white-space:normal}
+}
+@media print{body{background:#fff}main{padding:0}.step,.box,table,.flow{break-inside:avoid}}
+</style>
+</head>
+<body>
+<script>/* 카카오톡 안 창 → 바깥 브라우저로 */
+(function(){if(!/KAKAOTALK/i.test(navigator.userAgent))return;try{if(sessionStorage.getItem("kkOut"))return;sessionStorage.setItem("kkOut","1");}catch(e){}
+location.href="kakaotalk://web/openExternal?url="+encodeURIComponent(location.href);})();</script>
+
+<main>
+<h1>🏫 바질 키우기 — 구글 클래스룸으로 수업하기</h1>
+<div class="sub">클래스룸에 무엇을 · 어디서 가져와 · 어떻게 올리나 · 아이들은 어떻게 여나 · 다른 선생님은 어떻게 쓰나</div>
+
+<h2>한눈에</h2>
+<div class="flow">
+  <div><b>① 처음 한 번</b>구글 시트 연결<br><span class="sub">선생님 개인 구글 계정 · 10분</span></div>
+  <div class="ar">→</div>
+  <div><b>② 반 들어가기 링크</b>바질 앱 선생님 화면에서 만들어짐</div>
+  <div class="ar">→</div>
+  <div><b>③ 클래스룸에 올리기</b>«🏫» 단추 한 번<br><span class="sub">학교 계정의 반으로</span></div>
+  <div class="ar">→</div>
+  <div><b>④ 아이들</b>클래스룸에서 링크 누름 → 내 이름 → 시작</div>
+</div>
+<div class="box">
+클래스룸에 올리는 것은 <b>«반 들어가기 링크» 하나</b>입니다. 이 링크를 누르면 패드가 우리 반 설정 · 명단을 저절로 받아 «내 이름» 화면이 열립니다.<br>
+<span class="sub">앱 주소(cheaman.github.io/basil)만 올리면 패드마다 반 설정을 새로 해야 합니다 — 꼭 «반 들어가기 링크» 를 올려 주세요.</span>
+</div>
+
+<h2>계정 두 개 — 하는 일이 다릅니다</h2>
+<table>
+  <tr><th>계정</th><th>무엇에 쓰나</th><th>왜</th></tr>
+  <tr><td>선생님 개인 구글 (지메일)</td><td>구글 시트 연결 (스크립트 · 시트) — 처음 한 번</td><td>학교 계정은 «모든 사용자» 로 여는 스크립트를 학교가 막아 두었을 수 있어서. 자료는 선생님 드라이브의 시트에만 저장됩니다</td></tr>
+  <tr><td>학교 계정</td><td>구글 클래스룸 — 링크 올리기 · 아이들이 링크 누르기</td><td>반 · 학생이 학교 계정 클래스룸에 있어서</td></tr>
+</table>
+<div class="sub" style="margin-top:6px">교실 컴퓨터 크롬에 두 계정이 함께 로그인돼 있어도 괜찮습니다. 클래스룸 창이 뜨면 <b>오른쪽 위 계정이 학교 계정인지</b>만 확인해 주세요.</div>
+
+<h2>1 · 처음 한 번 — 준비</h2>
+<div class="step"><span class="n">1</span><div><b>구글 시트 연결</b> — «<a href="sheet.html">구글 시트 연결 안내</a>» 대로 (10분쯤 · 개인 구글 계정으로)<br><span class="sub">연결해야 «반 들어가기 링크» 가 생깁니다.</span></div></div>
+<div class="step"><span class="n">2</span><div><b>반 설정</b> — 처음 열면 저절로 나옵니다 · 다시 열 때는 선생님 화면 <span class="btn">⚙ 설정 ▾</span> → <span class="btn">⚙ 반 설정</span> (한 시간 수업이면 수업 진행 판 위 <span class="btn">⚙ 반 설정</span>)<br>
+맨 위 <b>수업 꼴</b>을 고르고 저장 : <em>🕐 한 시간 미션 수업</em> (한 시간 안에 씨앗 → 수확 · 선생님이 미션 · 문제를 보냄) 또는 <em>📅 2~3주 키우기</em> (실제 날짜대로 · 수업 요일마다 돌봄)<br>
+학생 명단도 여기에 (클래스룸 명단을 복사해 붙이면 이름만 골라 넣습니다)</div></div>
+
+<h2>2 · 어디서 가져오나 — «반 들어가기 링크»</h2>
+<table>
+  <tr><th>수업 꼴</th><th>링크가 있는 곳</th></tr>
+  <tr><td>📅 2~3주 키우기</td><td>첫 화면 오른쪽 위 <span class="btn">👩‍🏫 선생님</span> → 위쪽 <span class="btn">⚙ 설정 ▾</span> → <span class="btn">☁ 구글 시트</span> → 창 아래 <b>«🔗 반 들어가기 링크»</b></td></tr>
+  <tr><td>🕐 한 시간 미션 수업</td><td>첫 화면 <span class="btn">👩‍🏫 선생님</span> → <b>수업 진행 판</b> 위쪽 <span class="btn">🏫 클래스룸에</span> (또는 <span class="btn">☁ 구글 시트</span> 창)</td></tr>
+</table>
+
+<h2>3 · 올리는 법</h2>
+<h3>가 · 단추로 (권함)</h3>
+<div class="step blue"><span class="n">1</span><div>교실 컴퓨터 크롬에 <b>학교 계정으로 로그인</b>된 상태에서 바질 앱 선생님 화면을 엽니다</div></div>
+<div class="step blue"><span class="n">2</span><div><span class="btn">🏫 클래스룸에 올리기</span> (☁ 구글 시트 창 · «🔗 링크 복사» 옆) 또는 <span class="btn">🏫 클래스룸에</span> (수업 진행 판 위쪽)</div></div>
+<div class="step blue"><span class="n">3</span><div>작은 클래스룸 창이 뜹니다 → <b>오른쪽 위 계정이 학교 계정인지</b> 확인 → <b>반</b> 고르기 → 무엇으로 올릴지 고르기 → 올리기<br>
+· <em>자료</em> (권함) — 아이들이 «수업» 탭에서 언제든 다시 누를 수 있음 · 낼 것 없음<br>
+· <em>과제</em> — 마감 · 점검이 필요할 때 (2~3주 마지막 날 «성장 카드 내기» 에 좋음)<br>
+· <em>공지</em> — 그날만 알릴 때</div></div>
+<div class="sub">창이 안 뜨면 크롬 주소창 오른쪽의 «팝업 차단» 표시를 눌러 <b>허용</b> 해 주세요. 제목 칸이 비어 있으면 «🌿 바질 키우기 들어가기» 처럼 적어 주세요.</div>
+
+<h3>나 · 손으로 (단추가 안 될 때)</h3>
+<div class="step"><span class="n">1</span><div>바질 앱 <span class="btn">☁ 구글 시트</span> 창 → <span class="btn">🔗 링크 복사</span></div></div>
+<div class="step"><span class="n">2</span><div>클래스룸(학교 계정) → 그 반 → <b>수업</b> 탭 → <b>+ 만들기</b> → <b>자료</b></div></div>
+<div class="step"><span class="n">3</span><div>제목 적기 → <b>추가</b>(또는 링크 그림) → <b>링크</b> → 붙여 넣기 → <b>게시</b></div></div>
+
+<h2>4 · 아이들은 이렇게 엽니다</h2>
+<div class="step"><span class="n">1</span><div>패드에서 클래스룸 (앱이나 웹) → 그 반 → <b>수업</b> 탭 → 바질 자료 → <b>링크 누르기</b></div></div>
+<div class="step"><span class="n">2</span><div><b>내 이름</b>을 누르고 들어가기<br>
+· 한 시간 미션 수업 : 이름만 누르면 시작 → 선생님이 보내는 미션 · 문제가 화면에 크게 뜸<br>
+· 2~3주 키우기 : 이름 → 내 그림 열쇠 3개 → 내 바질</div></div>
+<div class="step"><span class="n">3</span><div>다음 수업에도 <b>같은 링크</b>를 다시 누르면 됩니다 (내 바질 · 점수는 선생님 시트에 저장)</div></div>
+<div class="sub">링크가 클래스룸 앱 안 창으로 열려도 그대로 쓰면 됩니다. 화면을 더 크게 쓰려면 첫 화면 «📲 앱으로 깔기» (패드마다 처음 한 번 · <a href="teacher.html">선생님 시작 안내</a> 8번).</div>
+
+<h2>5 · 다른 선생님이 쓰실 때</h2>
+<div class="box">
+· 앱 주소는 모두 같습니다 : <b>https://cheaman.github.io/basil/</b><br>
+· 선생님마다 <b>자기 개인 구글 계정</b>으로 «구글 시트 연결» 을 한 번 → 자기 반 설정 · 명단 → 자기 «반 들어가기 링크» 를 자기 클래스룸에 올리기<br>
+· 시트 · 링크가 선생님마다 따로라 <b>반끼리 섞이지 않습니다</b><br>
+· 한 선생님이 <b>여러 반</b>을 맡으면 반마다 스크립트를 하나씩 (반마다 10분) — 반마다 링크가 따로 생깁니다<br>
+· 처음 보시는 선생님께는 이 안내 차례 쪽을 보내 드리면 됩니다 : <b>https://cheaman.github.io/basil/guide/</b>
+</div>
+
+<h2>잘 안 될 때</h2>
+<table>
+  <tr><th>이럴 때</th><th>이렇게 해 주세요</th></tr>
+  <tr><td>«먼저 ☁ 구글 시트를 연결해 주세요»</td><td>«<a href="sheet.html">구글 시트 연결 안내</a>» 를 먼저 — 연결해야 링크가 생깁니다</td></tr>
+  <tr><td>클래스룸 창에 우리 반이 없음</td><td>창 오른쪽 위 계정을 <b>학교 계정</b>으로 바꾸기</td></tr>
+  <tr><td>클래스룸 창이 안 뜸</td><td>크롬 주소창 오른쪽 «팝업 차단» → 허용 · 그래도 안 되면 «나 · 손으로»</td></tr>
+  <tr><td>아이가 링크를 눌렀는데 «반 설정» 화면이 나옴</td><td>앱 주소만 올라간 것 — <b>«반 들어가기 링크»</b> (주소 끝에 #j= 가 붙은 것) 로 다시 올리기</td></tr>
+  <tr><td>아이 화면 위 ☁✘</td><td>와이파이 확인 · 이어지면 저절로 올라감 · 계속이면 학교 와이파이가 구글 스크립트 주소를 막는지 정보 담당 선생님께</td></tr>
+</table>
+
+<h2>꼭 지켜 주세요</h2>
+<div class="warn">
+· 반 들어가기 링크에는 <b>시트 열쇠</b>가 들어 있습니다 — <b>클래스룸 안에만</b> 올려 주세요 (카톡 · 학교 누리집 · 공개 게시판 X)<br>
+· 학생 이름 · 기록은 <b>선생님 구글 시트 ↔ 교실 패드</b> 사이에서만 오갑니다
+</div>
+<div class="sub" style="margin-top:14px">같이 보기 : <a href="intro.html">바질 키우기 소개</a> · <a href="sheet.html">구글 시트 연결 안내</a> · <a href="./">차례</a></div>
+</main>
+</body>
+</html>
