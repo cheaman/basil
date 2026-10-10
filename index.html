@@ -942,7 +942,7 @@ select.selnum{font:18px "Jua";padding:2px 6px;border-radius:8px;border:2px solid
     <div class="app" style="position:relative">
       <div class="bar"><span class="logo">👩‍🏫 수업 진행 판</span><span class="who"><span class='mlcls'></span> · ⏱ <b id="mlClk">0:00</b></span>
         <span class="mlpl">오늘의 식물 <select id="mlPlant" onchange="mlSetPlant(this.value)"></select></span>
-        <span class="day"></span><button class="b" onclick="mlRestart()">🔄 새 수업</button><button class="b" onclick="openSetup()">⚙ 반 설정</button><button class="b" onclick="mlOpenGs()">☁ 구글 시트</button><button class="b" onclick="mlLeaveT()">← 나가기</button></div>
+        <span class="day"></span><button class="b" onclick="mlRestart()">🔄 새 수업</button><button class="b" onclick="openSetup()">⚙ 반 설정</button><button class="b" onclick="mlOpenGs()">☁ 구글 시트</button><button class="b" onclick="crShare()" title="반 들어가기 링크를 클래스룸 과제 · 자료로 올려요">🏫 클래스룸에</button><button class="b" onclick="mlLeaveT()">← 나가기</button></div>
       <div class="mlwrap">
         <div class="mlcol">
           <div class="mlcard" id="mlCard"></div>
@@ -7500,6 +7500,28 @@ window.addEventListener("storage", ev => {
   if (ev.key === "basil.live" && mlName && $("pS").classList.contains("on")) mlSPoll();
   if (ev.key.startsWith("basil.ans.") && ML && $("pL").classList.contains("on")) mlPoll();
 });
+
+/* ═════════ 🏫 클래스룸에 올리기 (10-10 · 구글 공식 «클래스룸 공유» 길) ═════════
+   반 들어가기 링크를 클래스룸 과제 · 자료 · 공지로 바로 올림 — 작은 창에서 반을 고름
+   · 선생님이 이 브라우저에서 학교 계정으로 로그인돼 있으면 그 계정의 반이 뜸 (외부 앱 통제와 상관없는 구글 단추)
+   · 공식으로 받는 것은 url 하나 — 제목 · 설명(title · body)은 클래스룸이 안 받으면 선생님이 창에서 적음
+   · 링크에 열쇠가 들어 있음 → 클래스룸 «안» 에만 올라감 (지금까지 손으로 붙여 넣던 것과 같은 곳) */
+function crShare(){
+  if (!gsOn()){ toast("먼저 ☁ 구글 시트를 연결해 주세요 — 반 들어가기 링크가 거기서 만들어져요"); return; }
+  const title = (lessonOn() ? "🌿 미션 수업 — " : "🌿 바질 키우기 — ") + (CFG.className || "우리 반") + " 들어가기";
+  const body = "패드에서 이 링크를 누르면 우리 반 바질 키우기가 열려요. 내 이름을 눌러 들어가요.";
+  const u = "https://classroom.google.com/share?url=" + encodeURIComponent(gsJoinLink()) + "&title=" + encodeURIComponent(title) + "&body=" + encodeURIComponent(body);
+  const w = window.open(u, "crShare", "width=640,height=700");
+  if (!w) toast("새 창이 막혔어요 — 브라우저 주소창 오른쪽의 «팝업 허용» 을 눌러 주세요");
+  else toast("🏫 클래스룸 창에서 반을 고르고 «과제» 나 «자료» 로 올려요");
+}
+/* ☁ 구글 시트 창 — «🔗 링크 복사» 옆에 */
+const _openGsCr = openGs;
+openGs = function(){
+  const r = _openGsCr.apply(this, arguments);
+  try { const b = [...document.querySelectorAll("#gsModal .b")].find(x => /링크 복사/.test(x.textContent)); if (b) b.insertAdjacentHTML("afterend", `<button class="b" onclick="crShare()" style="background:#e3eefb;color:#1f4f8a">🏫 클래스룸에 올리기</button>`); } catch (e) {}
+  return r;
+};
 
 /* 반 이름 표시 */
 const _mlRenderCls = mlRender; mlRender = function(){ document.querySelectorAll('.mlcls').forEach(e => e.textContent = CFG ? CFG.className : ''); return _mlRenderCls.apply(this, arguments); };
