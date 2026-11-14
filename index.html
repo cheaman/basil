@@ -3004,8 +3004,8 @@ function openSetup(){
       <label>상장 · 보고서 이름 <input type="text" value="${esc(d.teacher)}" placeholder="예: 담임 ○○○" oninput="setupDraft.teacher=this.value"></label>
     </div>
     <div class="panel">
-      <label>학생 명단 <span class="hint">한 줄에 한 명 · 복사해 붙이면 이름만 골라 넣음 · 가나다순으로 저절로 줄 세움</span></label>
-      <textarea id="sRoster" oninput="setupDraft.roster=this.value.split(/\\n/).map(s=>s.trim()).filter(Boolean);setupLock()">${esc(d.roster.join("\n"))}</textarea>
+      <label>학생 명단 <span class="hint">한 줄에 한 명 · 띄어쓰기나 쉼표로 이어 적어도 나눠 넣음 · 복사해 붙이면 이름만 골라 넣음 · 가나다순으로 저절로 줄 세움</span></label>
+      <textarea id="sRoster" oninput="setupDraft.roster=this.value.split(/[\\s,，、;]+/).map(s=>s.trim()).filter(Boolean);setupLock()">${esc(d.roster.join("\n"))}</textarea>
       <div class="hint" id="sCount"></div>
       <label>⏩ 날짜 넘기기 <small style="font:12px 'Noto Sans KR';color:var(--sub)">시연 모드</small> <button class="b ${d.demo ? "sel" : ""}" onclick="setupDraft.demo=true;openSetupKeep()">켬</button><button class="b ${d.demo ? "" : "sel"}" onclick="setupDraft.demo=false;openSetupKeep()">끔</button></label>
       <div class="hint demohelp" style="margin-top:-6px"><b>무엇?</b> 실제 날짜를 기다리지 않고 바질이 자라는 모습을 바로 보는 기능이에요.<br><b>켜면</b> → 학생 화면 화분 옆에 «⏩ 하루 · ⏩ 3일» 단추가 생겨요. 누를 때마다 날짜가 앞으로 가요.<br><b>언제 켜나</b> → 수업 전에 선생님 혼자 미리 볼 때 · 공개 수업 · 연수에서 보여 줄 때<br><b>⚠ 수업 중엔 «끔»</b> → 켜 두면 아이들이 날짜를 넘겨 바질 날짜가 실제와 달라져요. 끄고 저장하면 실제 날짜로 돌아가요.${(d.dayOffset || 0) > 0 ? `<br>📅 지금 ${d.dayOffset}일 앞당겨 보는 중` : ""}</div>
@@ -6234,7 +6234,7 @@ openSetup = function(){
   const r = _openSetupImport.apply(this, arguments);
   const ta = $("sRoster");
   if (ta && !ta.dataset.paste){ ta.dataset.paste = "1";
-    ta.placeholder = "보기 :\n홍길동\n성춘향\n…\n엑셀 · 한글 · 나이스 명렬표를 통째로 붙여 넣어도 이름만 골라 넣어요";
+    ta.placeholder = "보기 :\n홍길동\n성춘향\n… 또는 «홍길동 성춘향, 이몽룡» 처럼 띄어쓰기 · 쉼표로 이어 적어도 돼요\n엑셀 · 한글 · 나이스 명렬표를 통째로 붙여 넣어도 이름만 골라 넣어요";
     ta.addEventListener("paste", ev => { const t = (ev.clipboardData || window.clipboardData).getData("text"); if (!t) return; ev.preventDefault(); rosterAdd(pickNames(t), "붙여 넣은 글에서"); }); }
   if (ta && !$("sImport")) ta.insertAdjacentHTML("beforebegin", `<div id="sImport" class="simport"><button class="b" onclick="rosterFile()">📂 명단 파일 가져오기</button><button class="b" onclick="rosterTidy()">✨ 이름만 골라내기</button><span class="sub">엑셀 .xlsx · .csv · .txt</span></div>`);
   return r;
